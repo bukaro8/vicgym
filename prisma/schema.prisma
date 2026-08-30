@@ -1,0 +1,322 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum WeightUnit {
+  KG
+}
+
+enum EquipmentType {
+  MACHINE
+  DUMBBELL
+  BARBELL
+  BODYWEIGHT
+  CARDIO
+  STEP
+}
+
+enum RepMode {
+  TOTAL
+  PER_SIDE
+}
+
+enum LoadEntryMode {
+  STACK_TOTAL
+  TOTAL_LOAD
+  PER_DUMBBELL
+  BODYWEIGHT
+  NONE
+}
+
+enum MuscleRole {
+  PRIMARY
+  SECONDARY
+}
+
+enum MediaRole {
+  PRIMARY
+  REFERENCE
+}
+
+enum ProgramStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+  DEMO
+}
+
+enum ProgramVersionSource {
+  SEED
+  MANUAL
+  IMPORT
+}
+
+enum WorkoutSessionStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+enum RestPeriodStatus {
+  RUNNING
+  PAUSED
+  COMPLETED
+  SKIPPED
+}
+
+enum ClientMutationStatus {
+  PENDING
+  APPLIED
+  FAILED
+}
+
+model AppSettings {
+  id                  Int        @id @default(1)
+  timezone            String     @default("Europe/London")
+  weightUnit          WeightUnit @default(KG)
+  soundEnabled        Boolean    @default(false)
+  vibrationEnabled    Boolean    @default(false)
+  onboardingCompleted Boolean    @default(false)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+}
+
+model Equipment {
+  id        String          @id @default(uuid()) @db.Uuid
+  slug      String          @unique
+  name      String
+  type      EquipmentType
+  available Boolean         @default(true)
+  notes     String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  exercises Exercise[]
+  media     ExerciseMedia[]
+}
+
+model Exercise {
+  id                String            @id @default(uuid()) @db.Uuid
+  slug              String            @unique
+  name              String
+  equipmentId       String?           @db.Uuid
+  defaultTargetReps Int               @default(12)
+  techniqueUrl      String?
+  active            Boolean           @default(true)
+  repMode           RepMode           @default(TOTAL)
+  loadEntryMode     LoadEntryMode     @default(STACK_TOTAL)
+  loadMultiplier    Decimal           @default(1) @db.Decimal(6, 3)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  equipment         Equipment?        @relation(fields: [equipmentId], references: [id], onDelete: Restrict)
+  muscles           ExerciseMuscle[]
+  media             ExerciseMedia[]
+  workoutExercises  WorkoutExercise[]
+  exerciseSessions  ExerciseSession[]
+
+  @@index([equipmentId])
+}
+
+model Muscle {
+  id        String           @id @default(uuid()) @db.Uuid
+  slug      String           @unique
+  name      String
+  groupName String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  exercises ExerciseMuscle[]
+}
+
+model ExerciseMuscle {
+  exerciseId String     @db.Uuid
+  muscleId   String     @db.Uuid
+  role       MuscleRole
+  exercise   Exercise   @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  muscle     Muscle     @relation(fields: [muscleId], references: [id], onDelete: Cascade)
+
+  @@id([exerciseId, muscleId])
+  @@index([muscleId, role])
+}
+
+model ExerciseMedia {
+  id             String     @id @default(uuid()) @db.Uuid
+  exerciseId     String?    @db.Uuid
+  equipmentId    String?    @db.Uuid
+  role           MediaRole
+  storagePath    String
+  sourceFilename String
+  altText        String
+  sortOrder      Int        @default(0)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  exercise       Exercise?  @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  equipment      Equipment? @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  @@unique([equipmentId, sourceFilename])
+  @@index([exerciseId, role, sortOrder])
+  @@index([equipmentId, role, sortOrder])
+}
+
+model WorkoutProgram {
+  id              String           @id @default(uuid()) @db.Uuid
+  slug            String           @unique
+  name            String
+  isDemo          Boolean          @default(false)
+  status          ProgramStatus    @default(DRAFT)
+  activeVersionId String?          @unique @db.Uuid
+  notice          String?
+  activatedAt     DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  activeVersion   ProgramVersion?  @relation("ActiveProgramVersion", fields: [activeVersionId], references: [id], onDelete: SetNull)
+  versions        ProgramVersion[] @relation("ProgramVersions")
+}
+
+model ProgramVersion {
+  id               String               @id @default(uuid()) @db.Uuid
+  programId        String               @db.Uuid
+  versionNumber    Int
+  source           ProgramVersionSource
+  notes            String?
+  createdAt        DateTime             @default(now())
+  program          WorkoutProgram       @relation("ProgramVersions", fields: [programId], references: [id], onDelete: Cascade)
+  activeForProgram WorkoutProgram?      @relation("ActiveProgramVersion")
+  days             WorkoutDay[]
+  workoutSessions  WorkoutSession[]
+
+  @@unique([programId, versionNumber])
+  @@index([programId, createdAt])
+}
+
+model WorkoutDay {
+  id               String            @id @default(uuid()) @db.Uuid
+  programVersionId String            @db.Uuid
+  slug             String
+  name             String
+  rotationOrder    Int
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  programVersion   ProgramVersion    @relation(fields: [programVersionId], references: [id], onDelete: Cascade)
+  workoutExercises WorkoutExercise[]
+  workoutSessions  WorkoutSession[]
+
+  @@unique([programVersionId, slug])
+  @@unique([programVersionId, rotationOrder])
+}
+
+model WorkoutExercise {
+  id              String     @id @default(uuid()) @db.Uuid
+  workoutDayId    String     @db.Uuid
+  exerciseId      String     @db.Uuid
+  position        Int
+  sets            Int
+  targetReps      Int        @default(12)
+  plannedWeightKg Decimal?   @db.Decimal(7, 2)
+  restSeconds     Int
+  autoRest        Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  workoutDay      WorkoutDay @relation(fields: [workoutDayId], references: [id], onDelete: Cascade)
+  exercise        Exercise   @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+
+  @@unique([workoutDayId, position])
+  @@unique([workoutDayId, exerciseId])
+  @@index([exerciseId])
+}
+
+model WorkoutSession {
+  id                     String               @id @default(uuid()) @db.Uuid
+  programVersionId       String               @db.Uuid
+  workoutDayId           String               @db.Uuid
+  status                 WorkoutSessionStatus @default(IN_PROGRESS)
+  workoutDayNameSnapshot String
+  startedAt              DateTime             @default(now())
+  completedAt            DateTime?
+  notes                  String?
+  updatedAt              DateTime             @updatedAt
+  programVersion         ProgramVersion       @relation(fields: [programVersionId], references: [id], onDelete: Restrict)
+  workoutDay             WorkoutDay           @relation(fields: [workoutDayId], references: [id], onDelete: Restrict)
+  exerciseSessions       ExerciseSession[]
+
+  @@index([status, startedAt])
+  @@index([programVersionId])
+  @@index([workoutDayId])
+}
+
+model ExerciseSession {
+  id                   String         @id @default(uuid()) @db.Uuid
+  workoutSessionId     String         @db.Uuid
+  exerciseId           String         @db.Uuid
+  position             Int
+  exerciseNameSnapshot String
+  plannedSets          Int
+  targetReps           Int            @default(12)
+  restSeconds          Int
+  autoRest             Boolean
+  notes                String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  workoutSession       WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  exercise             Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+  setLogs              SetLog[]
+
+  @@unique([workoutSessionId, position])
+  @@index([exerciseId, createdAt])
+}
+
+model SetLog {
+  id                String          @id @default(uuid()) @db.Uuid
+  exerciseSessionId String          @db.Uuid
+  setNumber         Int
+  targetReps        Int             @default(12)
+  actualReps        Int?
+  weightKg          Decimal?        @db.Decimal(7, 2)
+  completedAt       DateTime?
+  notes             String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  exerciseSession   ExerciseSession @relation(fields: [exerciseSessionId], references: [id], onDelete: Cascade)
+  restPeriod        RestPeriod?
+
+  @@unique([exerciseSessionId, setNumber])
+  @@index([completedAt])
+}
+
+model RestPeriod {
+  id                       String           @id @default(uuid()) @db.Uuid
+  setLogId                 String           @unique @db.Uuid
+  status                   RestPeriodStatus
+  configuredSeconds        Int
+  startedAt                DateTime
+  endsAt                   DateTime?
+  pausedAt                 DateTime?
+  pausedRemainingSeconds   Int?
+  pausedRemainingMs        Int?
+  accumulatedPausedSeconds Int              @default(0)
+  completedAt              DateTime?
+  skippedAt                DateTime?
+  adjustments              Json?
+  createdAt                DateTime         @default(now())
+  updatedAt                DateTime         @updatedAt
+  setLog                   SetLog           @relation(fields: [setLogId], references: [id], onDelete: Cascade)
+
+  @@index([status, endsAt])
+}
+
+model ClientMutation {
+  id           String               @id @db.Uuid
+  status       ClientMutationStatus @default(PENDING)
+  entityType   String
+  entityId     String?
+  payloadHash  String
+  appliedAt    DateTime?
+  errorMessage String?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  @@index([status, createdAt])
+}

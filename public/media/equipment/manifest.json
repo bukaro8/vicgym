@@ -1,0 +1,293 @@
+{
+  "generatedAt": "2026-08-30T15:56:53.953Z",
+  "items": [
+    {
+      "equipmentSlug": "triceps-press",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141811.jpg",
+      "originalSha256": "6d0d735cc3cccdef910c6782f898ca2801572227440e000bd058ad0b5b4f958e",
+      "derivatives": [
+        "/media/equipment/triceps-press/20260830_141811-640.webp",
+        "/media/equipment/triceps-press/20260830_141811-640.avif",
+        "/media/equipment/triceps-press/20260830_141811-1280.webp",
+        "/media/equipment/triceps-press/20260830_141811-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "triceps-press",
+      "role": "REFERENCE",
+      "originalFilename": "20260830_141807.jpg",
+      "originalSha256": "ccd3686cdec3c9824f009f15c0d885f113c2c53f93821dc8fccac89b8612d17f",
+      "derivatives": [
+        "/media/equipment/triceps-press/20260830_141807-640.webp",
+        "/media/equipment/triceps-press/20260830_141807-640.avif",
+        "/media/equipment/triceps-press/20260830_141807-1280.webp",
+        "/media/equipment/triceps-press/20260830_141807-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "chest-press",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141819.jpg",
+      "originalSha256": "553646861579ce972d9d671f018375eed708f6bff09d79d4155c62fc1ab94448",
+      "derivatives": [
+        "/media/equipment/chest-press/20260830_141819-640.webp",
+        "/media/equipment/chest-press/20260830_141819-640.avif",
+        "/media/equipment/chest-press/20260830_141819-1280.webp",
+        "/media/equipment/chest-press/20260830_141819-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "chest-press",
+      "role": "REFERENCE",
+      "originalFilename": "20260830_141816.jpg",
+      "originalSha256": "5205a578d531b3816795bb57d983e91648e0d9d97cbc949540ab8d099e0a8077",
+      "derivatives": [
+        "/media/equipment/chest-press/20260830_141816-640.webp",
+        "/media/equipment/chest-press/20260830_141816-640.avif",
+        "/media/equipment/chest-press/20260830_141816-1280.webp",
+        "/media/equipment/chest-press/20260830_141816-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "shoulder-press",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141830.jpg",
+      "originalSha256": "c00c577a3cfcc237002f24a9407488a4602cae288fa86542d93e47b2ce011895",
+      "derivatives": [
+        "/media/equipment/shoulder-press/20260830_141830-640.webp",
+        "/media/equipment/shoulder-press/20260830_141830-640.avif",
+        "/media/equipment/shoulder-press/20260830_141830-1280.webp",
+        "/media/equipment/shoulder-press/20260830_141830-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "shoulder-press",
+      "role": "REFERENCE",
+      "originalFilename": "20260830_141826.jpg",
+      "originalSha256": "d4203c110c1d6706dadd3693707bda0bb0f98f071fed5e12ecefbc1ad0164fc7",
+      "derivatives": [
+        "/media/equipment/shoulder-press/20260830_141826-640.webp",
+        "/media/equipment/shoulder-press/20260830_141826-640.avif",
+        "/media/equipment/shoulder-press/20260830_141826-1280.webp",
+        "/media/equipment/shoulder-press/20260830_141826-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "squat-machine",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141840.jpg",
+      "originalSha256": "5e8e1476157127a25cd4b5916e609ac332fe05403ff758121cbe992778e4ed93",
+      "derivatives": [
+        "/media/equipment/squat-machine/20260830_141840-640.webp",
+        "/media/equipment/squat-machine/20260830_141840-640.avif",
+        "/media/equipment/squat-machine/20260830_141840-1280.webp",
+        "/media/equipment/squat-machine/20260830_141840-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "squat-machine",
+      "role": "REFERENCE",
+      "originalFilename": "20260830_141836.jpg",
+      "originalSha256": "fe8eed12433d18cac25e099bcfb1b58d79837715394de66beedf380d5f665c0f",
+      "derivatives": [
+        "/media/equipment/squat-machine/20260830_141836-640.webp",
+        "/media/equipment/squat-machine/20260830_141836-640.avif",
+        "/media/equipment/squat-machine/20260830_141836-1280.webp",
+        "/media/equipment/squat-machine/20260830_141836-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "leg-extension",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141941.jpg",
+      "originalSha256": "db4079c4a6a6fec34bbcfe709e13ec6c029100be1ba22589e7590b8e81e9e164",
+      "derivatives": [
+        "/media/equipment/leg-extension/20260830_141941-640.webp",
+        "/media/equipment/leg-extension/20260830_141941-640.avif",
+        "/media/equipment/leg-extension/20260830_141941-1280.webp",
+        "/media/equipment/leg-extension/20260830_141941-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "leg-extension",
+      "role": "REFERENCE",
+      "originalFilename": "20260830_141936.jpg",
+      "originalSha256": "95a7c0a070f8c682a16d1e2fbb0512cf1ca8955a410f9ee9f68d43517c55d955",
+      "derivatives": [
+        "/media/equipment/leg-extension/20260830_141936-640.webp",
+        "/media/equipment/leg-extension/20260830_141936-640.avif",
+        "/media/equipment/leg-extension/20260830_141936-1280.webp",
+        "/media/equipment/leg-extension/20260830_141936-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "leg-extension",
+      "role": "REFERENCE",
+      "originalFilename": "20260830_141850.jpg",
+      "originalSha256": "b6648216dd4312cd4020e68f83391eae13554807f51ff9c72299739ba183961b",
+      "derivatives": [
+        "/media/equipment/leg-extension/20260830_141850-640.webp",
+        "/media/equipment/leg-extension/20260830_141850-640.avif",
+        "/media/equipment/leg-extension/20260830_141850-1280.webp",
+        "/media/equipment/leg-extension/20260830_141850-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "leg-extension",
+      "role": "REFERENCE",
+      "originalFilename": "20260830_141846.jpg",
+      "originalSha256": "584291199e3cc123cc44fc12a2b34f1792f27431c08dc5b41b8d68528a5fa0e9",
+      "derivatives": [
+        "/media/equipment/leg-extension/20260830_141846-640.webp",
+        "/media/equipment/leg-extension/20260830_141846-640.avif",
+        "/media/equipment/leg-extension/20260830_141846-1280.webp",
+        "/media/equipment/leg-extension/20260830_141846-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "lat-pulldown",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141858.jpg",
+      "originalSha256": "6230e19d7f9f63afb0a4e0e9c25ac89ab7f3e0d5255cfafe30a578902aa8a0bd",
+      "derivatives": [
+        "/media/equipment/lat-pulldown/20260830_141858-640.webp",
+        "/media/equipment/lat-pulldown/20260830_141858-640.avif",
+        "/media/equipment/lat-pulldown/20260830_141858-1280.webp",
+        "/media/equipment/lat-pulldown/20260830_141858-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "lat-pulldown",
+      "role": "REFERENCE",
+      "originalFilename": "20260830_141853.jpg",
+      "originalSha256": "fa9e75ba1904fc1d3980c4b2899c18cc9879d57f8708dedcc78a824afd12e2e7",
+      "derivatives": [
+        "/media/equipment/lat-pulldown/20260830_141853-640.webp",
+        "/media/equipment/lat-pulldown/20260830_141853-640.avif",
+        "/media/equipment/lat-pulldown/20260830_141853-1280.webp",
+        "/media/equipment/lat-pulldown/20260830_141853-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "biceps-curl",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141908.jpg",
+      "originalSha256": "610815100d983437fcd323aab1f219e7ed4df201a4fb2e700546c3bab7581525",
+      "derivatives": [
+        "/media/equipment/biceps-curl/20260830_141908-640.webp",
+        "/media/equipment/biceps-curl/20260830_141908-640.avif",
+        "/media/equipment/biceps-curl/20260830_141908-1280.webp",
+        "/media/equipment/biceps-curl/20260830_141908-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "biceps-curl",
+      "role": "REFERENCE",
+      "originalFilename": "20260830_141904.jpg",
+      "originalSha256": "141d88cacc65d74490d8b2a66ff711ee6976a441259f489621ecda7fa721cf39",
+      "derivatives": [
+        "/media/equipment/biceps-curl/20260830_141904-640.webp",
+        "/media/equipment/biceps-curl/20260830_141904-640.avif",
+        "/media/equipment/biceps-curl/20260830_141904-1280.webp",
+        "/media/equipment/biceps-curl/20260830_141904-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "abdominal-machine",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141918.jpg",
+      "originalSha256": "9eb149df830d01bf68b3b65ba36ecda0da3a92fc6f7e6999219e9ceef9acf785",
+      "derivatives": [
+        "/media/equipment/abdominal-machine/20260830_141918-640.webp",
+        "/media/equipment/abdominal-machine/20260830_141918-640.avif",
+        "/media/equipment/abdominal-machine/20260830_141918-1280.webp",
+        "/media/equipment/abdominal-machine/20260830_141918-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "seated-leg-curl",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141931.jpg",
+      "originalSha256": "21aa218b439dc390d847d82839c5cdf1fc09b568c3564487ed9aa70b5ddd271f",
+      "derivatives": [
+        "/media/equipment/seated-leg-curl/20260830_141931-640.webp",
+        "/media/equipment/seated-leg-curl/20260830_141931-640.avif",
+        "/media/equipment/seated-leg-curl/20260830_141931-1280.webp",
+        "/media/equipment/seated-leg-curl/20260830_141931-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "seated-leg-curl",
+      "role": "REFERENCE",
+      "originalFilename": "20260830_141928.jpg",
+      "originalSha256": "64b13b68bc31eb465637dd994b8adff5d9ce94d9bf44b63f244e937fc2d8c4d7",
+      "derivatives": [
+        "/media/equipment/seated-leg-curl/20260830_141928-640.webp",
+        "/media/equipment/seated-leg-curl/20260830_141928-640.avif",
+        "/media/equipment/seated-leg-curl/20260830_141928-1280.webp",
+        "/media/equipment/seated-leg-curl/20260830_141928-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "dumbbells",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141924.jpg",
+      "originalSha256": "e4ebbf277b5654f45be0e49ef00e4fdb344f0610493e9b1d65c1d99362fefa16",
+      "derivatives": [
+        "/media/equipment/dumbbells/20260830_141924-640.webp",
+        "/media/equipment/dumbbells/20260830_141924-640.avif",
+        "/media/equipment/dumbbells/20260830_141924-1280.webp",
+        "/media/equipment/dumbbells/20260830_141924-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "treadmill",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141948.jpg",
+      "originalSha256": "d9ac62fe6e88a21db0406406677333a6def18398a7e766774c46242ec2b547ec",
+      "derivatives": [
+        "/media/equipment/treadmill/20260830_141948-640.webp",
+        "/media/equipment/treadmill/20260830_141948-640.avif",
+        "/media/equipment/treadmill/20260830_141948-1280.webp",
+        "/media/equipment/treadmill/20260830_141948-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise-bikes",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_141959.jpg",
+      "originalSha256": "4f66a9a388efed2446815f039f80d920482217d502f48948fba27c8dcdc5bbc8",
+      "derivatives": [
+        "/media/equipment/exercise-bikes/20260830_141959-640.webp",
+        "/media/equipment/exercise-bikes/20260830_141959-640.avif",
+        "/media/equipment/exercise-bikes/20260830_141959-1280.webp",
+        "/media/equipment/exercise-bikes/20260830_141959-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "ellipticals-cross-trainers",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_142004.jpg",
+      "originalSha256": "653b5a836d0bd32d4bdf87c67d07b9b78e1ff5694b01a0413bde263e493e1fa7",
+      "derivatives": [
+        "/media/equipment/ellipticals-cross-trainers/20260830_142004-640.webp",
+        "/media/equipment/ellipticals-cross-trainers/20260830_142004-640.avif",
+        "/media/equipment/ellipticals-cross-trainers/20260830_142004-1280.webp",
+        "/media/equipment/ellipticals-cross-trainers/20260830_142004-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "studio-accessories",
+      "role": "PRIMARY",
+      "originalFilename": "20260830_142012.jpg",
+      "originalSha256": "0b19d2b28453bf15b46addde0413300f222879a69981b099b6cc69db4c71736b",
+      "derivatives": [
+        "/media/equipment/studio-accessories/20260830_142012-640.webp",
+        "/media/equipment/studio-accessories/20260830_142012-640.avif",
+        "/media/equipment/studio-accessories/20260830_142012-1280.webp",
+        "/media/equipment/studio-accessories/20260830_142012-1280.avif"
+      ]
+    }
+  ]
+}
