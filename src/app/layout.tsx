@@ -13,6 +13,13 @@ export const metadata: Metadata = {
     template: "%s · VicGym",
   },
   description: "A private workout log for one local gym.",
+  icons: {
+    icon: [
+      { url: "/icons/vicgym-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/vicgym-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
