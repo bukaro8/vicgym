@@ -17,6 +17,7 @@ Browser-native Basic Authentication has no polished logout flow. Closing all bro
 Create a PostgreSQL service on Coolify's internal network. Set these application environment variables:
 
 - `DATABASE_URL`: the PostgreSQL connection URL using the internal service hostname and a unique database password.
+- `APP_ORIGIN`: the exact public HTTPS origin, for example `https://gym.example.com`. This keeps same-origin mutation protection correct if a proxy forwards an internal host.
 - `APP_TIMEZONE`: `Europe/London` unless the owner deliberately changes it.
 
 Keep `DATABASE_URL` in Coolify's secret environment configuration. Do not commit `.env` files. PostgreSQL should not expose a public host port. Configure scheduled database backups and test restoration before relying on the deployment for durable history.
@@ -25,7 +26,7 @@ Keep `DATABASE_URL` in Coolify's secret environment configuration. Do not commit
 
 The container entrypoint runs `prisma migrate deploy` and the idempotent verified catalogue seed before starting the standalone Next.js server. If migration or seeding fails, the application does not start and cannot report healthy. The seed never activates the demo programme and does not overwrite an existing programme version.
 
-All future mutation routes must call the shared same-origin JSON guard. The deployment must preserve `Host`, `X-Forwarded-Host`, and `X-Forwarded-Proto`, as Coolify's Traefik proxy normally does. Do not add permissive CORS headers.
+All future mutation routes must call the shared same-origin JSON guard. `APP_ORIGIN` is the authoritative public origin; the deployment should also preserve `Host`, `X-Forwarded-Host`, and `X-Forwarded-Proto`. Do not add permissive CORS headers.
 
 Phase 6 installs a same-origin service worker and stores active workout data in IndexedDB. Serve VicGym only over HTTPS through the authenticated Traefik route, and do not expose a direct application port that could let the service worker fetch around the proxy boundary. API responses are not runtime-cached; prepared workout pages and optimized machine media are held in private versioned caches until browser eviction or explicit local-data reset.
 

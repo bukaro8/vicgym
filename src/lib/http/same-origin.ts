@@ -9,6 +9,9 @@ export class RequestPolicyError extends Error {
 }
 
 function expectedOrigin(request: Request): string {
+  const configuredOrigin = process.env.APP_ORIGIN?.replace(/\/$/, "");
+  if (configuredOrigin) return configuredOrigin;
+
   const requestUrl = new URL(request.url);
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
   const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();

@@ -41,4 +41,20 @@ describe("assertSameOriginJson", () => {
 
     expect(() => assertSameOriginJson(request)).not.toThrow();
   });
+
+  it("uses the configured public origin when a proxy reports an internal host", () => {
+    const previous = process.env.APP_ORIGIN;
+    process.env.APP_ORIGIN = "https://gym.example.test";
+
+    try {
+      expect(() => assertSameOriginJson(makeRequest({
+        host: "vicgym:3000",
+        "x-forwarded-host": "coolify-proxy:443",
+        "x-forwarded-proto": "http",
+      }))).not.toThrow();
+    } finally {
+      if (previous === undefined) delete process.env.APP_ORIGIN;
+      else process.env.APP_ORIGIN = previous;
+    }
+  });
 });

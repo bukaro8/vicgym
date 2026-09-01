@@ -2,6 +2,11 @@ import { z } from "zod";
 
 export const serverEnvSchema = z.object({
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  APP_ORIGIN: z.string().url("APP_ORIGIN must be an absolute URL").optional().refine((value) => {
+    if (!value) return true;
+    const url = new URL(value);
+    return url.pathname === "/" && !url.search && !url.hash;
+  }, "APP_ORIGIN must not include a path, query, or fragment"),
   APP_TIMEZONE: z.string().min(1).default("Europe/London"),
   RAPIDAPI_KEY: z.string().min(1).optional(),
   RAPIDAPI_HOST: z.string().regex(/^[a-z0-9.-]+$/i, "RAPIDAPI_HOST is invalid").default("edb-with-videos-and-images-by-ascendapi.p.rapidapi.com"),
