@@ -39,9 +39,14 @@ export type ExerciseMediaMinAggregateOutputType = {
   exerciseId: string | null
   equipmentId: string | null
   role: $Enums.MediaRole | null
+  kind: $Enums.MediaKind | null
   storagePath: string | null
   sourceFilename: string | null
   altText: string | null
+  provider: string | null
+  externalId: string | null
+  sourceUrl: string | null
+  attribution: string | null
   sortOrder: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -52,9 +57,14 @@ export type ExerciseMediaMaxAggregateOutputType = {
   exerciseId: string | null
   equipmentId: string | null
   role: $Enums.MediaRole | null
+  kind: $Enums.MediaKind | null
   storagePath: string | null
   sourceFilename: string | null
   altText: string | null
+  provider: string | null
+  externalId: string | null
+  sourceUrl: string | null
+  attribution: string | null
   sortOrder: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -65,9 +75,14 @@ export type ExerciseMediaCountAggregateOutputType = {
   exerciseId: number
   equipmentId: number
   role: number
+  kind: number
   storagePath: number
   sourceFilename: number
   altText: number
+  provider: number
+  externalId: number
+  sourceUrl: number
+  attribution: number
   sortOrder: number
   createdAt: number
   updatedAt: number
@@ -88,9 +103,14 @@ export type ExerciseMediaMinAggregateInputType = {
   exerciseId?: true
   equipmentId?: true
   role?: true
+  kind?: true
   storagePath?: true
   sourceFilename?: true
   altText?: true
+  provider?: true
+  externalId?: true
+  sourceUrl?: true
+  attribution?: true
   sortOrder?: true
   createdAt?: true
   updatedAt?: true
@@ -101,9 +121,14 @@ export type ExerciseMediaMaxAggregateInputType = {
   exerciseId?: true
   equipmentId?: true
   role?: true
+  kind?: true
   storagePath?: true
   sourceFilename?: true
   altText?: true
+  provider?: true
+  externalId?: true
+  sourceUrl?: true
+  attribution?: true
   sortOrder?: true
   createdAt?: true
   updatedAt?: true
@@ -114,9 +139,14 @@ export type ExerciseMediaCountAggregateInputType = {
   exerciseId?: true
   equipmentId?: true
   role?: true
+  kind?: true
   storagePath?: true
   sourceFilename?: true
   altText?: true
+  provider?: true
+  externalId?: true
+  sourceUrl?: true
+  attribution?: true
   sortOrder?: true
   createdAt?: true
   updatedAt?: true
@@ -214,9 +244,14 @@ export type ExerciseMediaGroupByOutputType = {
   exerciseId: string | null
   equipmentId: string | null
   role: $Enums.MediaRole
+  kind: $Enums.MediaKind
   storagePath: string
   sourceFilename: string
   altText: string
+  provider: string
+  externalId: string | null
+  sourceUrl: string | null
+  attribution: string | null
   sortOrder: number
   createdAt: Date
   updatedAt: Date
@@ -250,9 +285,14 @@ export type ExerciseMediaWhereInput = {
   exerciseId?: Prisma.UuidNullableFilter<"ExerciseMedia"> | string | null
   equipmentId?: Prisma.UuidNullableFilter<"ExerciseMedia"> | string | null
   role?: Prisma.EnumMediaRoleFilter<"ExerciseMedia"> | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFilter<"ExerciseMedia"> | $Enums.MediaKind
   storagePath?: Prisma.StringFilter<"ExerciseMedia"> | string
   sourceFilename?: Prisma.StringFilter<"ExerciseMedia"> | string
   altText?: Prisma.StringFilter<"ExerciseMedia"> | string
+  provider?: Prisma.StringFilter<"ExerciseMedia"> | string
+  externalId?: Prisma.StringNullableFilter<"ExerciseMedia"> | string | null
+  sourceUrl?: Prisma.StringNullableFilter<"ExerciseMedia"> | string | null
+  attribution?: Prisma.StringNullableFilter<"ExerciseMedia"> | string | null
   sortOrder?: Prisma.IntFilter<"ExerciseMedia"> | number
   createdAt?: Prisma.DateTimeFilter<"ExerciseMedia"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ExerciseMedia"> | Date | string
@@ -265,9 +305,14 @@ export type ExerciseMediaOrderByWithRelationInput = {
   exerciseId?: Prisma.SortOrderInput | Prisma.SortOrder
   equipmentId?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   storagePath?: Prisma.SortOrder
   sourceFilename?: Prisma.SortOrder
   altText?: Prisma.SortOrder
+  provider?: Prisma.SortOrder
+  externalId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  attribution?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -278,30 +323,41 @@ export type ExerciseMediaOrderByWithRelationInput = {
 export type ExerciseMediaWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   equipmentId_sourceFilename?: Prisma.ExerciseMediaEquipmentIdSourceFilenameCompoundUniqueInput
+  exerciseId_provider_externalId_kind?: Prisma.ExerciseMediaExerciseIdProviderExternalIdKindCompoundUniqueInput
   AND?: Prisma.ExerciseMediaWhereInput | Prisma.ExerciseMediaWhereInput[]
   OR?: Prisma.ExerciseMediaWhereInput[]
   NOT?: Prisma.ExerciseMediaWhereInput | Prisma.ExerciseMediaWhereInput[]
   exerciseId?: Prisma.UuidNullableFilter<"ExerciseMedia"> | string | null
   equipmentId?: Prisma.UuidNullableFilter<"ExerciseMedia"> | string | null
   role?: Prisma.EnumMediaRoleFilter<"ExerciseMedia"> | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFilter<"ExerciseMedia"> | $Enums.MediaKind
   storagePath?: Prisma.StringFilter<"ExerciseMedia"> | string
   sourceFilename?: Prisma.StringFilter<"ExerciseMedia"> | string
   altText?: Prisma.StringFilter<"ExerciseMedia"> | string
+  provider?: Prisma.StringFilter<"ExerciseMedia"> | string
+  externalId?: Prisma.StringNullableFilter<"ExerciseMedia"> | string | null
+  sourceUrl?: Prisma.StringNullableFilter<"ExerciseMedia"> | string | null
+  attribution?: Prisma.StringNullableFilter<"ExerciseMedia"> | string | null
   sortOrder?: Prisma.IntFilter<"ExerciseMedia"> | number
   createdAt?: Prisma.DateTimeFilter<"ExerciseMedia"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ExerciseMedia"> | Date | string
   exercise?: Prisma.XOR<Prisma.ExerciseNullableScalarRelationFilter, Prisma.ExerciseWhereInput> | null
   equipment?: Prisma.XOR<Prisma.EquipmentNullableScalarRelationFilter, Prisma.EquipmentWhereInput> | null
-}, "id" | "equipmentId_sourceFilename">
+}, "id" | "equipmentId_sourceFilename" | "exerciseId_provider_externalId_kind">
 
 export type ExerciseMediaOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   exerciseId?: Prisma.SortOrderInput | Prisma.SortOrder
   equipmentId?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   storagePath?: Prisma.SortOrder
   sourceFilename?: Prisma.SortOrder
   altText?: Prisma.SortOrder
+  provider?: Prisma.SortOrder
+  externalId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  attribution?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -320,9 +376,14 @@ export type ExerciseMediaScalarWhereWithAggregatesInput = {
   exerciseId?: Prisma.UuidNullableWithAggregatesFilter<"ExerciseMedia"> | string | null
   equipmentId?: Prisma.UuidNullableWithAggregatesFilter<"ExerciseMedia"> | string | null
   role?: Prisma.EnumMediaRoleWithAggregatesFilter<"ExerciseMedia"> | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindWithAggregatesFilter<"ExerciseMedia"> | $Enums.MediaKind
   storagePath?: Prisma.StringWithAggregatesFilter<"ExerciseMedia"> | string
   sourceFilename?: Prisma.StringWithAggregatesFilter<"ExerciseMedia"> | string
   altText?: Prisma.StringWithAggregatesFilter<"ExerciseMedia"> | string
+  provider?: Prisma.StringWithAggregatesFilter<"ExerciseMedia"> | string
+  externalId?: Prisma.StringNullableWithAggregatesFilter<"ExerciseMedia"> | string | null
+  sourceUrl?: Prisma.StringNullableWithAggregatesFilter<"ExerciseMedia"> | string | null
+  attribution?: Prisma.StringNullableWithAggregatesFilter<"ExerciseMedia"> | string | null
   sortOrder?: Prisma.IntWithAggregatesFilter<"ExerciseMedia"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ExerciseMedia"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ExerciseMedia"> | Date | string
@@ -331,9 +392,14 @@ export type ExerciseMediaScalarWhereWithAggregatesInput = {
 export type ExerciseMediaCreateInput = {
   id?: string
   role: $Enums.MediaRole
+  kind?: $Enums.MediaKind
   storagePath: string
   sourceFilename: string
   altText: string
+  provider?: string
+  externalId?: string | null
+  sourceUrl?: string | null
+  attribution?: string | null
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -346,9 +412,14 @@ export type ExerciseMediaUncheckedCreateInput = {
   exerciseId?: string | null
   equipmentId?: string | null
   role: $Enums.MediaRole
+  kind?: $Enums.MediaKind
   storagePath: string
   sourceFilename: string
   altText: string
+  provider?: string
+  externalId?: string | null
+  sourceUrl?: string | null
+  attribution?: string | null
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -357,9 +428,14 @@ export type ExerciseMediaUncheckedCreateInput = {
 export type ExerciseMediaUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMediaRoleFieldUpdateOperationsInput | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFieldUpdateOperationsInput | $Enums.MediaKind
   storagePath?: Prisma.StringFieldUpdateOperationsInput | string
   sourceFilename?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -372,9 +448,14 @@ export type ExerciseMediaUncheckedUpdateInput = {
   exerciseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumMediaRoleFieldUpdateOperationsInput | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFieldUpdateOperationsInput | $Enums.MediaKind
   storagePath?: Prisma.StringFieldUpdateOperationsInput | string
   sourceFilename?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -385,9 +466,14 @@ export type ExerciseMediaCreateManyInput = {
   exerciseId?: string | null
   equipmentId?: string | null
   role: $Enums.MediaRole
+  kind?: $Enums.MediaKind
   storagePath: string
   sourceFilename: string
   altText: string
+  provider?: string
+  externalId?: string | null
+  sourceUrl?: string | null
+  attribution?: string | null
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -396,9 +482,14 @@ export type ExerciseMediaCreateManyInput = {
 export type ExerciseMediaUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMediaRoleFieldUpdateOperationsInput | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFieldUpdateOperationsInput | $Enums.MediaKind
   storagePath?: Prisma.StringFieldUpdateOperationsInput | string
   sourceFilename?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -409,9 +500,14 @@ export type ExerciseMediaUncheckedUpdateManyInput = {
   exerciseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   equipmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumMediaRoleFieldUpdateOperationsInput | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFieldUpdateOperationsInput | $Enums.MediaKind
   storagePath?: Prisma.StringFieldUpdateOperationsInput | string
   sourceFilename?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -432,14 +528,26 @@ export type ExerciseMediaEquipmentIdSourceFilenameCompoundUniqueInput = {
   sourceFilename: string
 }
 
+export type ExerciseMediaExerciseIdProviderExternalIdKindCompoundUniqueInput = {
+  exerciseId: string
+  provider: string
+  externalId: string
+  kind: $Enums.MediaKind
+}
+
 export type ExerciseMediaCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   exerciseId?: Prisma.SortOrder
   equipmentId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   storagePath?: Prisma.SortOrder
   sourceFilename?: Prisma.SortOrder
   altText?: Prisma.SortOrder
+  provider?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
+  sourceUrl?: Prisma.SortOrder
+  attribution?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -454,9 +562,14 @@ export type ExerciseMediaMaxOrderByAggregateInput = {
   exerciseId?: Prisma.SortOrder
   equipmentId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   storagePath?: Prisma.SortOrder
   sourceFilename?: Prisma.SortOrder
   altText?: Prisma.SortOrder
+  provider?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
+  sourceUrl?: Prisma.SortOrder
+  attribution?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -467,9 +580,14 @@ export type ExerciseMediaMinOrderByAggregateInput = {
   exerciseId?: Prisma.SortOrder
   equipmentId?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   storagePath?: Prisma.SortOrder
   sourceFilename?: Prisma.SortOrder
   altText?: Prisma.SortOrder
+  provider?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
+  sourceUrl?: Prisma.SortOrder
+  attribution?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -567,12 +685,21 @@ export type EnumMediaRoleFieldUpdateOperationsInput = {
   set?: $Enums.MediaRole
 }
 
+export type EnumMediaKindFieldUpdateOperationsInput = {
+  set?: $Enums.MediaKind
+}
+
 export type ExerciseMediaCreateWithoutEquipmentInput = {
   id?: string
   role: $Enums.MediaRole
+  kind?: $Enums.MediaKind
   storagePath: string
   sourceFilename: string
   altText: string
+  provider?: string
+  externalId?: string | null
+  sourceUrl?: string | null
+  attribution?: string | null
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -583,9 +710,14 @@ export type ExerciseMediaUncheckedCreateWithoutEquipmentInput = {
   id?: string
   exerciseId?: string | null
   role: $Enums.MediaRole
+  kind?: $Enums.MediaKind
   storagePath: string
   sourceFilename: string
   altText: string
+  provider?: string
+  externalId?: string | null
+  sourceUrl?: string | null
+  attribution?: string | null
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -625,9 +757,14 @@ export type ExerciseMediaScalarWhereInput = {
   exerciseId?: Prisma.UuidNullableFilter<"ExerciseMedia"> | string | null
   equipmentId?: Prisma.UuidNullableFilter<"ExerciseMedia"> | string | null
   role?: Prisma.EnumMediaRoleFilter<"ExerciseMedia"> | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFilter<"ExerciseMedia"> | $Enums.MediaKind
   storagePath?: Prisma.StringFilter<"ExerciseMedia"> | string
   sourceFilename?: Prisma.StringFilter<"ExerciseMedia"> | string
   altText?: Prisma.StringFilter<"ExerciseMedia"> | string
+  provider?: Prisma.StringFilter<"ExerciseMedia"> | string
+  externalId?: Prisma.StringNullableFilter<"ExerciseMedia"> | string | null
+  sourceUrl?: Prisma.StringNullableFilter<"ExerciseMedia"> | string | null
+  attribution?: Prisma.StringNullableFilter<"ExerciseMedia"> | string | null
   sortOrder?: Prisma.IntFilter<"ExerciseMedia"> | number
   createdAt?: Prisma.DateTimeFilter<"ExerciseMedia"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ExerciseMedia"> | Date | string
@@ -636,9 +773,14 @@ export type ExerciseMediaScalarWhereInput = {
 export type ExerciseMediaCreateWithoutExerciseInput = {
   id?: string
   role: $Enums.MediaRole
+  kind?: $Enums.MediaKind
   storagePath: string
   sourceFilename: string
   altText: string
+  provider?: string
+  externalId?: string | null
+  sourceUrl?: string | null
+  attribution?: string | null
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -649,9 +791,14 @@ export type ExerciseMediaUncheckedCreateWithoutExerciseInput = {
   id?: string
   equipmentId?: string | null
   role: $Enums.MediaRole
+  kind?: $Enums.MediaKind
   storagePath: string
   sourceFilename: string
   altText: string
+  provider?: string
+  externalId?: string | null
+  sourceUrl?: string | null
+  attribution?: string | null
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -687,9 +834,14 @@ export type ExerciseMediaCreateManyEquipmentInput = {
   id?: string
   exerciseId?: string | null
   role: $Enums.MediaRole
+  kind?: $Enums.MediaKind
   storagePath: string
   sourceFilename: string
   altText: string
+  provider?: string
+  externalId?: string | null
+  sourceUrl?: string | null
+  attribution?: string | null
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -698,9 +850,14 @@ export type ExerciseMediaCreateManyEquipmentInput = {
 export type ExerciseMediaUpdateWithoutEquipmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMediaRoleFieldUpdateOperationsInput | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFieldUpdateOperationsInput | $Enums.MediaKind
   storagePath?: Prisma.StringFieldUpdateOperationsInput | string
   sourceFilename?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -711,9 +868,14 @@ export type ExerciseMediaUncheckedUpdateWithoutEquipmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   exerciseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumMediaRoleFieldUpdateOperationsInput | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFieldUpdateOperationsInput | $Enums.MediaKind
   storagePath?: Prisma.StringFieldUpdateOperationsInput | string
   sourceFilename?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -723,9 +885,14 @@ export type ExerciseMediaUncheckedUpdateManyWithoutEquipmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   exerciseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumMediaRoleFieldUpdateOperationsInput | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFieldUpdateOperationsInput | $Enums.MediaKind
   storagePath?: Prisma.StringFieldUpdateOperationsInput | string
   sourceFilename?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -735,9 +902,14 @@ export type ExerciseMediaCreateManyExerciseInput = {
   id?: string
   equipmentId?: string | null
   role: $Enums.MediaRole
+  kind?: $Enums.MediaKind
   storagePath: string
   sourceFilename: string
   altText: string
+  provider?: string
+  externalId?: string | null
+  sourceUrl?: string | null
+  attribution?: string | null
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -746,9 +918,14 @@ export type ExerciseMediaCreateManyExerciseInput = {
 export type ExerciseMediaUpdateWithoutExerciseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumMediaRoleFieldUpdateOperationsInput | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFieldUpdateOperationsInput | $Enums.MediaKind
   storagePath?: Prisma.StringFieldUpdateOperationsInput | string
   sourceFilename?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -759,9 +936,14 @@ export type ExerciseMediaUncheckedUpdateWithoutExerciseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   equipmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumMediaRoleFieldUpdateOperationsInput | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFieldUpdateOperationsInput | $Enums.MediaKind
   storagePath?: Prisma.StringFieldUpdateOperationsInput | string
   sourceFilename?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -771,9 +953,14 @@ export type ExerciseMediaUncheckedUpdateManyWithoutExerciseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   equipmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumMediaRoleFieldUpdateOperationsInput | $Enums.MediaRole
+  kind?: Prisma.EnumMediaKindFieldUpdateOperationsInput | $Enums.MediaKind
   storagePath?: Prisma.StringFieldUpdateOperationsInput | string
   sourceFilename?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.StringFieldUpdateOperationsInput | string
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attribution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -786,9 +973,14 @@ export type ExerciseMediaSelect<ExtArgs extends runtime.Types.Extensions.Interna
   exerciseId?: boolean
   equipmentId?: boolean
   role?: boolean
+  kind?: boolean
   storagePath?: boolean
   sourceFilename?: boolean
   altText?: boolean
+  provider?: boolean
+  externalId?: boolean
+  sourceUrl?: boolean
+  attribution?: boolean
   sortOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -801,9 +993,14 @@ export type ExerciseMediaSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   exerciseId?: boolean
   equipmentId?: boolean
   role?: boolean
+  kind?: boolean
   storagePath?: boolean
   sourceFilename?: boolean
   altText?: boolean
+  provider?: boolean
+  externalId?: boolean
+  sourceUrl?: boolean
+  attribution?: boolean
   sortOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -816,9 +1013,14 @@ export type ExerciseMediaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   exerciseId?: boolean
   equipmentId?: boolean
   role?: boolean
+  kind?: boolean
   storagePath?: boolean
   sourceFilename?: boolean
   altText?: boolean
+  provider?: boolean
+  externalId?: boolean
+  sourceUrl?: boolean
+  attribution?: boolean
   sortOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -831,15 +1033,20 @@ export type ExerciseMediaSelectScalar = {
   exerciseId?: boolean
   equipmentId?: boolean
   role?: boolean
+  kind?: boolean
   storagePath?: boolean
   sourceFilename?: boolean
   altText?: boolean
+  provider?: boolean
+  externalId?: boolean
+  sourceUrl?: boolean
+  attribution?: boolean
   sortOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ExerciseMediaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "exerciseId" | "equipmentId" | "role" | "storagePath" | "sourceFilename" | "altText" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["exerciseMedia"]>
+export type ExerciseMediaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "exerciseId" | "equipmentId" | "role" | "kind" | "storagePath" | "sourceFilename" | "altText" | "provider" | "externalId" | "sourceUrl" | "attribution" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["exerciseMedia"]>
 export type ExerciseMediaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   exercise?: boolean | Prisma.ExerciseMedia$exerciseArgs<ExtArgs>
   equipment?: boolean | Prisma.ExerciseMedia$equipmentArgs<ExtArgs>
@@ -864,9 +1071,14 @@ export type $ExerciseMediaPayload<ExtArgs extends runtime.Types.Extensions.Inter
     exerciseId: string | null
     equipmentId: string | null
     role: $Enums.MediaRole
+    kind: $Enums.MediaKind
     storagePath: string
     sourceFilename: string
     altText: string
+    provider: string
+    externalId: string | null
+    sourceUrl: string | null
+    attribution: string | null
     sortOrder: number
     createdAt: Date
     updatedAt: Date
@@ -1299,9 +1511,14 @@ export interface ExerciseMediaFieldRefs {
   readonly exerciseId: Prisma.FieldRef<"ExerciseMedia", 'String'>
   readonly equipmentId: Prisma.FieldRef<"ExerciseMedia", 'String'>
   readonly role: Prisma.FieldRef<"ExerciseMedia", 'MediaRole'>
+  readonly kind: Prisma.FieldRef<"ExerciseMedia", 'MediaKind'>
   readonly storagePath: Prisma.FieldRef<"ExerciseMedia", 'String'>
   readonly sourceFilename: Prisma.FieldRef<"ExerciseMedia", 'String'>
   readonly altText: Prisma.FieldRef<"ExerciseMedia", 'String'>
+  readonly provider: Prisma.FieldRef<"ExerciseMedia", 'String'>
+  readonly externalId: Prisma.FieldRef<"ExerciseMedia", 'String'>
+  readonly sourceUrl: Prisma.FieldRef<"ExerciseMedia", 'String'>
+  readonly attribution: Prisma.FieldRef<"ExerciseMedia", 'String'>
   readonly sortOrder: Prisma.FieldRef<"ExerciseMedia", 'Int'>
   readonly createdAt: Prisma.FieldRef<"ExerciseMedia", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ExerciseMedia", 'DateTime'>

@@ -36,6 +36,7 @@ export type AppSettingsSumAggregateOutputType = {
 
 export type AppSettingsMinAggregateOutputType = {
   id: number | null
+  activeProgramId: string | null
   timezone: string | null
   weightUnit: $Enums.WeightUnit | null
   soundEnabled: boolean | null
@@ -47,6 +48,7 @@ export type AppSettingsMinAggregateOutputType = {
 
 export type AppSettingsMaxAggregateOutputType = {
   id: number | null
+  activeProgramId: string | null
   timezone: string | null
   weightUnit: $Enums.WeightUnit | null
   soundEnabled: boolean | null
@@ -58,6 +60,7 @@ export type AppSettingsMaxAggregateOutputType = {
 
 export type AppSettingsCountAggregateOutputType = {
   id: number
+  activeProgramId: number
   timezone: number
   weightUnit: number
   soundEnabled: number
@@ -79,6 +82,7 @@ export type AppSettingsSumAggregateInputType = {
 
 export type AppSettingsMinAggregateInputType = {
   id?: true
+  activeProgramId?: true
   timezone?: true
   weightUnit?: true
   soundEnabled?: true
@@ -90,6 +94,7 @@ export type AppSettingsMinAggregateInputType = {
 
 export type AppSettingsMaxAggregateInputType = {
   id?: true
+  activeProgramId?: true
   timezone?: true
   weightUnit?: true
   soundEnabled?: true
@@ -101,6 +106,7 @@ export type AppSettingsMaxAggregateInputType = {
 
 export type AppSettingsCountAggregateInputType = {
   id?: true
+  activeProgramId?: true
   timezone?: true
   weightUnit?: true
   soundEnabled?: true
@@ -199,6 +205,7 @@ export type AppSettingsGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type AppSettingsGroupByOutputType = {
   id: number
+  activeProgramId: string | null
   timezone: string
   weightUnit: $Enums.WeightUnit
   soundEnabled: boolean
@@ -233,6 +240,7 @@ export type AppSettingsWhereInput = {
   OR?: Prisma.AppSettingsWhereInput[]
   NOT?: Prisma.AppSettingsWhereInput | Prisma.AppSettingsWhereInput[]
   id?: Prisma.IntFilter<"AppSettings"> | number
+  activeProgramId?: Prisma.UuidNullableFilter<"AppSettings"> | string | null
   timezone?: Prisma.StringFilter<"AppSettings"> | string
   weightUnit?: Prisma.EnumWeightUnitFilter<"AppSettings"> | $Enums.WeightUnit
   soundEnabled?: Prisma.BoolFilter<"AppSettings"> | boolean
@@ -240,10 +248,12 @@ export type AppSettingsWhereInput = {
   onboardingCompleted?: Prisma.BoolFilter<"AppSettings"> | boolean
   createdAt?: Prisma.DateTimeFilter<"AppSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AppSettings"> | Date | string
+  activeProgram?: Prisma.XOR<Prisma.WorkoutProgramNullableScalarRelationFilter, Prisma.WorkoutProgramWhereInput> | null
 }
 
 export type AppSettingsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  activeProgramId?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrder
   weightUnit?: Prisma.SortOrder
   soundEnabled?: Prisma.SortOrder
@@ -251,10 +261,12 @@ export type AppSettingsOrderByWithRelationInput = {
   onboardingCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  activeProgram?: Prisma.WorkoutProgramOrderByWithRelationInput
 }
 
 export type AppSettingsWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  activeProgramId?: string
   AND?: Prisma.AppSettingsWhereInput | Prisma.AppSettingsWhereInput[]
   OR?: Prisma.AppSettingsWhereInput[]
   NOT?: Prisma.AppSettingsWhereInput | Prisma.AppSettingsWhereInput[]
@@ -265,10 +277,12 @@ export type AppSettingsWhereUniqueInput = Prisma.AtLeast<{
   onboardingCompleted?: Prisma.BoolFilter<"AppSettings"> | boolean
   createdAt?: Prisma.DateTimeFilter<"AppSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AppSettings"> | Date | string
-}, "id">
+  activeProgram?: Prisma.XOR<Prisma.WorkoutProgramNullableScalarRelationFilter, Prisma.WorkoutProgramWhereInput> | null
+}, "id" | "activeProgramId">
 
 export type AppSettingsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  activeProgramId?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrder
   weightUnit?: Prisma.SortOrder
   soundEnabled?: Prisma.SortOrder
@@ -288,6 +302,7 @@ export type AppSettingsScalarWhereWithAggregatesInput = {
   OR?: Prisma.AppSettingsScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AppSettingsScalarWhereWithAggregatesInput | Prisma.AppSettingsScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"AppSettings"> | number
+  activeProgramId?: Prisma.UuidNullableWithAggregatesFilter<"AppSettings"> | string | null
   timezone?: Prisma.StringWithAggregatesFilter<"AppSettings"> | string
   weightUnit?: Prisma.EnumWeightUnitWithAggregatesFilter<"AppSettings"> | $Enums.WeightUnit
   soundEnabled?: Prisma.BoolWithAggregatesFilter<"AppSettings"> | boolean
@@ -306,10 +321,12 @@ export type AppSettingsCreateInput = {
   onboardingCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  activeProgram?: Prisma.WorkoutProgramCreateNestedOneWithoutActiveInSettingsInput
 }
 
 export type AppSettingsUncheckedCreateInput = {
   id?: number
+  activeProgramId?: string | null
   timezone?: string
   weightUnit?: $Enums.WeightUnit
   soundEnabled?: boolean
@@ -328,10 +345,12 @@ export type AppSettingsUpdateInput = {
   onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeProgram?: Prisma.WorkoutProgramUpdateOneWithoutActiveInSettingsNestedInput
 }
 
 export type AppSettingsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  activeProgramId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   weightUnit?: Prisma.EnumWeightUnitFieldUpdateOperationsInput | $Enums.WeightUnit
   soundEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -343,6 +362,7 @@ export type AppSettingsUncheckedUpdateInput = {
 
 export type AppSettingsCreateManyInput = {
   id?: number
+  activeProgramId?: string | null
   timezone?: string
   weightUnit?: $Enums.WeightUnit
   soundEnabled?: boolean
@@ -365,6 +385,7 @@ export type AppSettingsUpdateManyMutationInput = {
 
 export type AppSettingsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  activeProgramId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   weightUnit?: Prisma.EnumWeightUnitFieldUpdateOperationsInput | $Enums.WeightUnit
   soundEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -376,6 +397,7 @@ export type AppSettingsUncheckedUpdateManyInput = {
 
 export type AppSettingsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  activeProgramId?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   weightUnit?: Prisma.SortOrder
   soundEnabled?: Prisma.SortOrder
@@ -391,6 +413,7 @@ export type AppSettingsAvgOrderByAggregateInput = {
 
 export type AppSettingsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  activeProgramId?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   weightUnit?: Prisma.SortOrder
   soundEnabled?: Prisma.SortOrder
@@ -402,6 +425,7 @@ export type AppSettingsMaxOrderByAggregateInput = {
 
 export type AppSettingsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  activeProgramId?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   weightUnit?: Prisma.SortOrder
   soundEnabled?: Prisma.SortOrder
@@ -413,6 +437,11 @@ export type AppSettingsMinOrderByAggregateInput = {
 
 export type AppSettingsSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+}
+
+export type AppSettingsNullableScalarRelationFilter = {
+  is?: Prisma.AppSettingsWhereInput | null
+  isNot?: Prisma.AppSettingsWhereInput | null
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -439,10 +468,107 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
+export type AppSettingsCreateNestedOneWithoutActiveProgramInput = {
+  create?: Prisma.XOR<Prisma.AppSettingsCreateWithoutActiveProgramInput, Prisma.AppSettingsUncheckedCreateWithoutActiveProgramInput>
+  connectOrCreate?: Prisma.AppSettingsCreateOrConnectWithoutActiveProgramInput
+  connect?: Prisma.AppSettingsWhereUniqueInput
+}
+
+export type AppSettingsUncheckedCreateNestedOneWithoutActiveProgramInput = {
+  create?: Prisma.XOR<Prisma.AppSettingsCreateWithoutActiveProgramInput, Prisma.AppSettingsUncheckedCreateWithoutActiveProgramInput>
+  connectOrCreate?: Prisma.AppSettingsCreateOrConnectWithoutActiveProgramInput
+  connect?: Prisma.AppSettingsWhereUniqueInput
+}
+
+export type AppSettingsUpdateOneWithoutActiveProgramNestedInput = {
+  create?: Prisma.XOR<Prisma.AppSettingsCreateWithoutActiveProgramInput, Prisma.AppSettingsUncheckedCreateWithoutActiveProgramInput>
+  connectOrCreate?: Prisma.AppSettingsCreateOrConnectWithoutActiveProgramInput
+  upsert?: Prisma.AppSettingsUpsertWithoutActiveProgramInput
+  disconnect?: Prisma.AppSettingsWhereInput | boolean
+  delete?: Prisma.AppSettingsWhereInput | boolean
+  connect?: Prisma.AppSettingsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AppSettingsUpdateToOneWithWhereWithoutActiveProgramInput, Prisma.AppSettingsUpdateWithoutActiveProgramInput>, Prisma.AppSettingsUncheckedUpdateWithoutActiveProgramInput>
+}
+
+export type AppSettingsUncheckedUpdateOneWithoutActiveProgramNestedInput = {
+  create?: Prisma.XOR<Prisma.AppSettingsCreateWithoutActiveProgramInput, Prisma.AppSettingsUncheckedCreateWithoutActiveProgramInput>
+  connectOrCreate?: Prisma.AppSettingsCreateOrConnectWithoutActiveProgramInput
+  upsert?: Prisma.AppSettingsUpsertWithoutActiveProgramInput
+  disconnect?: Prisma.AppSettingsWhereInput | boolean
+  delete?: Prisma.AppSettingsWhereInput | boolean
+  connect?: Prisma.AppSettingsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AppSettingsUpdateToOneWithWhereWithoutActiveProgramInput, Prisma.AppSettingsUpdateWithoutActiveProgramInput>, Prisma.AppSettingsUncheckedUpdateWithoutActiveProgramInput>
+}
+
+export type AppSettingsCreateWithoutActiveProgramInput = {
+  id?: number
+  timezone?: string
+  weightUnit?: $Enums.WeightUnit
+  soundEnabled?: boolean
+  vibrationEnabled?: boolean
+  onboardingCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AppSettingsUncheckedCreateWithoutActiveProgramInput = {
+  id?: number
+  timezone?: string
+  weightUnit?: $Enums.WeightUnit
+  soundEnabled?: boolean
+  vibrationEnabled?: boolean
+  onboardingCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AppSettingsCreateOrConnectWithoutActiveProgramInput = {
+  where: Prisma.AppSettingsWhereUniqueInput
+  create: Prisma.XOR<Prisma.AppSettingsCreateWithoutActiveProgramInput, Prisma.AppSettingsUncheckedCreateWithoutActiveProgramInput>
+}
+
+export type AppSettingsUpsertWithoutActiveProgramInput = {
+  update: Prisma.XOR<Prisma.AppSettingsUpdateWithoutActiveProgramInput, Prisma.AppSettingsUncheckedUpdateWithoutActiveProgramInput>
+  create: Prisma.XOR<Prisma.AppSettingsCreateWithoutActiveProgramInput, Prisma.AppSettingsUncheckedCreateWithoutActiveProgramInput>
+  where?: Prisma.AppSettingsWhereInput
+}
+
+export type AppSettingsUpdateToOneWithWhereWithoutActiveProgramInput = {
+  where?: Prisma.AppSettingsWhereInput
+  data: Prisma.XOR<Prisma.AppSettingsUpdateWithoutActiveProgramInput, Prisma.AppSettingsUncheckedUpdateWithoutActiveProgramInput>
+}
+
+export type AppSettingsUpdateWithoutActiveProgramInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  weightUnit?: Prisma.EnumWeightUnitFieldUpdateOperationsInput | $Enums.WeightUnit
+  soundEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vibrationEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AppSettingsUncheckedUpdateWithoutActiveProgramInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  weightUnit?: Prisma.EnumWeightUnitFieldUpdateOperationsInput | $Enums.WeightUnit
+  soundEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vibrationEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  onboardingCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 
 
 export type AppSettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  activeProgramId?: boolean
   timezone?: boolean
   weightUnit?: boolean
   soundEnabled?: boolean
@@ -450,10 +576,12 @@ export type AppSettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   onboardingCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  activeProgram?: boolean | Prisma.AppSettings$activeProgramArgs<ExtArgs>
 }, ExtArgs["result"]["appSettings"]>
 
 export type AppSettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  activeProgramId?: boolean
   timezone?: boolean
   weightUnit?: boolean
   soundEnabled?: boolean
@@ -461,10 +589,12 @@ export type AppSettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   onboardingCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  activeProgram?: boolean | Prisma.AppSettings$activeProgramArgs<ExtArgs>
 }, ExtArgs["result"]["appSettings"]>
 
 export type AppSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  activeProgramId?: boolean
   timezone?: boolean
   weightUnit?: boolean
   soundEnabled?: boolean
@@ -472,10 +602,12 @@ export type AppSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   onboardingCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  activeProgram?: boolean | Prisma.AppSettings$activeProgramArgs<ExtArgs>
 }, ExtArgs["result"]["appSettings"]>
 
 export type AppSettingsSelectScalar = {
   id?: boolean
+  activeProgramId?: boolean
   timezone?: boolean
   weightUnit?: boolean
   soundEnabled?: boolean
@@ -485,13 +617,25 @@ export type AppSettingsSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AppSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "timezone" | "weightUnit" | "soundEnabled" | "vibrationEnabled" | "onboardingCompleted" | "createdAt" | "updatedAt", ExtArgs["result"]["appSettings"]>
+export type AppSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "activeProgramId" | "timezone" | "weightUnit" | "soundEnabled" | "vibrationEnabled" | "onboardingCompleted" | "createdAt" | "updatedAt", ExtArgs["result"]["appSettings"]>
+export type AppSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  activeProgram?: boolean | Prisma.AppSettings$activeProgramArgs<ExtArgs>
+}
+export type AppSettingsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  activeProgram?: boolean | Prisma.AppSettings$activeProgramArgs<ExtArgs>
+}
+export type AppSettingsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  activeProgram?: boolean | Prisma.AppSettings$activeProgramArgs<ExtArgs>
+}
 
 export type $AppSettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AppSettings"
-  objects: {}
+  objects: {
+    activeProgram: Prisma.$WorkoutProgramPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    activeProgramId: string | null
     timezone: string
     weightUnit: $Enums.WeightUnit
     soundEnabled: boolean
@@ -893,6 +1037,7 @@ readonly fields: AppSettingsFieldRefs;
  */
 export interface Prisma__AppSettingsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  activeProgram<T extends Prisma.AppSettings$activeProgramArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AppSettings$activeProgramArgs<ExtArgs>>): Prisma.Prisma__WorkoutProgramClient<runtime.Types.Result.GetResult<Prisma.$WorkoutProgramPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -923,6 +1068,7 @@ export interface Prisma__AppSettingsClient<T, Null = never, ExtArgs extends runt
  */
 export interface AppSettingsFieldRefs {
   readonly id: Prisma.FieldRef<"AppSettings", 'Int'>
+  readonly activeProgramId: Prisma.FieldRef<"AppSettings", 'String'>
   readonly timezone: Prisma.FieldRef<"AppSettings", 'String'>
   readonly weightUnit: Prisma.FieldRef<"AppSettings", 'WeightUnit'>
   readonly soundEnabled: Prisma.FieldRef<"AppSettings", 'Boolean'>
@@ -947,6 +1093,10 @@ export type AppSettingsFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.AppSettingsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
+  /**
    * Filter, which AppSettings to fetch.
    */
   where: Prisma.AppSettingsWhereUniqueInput
@@ -965,6 +1115,10 @@ export type AppSettingsFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.AppSettingsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
+  /**
    * Filter, which AppSettings to fetch.
    */
   where: Prisma.AppSettingsWhereUniqueInput
@@ -982,6 +1136,10 @@ export type AppSettingsFindFirstArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the AppSettings
    */
   omit?: Prisma.AppSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
   /**
    * Filter, which AppSettings to fetch.
    */
@@ -1031,6 +1189,10 @@ export type AppSettingsFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.AppSettingsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
+  /**
    * Filter, which AppSettings to fetch.
    */
   where?: Prisma.AppSettingsWhereInput
@@ -1078,6 +1240,10 @@ export type AppSettingsFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the AppSettings
    */
   omit?: Prisma.AppSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
   /**
    * Filter, which AppSettings to fetch.
    */
@@ -1127,6 +1293,10 @@ export type AppSettingsCreateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.AppSettingsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
+  /**
    * The data needed to create a AppSettings.
    */
   data: Prisma.XOR<Prisma.AppSettingsCreateInput, Prisma.AppSettingsUncheckedCreateInput>
@@ -1160,6 +1330,10 @@ export type AppSettingsCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    */
   data: Prisma.AppSettingsCreateManyInput | Prisma.AppSettingsCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1174,6 +1348,10 @@ export type AppSettingsUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the AppSettings
    */
   omit?: Prisma.AppSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
   /**
    * The data needed to update a AppSettings.
    */
@@ -1226,6 +1404,10 @@ export type AppSettingsUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many AppSettings to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1240,6 +1422,10 @@ export type AppSettingsUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the AppSettings
    */
   omit?: Prisma.AppSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
   /**
    * The filter to search for the AppSettings to update in case it exists.
    */
@@ -1267,6 +1453,10 @@ export type AppSettingsDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.AppSettingsOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
+  /**
    * Filter which AppSettings to delete.
    */
   where: Prisma.AppSettingsWhereUniqueInput
@@ -1287,6 +1477,25 @@ export type AppSettingsDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
+ * AppSettings.activeProgram
+ */
+export type AppSettings$activeProgramArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WorkoutProgram
+   */
+  select?: Prisma.WorkoutProgramSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WorkoutProgram
+   */
+  omit?: Prisma.WorkoutProgramOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkoutProgramInclude<ExtArgs> | null
+  where?: Prisma.WorkoutProgramWhereInput
+}
+
+/**
  * AppSettings without action
  */
 export type AppSettingsDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1298,4 +1507,8 @@ export type AppSettingsDefaultArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the AppSettings
    */
   omit?: Prisma.AppSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
 }

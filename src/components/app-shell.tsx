@@ -20,7 +20,7 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
       </header>
       {children}
       <footer className="mt-auto px-5 pt-8 pb-24 text-center text-xs text-muted-foreground sm:px-8 sm:pb-8">
-        Phase 2 · Verified catalogue and demo programme only.
+        Active workouts are saved locally before synchronization. Programme changes require validated JSON and explicit confirmation.
       </footer>
       <SiteNavigation variant="mobile" />
     </div>

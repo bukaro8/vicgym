@@ -8,7 +8,7 @@ const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   plugins: [react()],
-  resolve: { alias: { "@": path.resolve(projectRoot, "src") } },
+  resolve: { alias: { "@": path.resolve(projectRoot, "src"), "server-only": path.resolve(projectRoot, "src/test/server-only.ts") } },
   test: {
     environment: "jsdom",
     globals: true,

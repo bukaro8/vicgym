@@ -3,23 +3,25 @@ import Link from "next/link";
 
 import { ResponsiveEquipmentImage } from "@/components/responsive-equipment-image";
 import { equipmentTypeLabel } from "@/lib/display";
+import { getExercisePrimaryMedia } from "@/lib/exercise-media";
 
 type ExerciseCardProps = {
   exercise: {
     slug: string;
     name: string;
     defaultTargetReps: number;
+    media: Array<{ storagePath: string; altText: string; role: string; kind?: string }>;
     equipment: {
       name: string;
       type: string;
-      media: Array<{ storagePath: string; altText: string; role: string }>;
+      media: Array<{ storagePath: string; altText: string; role: string; kind?: string }>;
     } | null;
     muscles: Array<{ role: string; muscle: { name: string } }>;
   };
 };
 
 export function ExerciseCard({ exercise }: Readonly<ExerciseCardProps>) {
-  const primaryPhoto = exercise.equipment?.media.find((media) => media.role === "PRIMARY");
+  const primaryPhoto = getExercisePrimaryMedia(exercise);
   const primaryMuscle = exercise.muscles.find((relationship) => relationship.role === "PRIMARY")?.muscle.name;
   const secondaryMuscles = exercise.muscles.filter((relationship) => relationship.role === "SECONDARY").map((relationship) => relationship.muscle.name);
 

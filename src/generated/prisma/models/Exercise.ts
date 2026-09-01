@@ -46,6 +46,7 @@ export type ExerciseMinAggregateOutputType = {
   active: boolean | null
   repMode: $Enums.RepMode | null
   loadEntryMode: $Enums.LoadEntryMode | null
+  loadTrackingType: $Enums.LoadTrackingType | null
   loadMultiplier: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -61,6 +62,7 @@ export type ExerciseMaxAggregateOutputType = {
   active: boolean | null
   repMode: $Enums.RepMode | null
   loadEntryMode: $Enums.LoadEntryMode | null
+  loadTrackingType: $Enums.LoadTrackingType | null
   loadMultiplier: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -76,6 +78,7 @@ export type ExerciseCountAggregateOutputType = {
   active: number
   repMode: number
   loadEntryMode: number
+  loadTrackingType: number
   loadMultiplier: number
   createdAt: number
   updatedAt: number
@@ -103,6 +106,7 @@ export type ExerciseMinAggregateInputType = {
   active?: true
   repMode?: true
   loadEntryMode?: true
+  loadTrackingType?: true
   loadMultiplier?: true
   createdAt?: true
   updatedAt?: true
@@ -118,6 +122,7 @@ export type ExerciseMaxAggregateInputType = {
   active?: true
   repMode?: true
   loadEntryMode?: true
+  loadTrackingType?: true
   loadMultiplier?: true
   createdAt?: true
   updatedAt?: true
@@ -133,6 +138,7 @@ export type ExerciseCountAggregateInputType = {
   active?: true
   repMode?: true
   loadEntryMode?: true
+  loadTrackingType?: true
   loadMultiplier?: true
   createdAt?: true
   updatedAt?: true
@@ -235,6 +241,7 @@ export type ExerciseGroupByOutputType = {
   active: boolean
   repMode: $Enums.RepMode
   loadEntryMode: $Enums.LoadEntryMode
+  loadTrackingType: $Enums.LoadTrackingType
   loadMultiplier: runtime.Decimal
   createdAt: Date
   updatedAt: Date
@@ -273,6 +280,7 @@ export type ExerciseWhereInput = {
   active?: Prisma.BoolFilter<"Exercise"> | boolean
   repMode?: Prisma.EnumRepModeFilter<"Exercise"> | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFilter<"Exercise"> | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFilter<"Exercise"> | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFilter<"Exercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"Exercise"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Exercise"> | Date | string
@@ -293,6 +301,7 @@ export type ExerciseOrderByWithRelationInput = {
   active?: Prisma.SortOrder
   repMode?: Prisma.SortOrder
   loadEntryMode?: Prisma.SortOrder
+  loadTrackingType?: Prisma.SortOrder
   loadMultiplier?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -316,6 +325,7 @@ export type ExerciseWhereUniqueInput = Prisma.AtLeast<{
   active?: Prisma.BoolFilter<"Exercise"> | boolean
   repMode?: Prisma.EnumRepModeFilter<"Exercise"> | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFilter<"Exercise"> | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFilter<"Exercise"> | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFilter<"Exercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"Exercise"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Exercise"> | Date | string
@@ -336,6 +346,7 @@ export type ExerciseOrderByWithAggregationInput = {
   active?: Prisma.SortOrder
   repMode?: Prisma.SortOrder
   loadEntryMode?: Prisma.SortOrder
+  loadTrackingType?: Prisma.SortOrder
   loadMultiplier?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -359,6 +370,7 @@ export type ExerciseScalarWhereWithAggregatesInput = {
   active?: Prisma.BoolWithAggregatesFilter<"Exercise"> | boolean
   repMode?: Prisma.EnumRepModeWithAggregatesFilter<"Exercise"> | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeWithAggregatesFilter<"Exercise"> | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeWithAggregatesFilter<"Exercise"> | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalWithAggregatesFilter<"Exercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Exercise"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Exercise"> | Date | string
@@ -373,6 +385,7 @@ export type ExerciseCreateInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -393,6 +406,7 @@ export type ExerciseUncheckedCreateInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -411,6 +425,7 @@ export type ExerciseUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -431,6 +446,7 @@ export type ExerciseUncheckedUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -450,6 +466,7 @@ export type ExerciseCreateManyInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -464,6 +481,7 @@ export type ExerciseUpdateManyMutationInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -479,6 +497,7 @@ export type ExerciseUncheckedUpdateManyInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -504,6 +523,7 @@ export type ExerciseCountOrderByAggregateInput = {
   active?: Prisma.SortOrder
   repMode?: Prisma.SortOrder
   loadEntryMode?: Prisma.SortOrder
+  loadTrackingType?: Prisma.SortOrder
   loadMultiplier?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -524,6 +544,7 @@ export type ExerciseMaxOrderByAggregateInput = {
   active?: Prisma.SortOrder
   repMode?: Prisma.SortOrder
   loadEntryMode?: Prisma.SortOrder
+  loadTrackingType?: Prisma.SortOrder
   loadMultiplier?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -539,6 +560,7 @@ export type ExerciseMinOrderByAggregateInput = {
   active?: Prisma.SortOrder
   repMode?: Prisma.SortOrder
   loadEntryMode?: Prisma.SortOrder
+  loadTrackingType?: Prisma.SortOrder
   loadMultiplier?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -607,6 +629,10 @@ export type EnumRepModeFieldUpdateOperationsInput = {
 
 export type EnumLoadEntryModeFieldUpdateOperationsInput = {
   set?: $Enums.LoadEntryMode
+}
+
+export type EnumLoadTrackingTypeFieldUpdateOperationsInput = {
+  set?: $Enums.LoadTrackingType
 }
 
 export type DecimalFieldUpdateOperationsInput = {
@@ -684,6 +710,7 @@ export type ExerciseCreateWithoutEquipmentInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -702,6 +729,7 @@ export type ExerciseUncheckedCreateWithoutEquipmentInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -750,6 +778,7 @@ export type ExerciseScalarWhereInput = {
   active?: Prisma.BoolFilter<"Exercise"> | boolean
   repMode?: Prisma.EnumRepModeFilter<"Exercise"> | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFilter<"Exercise"> | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFilter<"Exercise"> | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFilter<"Exercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"Exercise"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Exercise"> | Date | string
@@ -764,6 +793,7 @@ export type ExerciseCreateWithoutMusclesInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -783,6 +813,7 @@ export type ExerciseUncheckedCreateWithoutMusclesInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -816,6 +847,7 @@ export type ExerciseUpdateWithoutMusclesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -835,6 +867,7 @@ export type ExerciseUncheckedUpdateWithoutMusclesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -852,6 +885,7 @@ export type ExerciseCreateWithoutMediaInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -871,6 +905,7 @@ export type ExerciseUncheckedCreateWithoutMediaInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -904,6 +939,7 @@ export type ExerciseUpdateWithoutMediaInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -923,6 +959,7 @@ export type ExerciseUncheckedUpdateWithoutMediaInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -940,6 +977,7 @@ export type ExerciseCreateWithoutWorkoutExercisesInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -959,6 +997,7 @@ export type ExerciseUncheckedCreateWithoutWorkoutExercisesInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -992,6 +1031,7 @@ export type ExerciseUpdateWithoutWorkoutExercisesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1011,6 +1051,7 @@ export type ExerciseUncheckedUpdateWithoutWorkoutExercisesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1028,6 +1069,7 @@ export type ExerciseCreateWithoutExerciseSessionsInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1047,6 +1089,7 @@ export type ExerciseUncheckedCreateWithoutExerciseSessionsInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1080,6 +1123,7 @@ export type ExerciseUpdateWithoutExerciseSessionsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1099,6 +1143,7 @@ export type ExerciseUncheckedUpdateWithoutExerciseSessionsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1116,6 +1161,7 @@ export type ExerciseCreateManyEquipmentInput = {
   active?: boolean
   repMode?: $Enums.RepMode
   loadEntryMode?: $Enums.LoadEntryMode
+  loadTrackingType?: $Enums.LoadTrackingType
   loadMultiplier?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1130,6 +1176,7 @@ export type ExerciseUpdateWithoutEquipmentInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1148,6 +1195,7 @@ export type ExerciseUncheckedUpdateWithoutEquipmentInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1166,6 +1214,7 @@ export type ExerciseUncheckedUpdateManyWithoutEquipmentInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   repMode?: Prisma.EnumRepModeFieldUpdateOperationsInput | $Enums.RepMode
   loadEntryMode?: Prisma.EnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType
   loadMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1239,6 +1288,7 @@ export type ExerciseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   active?: boolean
   repMode?: boolean
   loadEntryMode?: boolean
+  loadTrackingType?: boolean
   loadMultiplier?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1260,6 +1310,7 @@ export type ExerciseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   active?: boolean
   repMode?: boolean
   loadEntryMode?: boolean
+  loadTrackingType?: boolean
   loadMultiplier?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1276,6 +1327,7 @@ export type ExerciseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   active?: boolean
   repMode?: boolean
   loadEntryMode?: boolean
+  loadTrackingType?: boolean
   loadMultiplier?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1292,12 +1344,13 @@ export type ExerciseSelectScalar = {
   active?: boolean
   repMode?: boolean
   loadEntryMode?: boolean
+  loadTrackingType?: boolean
   loadMultiplier?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ExerciseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "equipmentId" | "defaultTargetReps" | "techniqueUrl" | "active" | "repMode" | "loadEntryMode" | "loadMultiplier" | "createdAt" | "updatedAt", ExtArgs["result"]["exercise"]>
+export type ExerciseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "equipmentId" | "defaultTargetReps" | "techniqueUrl" | "active" | "repMode" | "loadEntryMode" | "loadTrackingType" | "loadMultiplier" | "createdAt" | "updatedAt", ExtArgs["result"]["exercise"]>
 export type ExerciseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   equipment?: boolean | Prisma.Exercise$equipmentArgs<ExtArgs>
   muscles?: boolean | Prisma.Exercise$musclesArgs<ExtArgs>
@@ -1332,6 +1385,7 @@ export type $ExercisePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     active: boolean
     repMode: $Enums.RepMode
     loadEntryMode: $Enums.LoadEntryMode
+    loadTrackingType: $Enums.LoadTrackingType
     loadMultiplier: runtime.Decimal
     createdAt: Date
     updatedAt: Date
@@ -1772,6 +1826,7 @@ export interface ExerciseFieldRefs {
   readonly active: Prisma.FieldRef<"Exercise", 'Boolean'>
   readonly repMode: Prisma.FieldRef<"Exercise", 'RepMode'>
   readonly loadEntryMode: Prisma.FieldRef<"Exercise", 'LoadEntryMode'>
+  readonly loadTrackingType: Prisma.FieldRef<"Exercise", 'LoadTrackingType'>
   readonly loadMultiplier: Prisma.FieldRef<"Exercise", 'Decimal'>
   readonly createdAt: Prisma.FieldRef<"Exercise", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Exercise", 'DateTime'>

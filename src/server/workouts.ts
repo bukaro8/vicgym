@@ -1,10 +1,17 @@
 import { Prisma, type PrismaClient } from "@/generated/prisma/client";
+import type { LoadEntryModeValue, LoadTrackingTypeValue } from "@/lib/load-tracking";
 
 export type PreviousSet = { setNumber: number; weightKg: number | null };
+export type PreviousTypedSet = { setNumber: number; loadValue: number | null };
 
 export function prefillWeights(setCount: number, previousSets: PreviousSet[]): Array<number | null> {
   const latestWeight = [...previousSets].reverse().find((set) => set.weightKg !== null)?.weightKg ?? null;
   return Array.from({ length: setCount }, (_, index) => previousSets.find((set) => set.setNumber === index + 1)?.weightKg ?? latestWeight);
+}
+
+export function prefillLoads(setCount: number, previousSets: PreviousTypedSet[]): Array<number | null> {
+  const latestLoad = [...previousSets].reverse().find((set) => set.loadValue !== null)?.loadValue ?? null;
+  return Array.from({ length: setCount }, (_, index) => previousSets.find((set) => set.setNumber === index + 1)?.loadValue ?? latestLoad);
 }
 
 export async function startWorkout(prisma: PrismaClient, workoutDayId: string) {
@@ -20,16 +27,25 @@ export async function startWorkout(prisma: PrismaClient, workoutDayId: string) {
           workoutExercises: { orderBy: { position: "asc" }, include: { exercise: true } },
         },
       });
-      if (!day || day.programVersion.program.activeVersionId !== day.programVersionId || day.programVersion.program.status !== "ACTIVE") throw new Error("WORKOUT_DAY_NOT_ACTIVE");
+      const settings = await tx.appSettings.findUnique({ where: { id: 1 }, select: { activeProgramId: true } });
+      if (!day || settings?.activeProgramId !== day.programVersion.programId || day.programVersion.program.activeVersionId !== day.programVersionId || day.programVersion.program.status !== "ACTIVE") throw new Error("WORKOUT_DAY_NOT_ACTIVE");
 
-      const previousByExercise = new Map<string, PreviousSet[]>();
+      const previousByExercise = new Map<string, PreviousTypedSet[]>();
       await Promise.all(day.workoutExercises.map(async (planned) => {
+        const isLegacy = planned.loadTrackingTypeSnapshot === null || planned.loadEntryModeSnapshot === null;
+        const trackingType = isLegacy ? null : planned.loadTrackingTypeSnapshot;
+        const entryMode = isLegacy ? null : planned.loadEntryModeSnapshot;
         const previous = await tx.exerciseSession.findFirst({
-          where: { exerciseId: planned.exerciseId, workoutSession: { status: "COMPLETED" } },
+          where: {
+            exerciseId: planned.exerciseId,
+            workoutSession: { status: "COMPLETED" },
+            loadTrackingTypeSnapshot: trackingType,
+            loadEntryModeSnapshot: entryMode,
+          },
           orderBy: { workoutSession: { completedAt: "desc" } },
           include: { setLogs: { where: { completedAt: { not: null } }, orderBy: { setNumber: "asc" } } },
         });
-        previousByExercise.set(planned.exerciseId, previous?.setLogs.map((set) => ({ setNumber: set.setNumber, weightKg: set.weightKg === null ? null : Number(set.weightKg) })) ?? []);
+        previousByExercise.set(planned.exerciseId, previous?.setLogs.map((set) => ({ setNumber: set.setNumber, loadValue: isLegacy ? (set.weightKg === null ? null : Number(set.weightKg)) : (set.loadValue === null ? null : Number(set.loadValue)) })) ?? []);
       }));
 
       return tx.workoutSession.create({
@@ -38,7 +54,12 @@ export async function startWorkout(prisma: PrismaClient, workoutDayId: string) {
           workoutDayId: day.id,
           workoutDayNameSnapshot: day.name,
           exerciseSessions: {
-            create: day.workoutExercises.map((planned) => ({
+            create: day.workoutExercises.map((planned) => {
+              const isLegacy = planned.loadTrackingTypeSnapshot === null || planned.loadEntryModeSnapshot === null;
+              const prefilled = prefillLoads(planned.sets, previousByExercise.get(planned.exerciseId) ?? []);
+              const trackingType = planned.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null;
+              const entryMode = planned.loadEntryModeSnapshot as LoadEntryModeValue | null;
+              return {
               exerciseId: planned.exerciseId,
               position: planned.position,
               exerciseNameSnapshot: planned.exercise.name,
@@ -46,15 +67,21 @@ export async function startWorkout(prisma: PrismaClient, workoutDayId: string) {
               targetReps: planned.targetReps,
               restSeconds: planned.restSeconds,
               autoRest: planned.autoRest,
+              loadTrackingTypeSnapshot: trackingType,
+              loadEntryModeSnapshot: entryMode,
+              loadMultiplierSnapshot: isLegacy ? null : planned.exercise.loadMultiplier,
               setLogs: {
-                create: prefillWeights(planned.sets, previousByExercise.get(planned.exerciseId) ?? []).map((weightKg, index) => ({
+                create: prefilled.map((loadValue, index) => ({
                   setNumber: index + 1,
                   targetReps: planned.targetReps,
                   actualReps: planned.targetReps,
-                  weightKg,
+                  weightKg: isLegacy ? (loadValue ?? planned.plannedWeightKg) : null,
+                  loadValue: isLegacy ? null : (loadValue ?? planned.plannedLoadValue),
+                  loadTrackingType: trackingType,
                 })),
               },
-            })),
+            };
+            }),
           },
         },
         select: { id: true, exerciseSessions: { orderBy: { position: "asc" }, take: 1, select: { id: true } } },

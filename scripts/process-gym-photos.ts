@@ -4,7 +4,7 @@ import path from "node:path";
 
 import sharp from "sharp";
 
-import { equipmentSeed, mediaStem } from "../src/data/phase-2-catalogue";
+import { equipmentSeed, localExerciseMediaSeed, localExerciseMediaStem, mediaStem } from "../src/data/phase-2-catalogue";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
 const sourceRoot = path.join(projectRoot, "gym-pictures");
@@ -66,6 +66,31 @@ for (const equipment of equipmentSeed) {
   }
 }
 
+for (const media of localExerciseMediaSeed) {
+  const exerciseOutput = path.join(projectRoot, "public", "media", "exercises", media.exerciseSlug);
+  await mkdir(exerciseOutput, { recursive: true });
+  const sourcePath = path.join(sourceRoot, media.filename);
+  const sourceBytes = await readFile(sourcePath);
+  const originalSha256 = createHash("sha256").update(sourceBytes).digest("hex");
+  const derivatives: string[] = [];
+
+  for (const width of widths) {
+    for (const format of formats) {
+      const relativeStem = localExerciseMediaStem(media.exerciseSlug, media.filename);
+      const relativePath = `${relativeStem}-${width}.${format}`;
+      const outputPath = path.join(projectRoot, "public", relativePath);
+      const pipeline = sharp(sourceBytes).rotate().resize({ width, withoutEnlargement: true }).withMetadata({ orientation: 1 });
+      if (format === "webp") await pipeline.webp({ quality: 80, effort: 5 }).toFile(outputPath);
+      else await pipeline.avif({ quality: 58, effort: 5 }).toFile(outputPath);
+      derivatives.push(relativePath);
+    }
+  }
+
+  const after = await stat(sourcePath);
+  if (after.size !== sourceBytes.byteLength) throw new Error(`Original photo changed while processing: ${media.filename}`);
+  manifest.push({ equipmentSlug: `exercise:${media.exerciseSlug}`, role: "PRIMARY", originalFilename: media.filename, originalSha256, derivatives });
+}
+
 await mkdir(outputRoot, { recursive: true });
 await writeFile(
   path.join(outputRoot, "manifest.json"),
@@ -73,7 +98,7 @@ await writeFile(
   "utf8",
 );
 
-console.log(`Processed ${manifest.length} verified photos into ${manifest.length * widths.length * formats.length} derivatives.`);
+console.log(`Processed ${manifest.length} verified photos and exercise images into ${manifest.length * widths.length * formats.length} derivatives.`);
 }
 
 main().catch((error: unknown) => {

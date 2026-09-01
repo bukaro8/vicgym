@@ -6,10 +6,14 @@ type Db = PrismaClient | Prisma.TransactionClient;
 
 export type RestTimerDto = {
   id: string;
+  setLogId: string;
   status: "RUNNING" | "PAUSED";
   configuredSeconds: number;
+  startedAt: string;
   endsAt: string | null;
+  pausedAt: string | null;
   pausedRemainingMs: number | null;
+  updatedAt: string;
   exerciseName: string;
   completedSetNumber: number;
   nextSetId: string | null;
@@ -23,10 +27,14 @@ function timerDto(timer: Awaited<ReturnType<typeof findActiveRestTimer>>): RestT
   if (!timer || (timer.status !== "RUNNING" && timer.status !== "PAUSED")) return null;
   return {
     id: timer.id,
+    setLogId: timer.setLogId,
     status: timer.status,
     configuredSeconds: timer.configuredSeconds,
+    startedAt: timer.startedAt.toISOString(),
     endsAt: timer.endsAt?.toISOString() ?? null,
+    pausedAt: timer.pausedAt?.toISOString() ?? null,
     pausedRemainingMs: timer.pausedRemainingMs ?? (timer.pausedRemainingSeconds === null ? null : timer.pausedRemainingSeconds * 1000),
+    updatedAt: timer.updatedAt.toISOString(),
     exerciseName: timer.setLog.exerciseSession.exerciseNameSnapshot,
     completedSetNumber: timer.setLog.setNumber,
     nextSetId: timer.setLog.exerciseSession.setLogs.find((set) => set.setNumber > timer.setLog.setNumber && !set.completedAt)?.id ?? null,

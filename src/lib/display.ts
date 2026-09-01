@@ -16,3 +16,7 @@ export function greetingFor(date: Date, timeZone = "Europe/London"): string {
   if (hour < 18) return "Good afternoon";
   return "Good evening";
 }
+
+export function elapsedMinutes(start: Date, end = new Date()): number {
+  return Math.max(1, Math.floor((end.getTime() - start.getTime()) / 60_000));
+}

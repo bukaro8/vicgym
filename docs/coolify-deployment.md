@@ -10,7 +10,7 @@ VicGym uses Coolify's Traefik HTTP Basic Authentication as its only authenticati
 4. Enable HTTP Basic Authentication for the application in Coolify. Use a long, unique password generated and stored by a password manager. Coolify stores the configured password as a bcrypt hash.
 5. Set the health-check path to `/api/health`. A `200` response means both the application and database are ready; a `503` means the application is running but the database is unavailable or misconfigured.
 
-Browser-native Basic Authentication has no polished logout flow. Closing all browser windows or clearing credentials for the site may be required to end a browser session.
+Browser-native Basic Authentication has no polished logout flow. Closing all browser windows or clearing credentials for the site may be required to end a browser session. Because Phase 6 stores the active workout in the browser profile, also use **More → Offline & synchronization → Reset private offline data** before handing an unlocked device or browser profile to another person.
 
 ## PostgreSQL and secrets
 
@@ -27,6 +27,6 @@ The container entrypoint runs `prisma migrate deploy` and the idempotent verifie
 
 All future mutation routes must call the shared same-origin JSON guard. The deployment must preserve `Host`, `X-Forwarded-Host`, and `X-Forwarded-Proto`, as Coolify's Traefik proxy normally does. Do not add permissive CORS headers.
 
-The phone or browser profile protects any future cached local data; Phase 1 does not install a service worker or create an offline cache.
+Phase 6 installs a same-origin service worker and stores active workout data in IndexedDB. Serve VicGym only over HTTPS through the authenticated Traefik route, and do not expose a direct application port that could let the service worker fetch around the proxy boundary. API responses are not runtime-cached; prepared workout pages and optimized machine media are held in private versioned caches until browser eviction or explicit local-data reset.
 
 Reference: [Coolify Basic Authentication](https://next.coolify.io/docs/core/networking/proxy/traefik/basic-auth)

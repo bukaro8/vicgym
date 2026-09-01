@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-30T15:56:53.953Z",
+  "generatedAt": "2026-09-01T14:44:19.437Z",
   "items": [
     {
       "equipmentSlug": "triceps-press",
@@ -287,6 +287,54 @@
         "/media/equipment/studio-accessories/20260830_142012-640.avif",
         "/media/equipment/studio-accessories/20260830_142012-1280.webp",
         "/media/equipment/studio-accessories/20260830_142012-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:dumbbell-biceps-curl",
+      "role": "PRIMARY",
+      "originalFilename": "Dumbbell Biceps Curl.png",
+      "originalSha256": "cca240f53fed4fb42e5ce8f4a32ef8fc3cb7dc4e43b7969426f2d516289e1608",
+      "derivatives": [
+        "/media/exercises/dumbbell-biceps-curl/Dumbbell Biceps Curl-640.webp",
+        "/media/exercises/dumbbell-biceps-curl/Dumbbell Biceps Curl-640.avif",
+        "/media/exercises/dumbbell-biceps-curl/Dumbbell Biceps Curl-1280.webp",
+        "/media/exercises/dumbbell-biceps-curl/Dumbbell Biceps Curl-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:glute-bridge",
+      "role": "PRIMARY",
+      "originalFilename": "Glute Bridge.png",
+      "originalSha256": "67d4eb8dda4f4a7c29a622c629dc54a6f647862802a2f5e3595079011787acd5",
+      "derivatives": [
+        "/media/exercises/glute-bridge/Glute Bridge-640.webp",
+        "/media/exercises/glute-bridge/Glute Bridge-640.avif",
+        "/media/exercises/glute-bridge/Glute Bridge-1280.webp",
+        "/media/exercises/glute-bridge/Glute Bridge-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:standing-dumbbell-shoulder-press",
+      "role": "PRIMARY",
+      "originalFilename": "Standing Dumbbell Shoulder Press.png",
+      "originalSha256": "cac380f69e5114716177fb84f640bf858257c4c1aa76ff84282b0412072db24d",
+      "derivatives": [
+        "/media/exercises/standing-dumbbell-shoulder-press/Standing Dumbbell Shoulder Press-640.webp",
+        "/media/exercises/standing-dumbbell-shoulder-press/Standing Dumbbell Shoulder Press-640.avif",
+        "/media/exercises/standing-dumbbell-shoulder-press/Standing Dumbbell Shoulder Press-1280.webp",
+        "/media/exercises/standing-dumbbell-shoulder-press/Standing Dumbbell Shoulder Press-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:step-up",
+      "role": "PRIMARY",
+      "originalFilename": "Step-up.png",
+      "originalSha256": "014fb202fecdd03c9f54554e075adbb0574527575d8afee9493a0cc7f852b2f4",
+      "derivatives": [
+        "/media/exercises/step-up/Step-up-640.webp",
+        "/media/exercises/step-up/Step-up-640.avif",
+        "/media/exercises/step-up/Step-up-1280.webp",
+        "/media/exercises/step-up/Step-up-1280.avif"
       ]
     }
   ]

@@ -1582,6 +1582,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const AppSettingsScalarFieldEnum = {
   id: 'id',
+  activeProgramId: 'activeProgramId',
   timezone: 'timezone',
   weightUnit: 'weightUnit',
   soundEnabled: 'soundEnabled',
@@ -1618,6 +1619,7 @@ export const ExerciseScalarFieldEnum = {
   active: 'active',
   repMode: 'repMode',
   loadEntryMode: 'loadEntryMode',
+  loadTrackingType: 'loadTrackingType',
   loadMultiplier: 'loadMultiplier',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1652,9 +1654,14 @@ export const ExerciseMediaScalarFieldEnum = {
   exerciseId: 'exerciseId',
   equipmentId: 'equipmentId',
   role: 'role',
+  kind: 'kind',
   storagePath: 'storagePath',
   sourceFilename: 'sourceFilename',
   altText: 'altText',
+  provider: 'provider',
+  externalId: 'externalId',
+  sourceUrl: 'sourceUrl',
+  attribution: 'attribution',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1712,6 +1719,9 @@ export const WorkoutExerciseScalarFieldEnum = {
   sets: 'sets',
   targetReps: 'targetReps',
   plannedWeightKg: 'plannedWeightKg',
+  plannedLoadValue: 'plannedLoadValue',
+  loadTrackingTypeSnapshot: 'loadTrackingTypeSnapshot',
+  loadEntryModeSnapshot: 'loadEntryModeSnapshot',
   restSeconds: 'restSeconds',
   autoRest: 'autoRest',
   createdAt: 'createdAt',
@@ -1746,6 +1756,9 @@ export const ExerciseSessionScalarFieldEnum = {
   targetReps: 'targetReps',
   restSeconds: 'restSeconds',
   autoRest: 'autoRest',
+  loadTrackingTypeSnapshot: 'loadTrackingTypeSnapshot',
+  loadEntryModeSnapshot: 'loadEntryModeSnapshot',
+  loadMultiplierSnapshot: 'loadMultiplierSnapshot',
   notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1761,6 +1774,8 @@ export const SetLogScalarFieldEnum = {
   targetReps: 'targetReps',
   actualReps: 'actualReps',
   weightKg: 'weightKg',
+  loadValue: 'loadValue',
+  loadTrackingType: 'loadTrackingType',
   completedAt: 'completedAt',
   notes: 'notes',
   createdAt: 'createdAt',
@@ -1959,6 +1974,20 @@ export type ListEnumLoadEntryModeFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'LoadTrackingType'
+ */
+export type EnumLoadTrackingTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LoadTrackingType'>
+    
+
+
+/**
+ * Reference to a field of type 'LoadTrackingType[]'
+ */
+export type ListEnumLoadTrackingTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LoadTrackingType[]'>
+    
+
+
+/**
  * Reference to a field of type 'Decimal'
  */
 export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
@@ -1997,6 +2026,20 @@ export type EnumMediaRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'MediaRole[]'
  */
 export type ListEnumMediaRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaRole[]'>
+    
+
+
+/**
+ * Reference to a field of type 'MediaKind'
+ */
+export type EnumMediaKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaKind'>
+    
+
+
+/**
+ * Reference to a field of type 'MediaKind[]'
+ */
+export type ListEnumMediaKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaKind[]'>
     
 
 

@@ -31,6 +31,7 @@ export type WorkoutExerciseAvgAggregateOutputType = {
   sets: number | null
   targetReps: number | null
   plannedWeightKg: runtime.Decimal | null
+  plannedLoadValue: runtime.Decimal | null
   restSeconds: number | null
 }
 
@@ -39,6 +40,7 @@ export type WorkoutExerciseSumAggregateOutputType = {
   sets: number | null
   targetReps: number | null
   plannedWeightKg: runtime.Decimal | null
+  plannedLoadValue: runtime.Decimal | null
   restSeconds: number | null
 }
 
@@ -50,6 +52,9 @@ export type WorkoutExerciseMinAggregateOutputType = {
   sets: number | null
   targetReps: number | null
   plannedWeightKg: runtime.Decimal | null
+  plannedLoadValue: runtime.Decimal | null
+  loadTrackingTypeSnapshot: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot: $Enums.LoadEntryMode | null
   restSeconds: number | null
   autoRest: boolean | null
   createdAt: Date | null
@@ -64,6 +69,9 @@ export type WorkoutExerciseMaxAggregateOutputType = {
   sets: number | null
   targetReps: number | null
   plannedWeightKg: runtime.Decimal | null
+  plannedLoadValue: runtime.Decimal | null
+  loadTrackingTypeSnapshot: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot: $Enums.LoadEntryMode | null
   restSeconds: number | null
   autoRest: boolean | null
   createdAt: Date | null
@@ -78,6 +86,9 @@ export type WorkoutExerciseCountAggregateOutputType = {
   sets: number
   targetReps: number
   plannedWeightKg: number
+  plannedLoadValue: number
+  loadTrackingTypeSnapshot: number
+  loadEntryModeSnapshot: number
   restSeconds: number
   autoRest: number
   createdAt: number
@@ -91,6 +102,7 @@ export type WorkoutExerciseAvgAggregateInputType = {
   sets?: true
   targetReps?: true
   plannedWeightKg?: true
+  plannedLoadValue?: true
   restSeconds?: true
 }
 
@@ -99,6 +111,7 @@ export type WorkoutExerciseSumAggregateInputType = {
   sets?: true
   targetReps?: true
   plannedWeightKg?: true
+  plannedLoadValue?: true
   restSeconds?: true
 }
 
@@ -110,6 +123,9 @@ export type WorkoutExerciseMinAggregateInputType = {
   sets?: true
   targetReps?: true
   plannedWeightKg?: true
+  plannedLoadValue?: true
+  loadTrackingTypeSnapshot?: true
+  loadEntryModeSnapshot?: true
   restSeconds?: true
   autoRest?: true
   createdAt?: true
@@ -124,6 +140,9 @@ export type WorkoutExerciseMaxAggregateInputType = {
   sets?: true
   targetReps?: true
   plannedWeightKg?: true
+  plannedLoadValue?: true
+  loadTrackingTypeSnapshot?: true
+  loadEntryModeSnapshot?: true
   restSeconds?: true
   autoRest?: true
   createdAt?: true
@@ -138,6 +157,9 @@ export type WorkoutExerciseCountAggregateInputType = {
   sets?: true
   targetReps?: true
   plannedWeightKg?: true
+  plannedLoadValue?: true
+  loadTrackingTypeSnapshot?: true
+  loadEntryModeSnapshot?: true
   restSeconds?: true
   autoRest?: true
   createdAt?: true
@@ -239,6 +261,9 @@ export type WorkoutExerciseGroupByOutputType = {
   sets: number
   targetReps: number
   plannedWeightKg: runtime.Decimal | null
+  plannedLoadValue: runtime.Decimal | null
+  loadTrackingTypeSnapshot: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot: $Enums.LoadEntryMode | null
   restSeconds: number
   autoRest: boolean
   createdAt: Date
@@ -276,6 +301,9 @@ export type WorkoutExerciseWhereInput = {
   sets?: Prisma.IntFilter<"WorkoutExercise"> | number
   targetReps?: Prisma.IntFilter<"WorkoutExercise"> | number
   plannedWeightKg?: Prisma.DecimalNullableFilter<"WorkoutExercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.DecimalNullableFilter<"WorkoutExercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.EnumLoadTrackingTypeNullableFilter<"WorkoutExercise"> | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.EnumLoadEntryModeNullableFilter<"WorkoutExercise"> | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFilter<"WorkoutExercise"> | number
   autoRest?: Prisma.BoolFilter<"WorkoutExercise"> | boolean
   createdAt?: Prisma.DateTimeFilter<"WorkoutExercise"> | Date | string
@@ -292,6 +320,9 @@ export type WorkoutExerciseOrderByWithRelationInput = {
   sets?: Prisma.SortOrder
   targetReps?: Prisma.SortOrder
   plannedWeightKg?: Prisma.SortOrderInput | Prisma.SortOrder
+  plannedLoadValue?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadTrackingTypeSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadEntryModeSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
   autoRest?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -313,6 +344,9 @@ export type WorkoutExerciseWhereUniqueInput = Prisma.AtLeast<{
   sets?: Prisma.IntFilter<"WorkoutExercise"> | number
   targetReps?: Prisma.IntFilter<"WorkoutExercise"> | number
   plannedWeightKg?: Prisma.DecimalNullableFilter<"WorkoutExercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.DecimalNullableFilter<"WorkoutExercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.EnumLoadTrackingTypeNullableFilter<"WorkoutExercise"> | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.EnumLoadEntryModeNullableFilter<"WorkoutExercise"> | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFilter<"WorkoutExercise"> | number
   autoRest?: Prisma.BoolFilter<"WorkoutExercise"> | boolean
   createdAt?: Prisma.DateTimeFilter<"WorkoutExercise"> | Date | string
@@ -329,6 +363,9 @@ export type WorkoutExerciseOrderByWithAggregationInput = {
   sets?: Prisma.SortOrder
   targetReps?: Prisma.SortOrder
   plannedWeightKg?: Prisma.SortOrderInput | Prisma.SortOrder
+  plannedLoadValue?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadTrackingTypeSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadEntryModeSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
   autoRest?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -351,6 +388,9 @@ export type WorkoutExerciseScalarWhereWithAggregatesInput = {
   sets?: Prisma.IntWithAggregatesFilter<"WorkoutExercise"> | number
   targetReps?: Prisma.IntWithAggregatesFilter<"WorkoutExercise"> | number
   plannedWeightKg?: Prisma.DecimalNullableWithAggregatesFilter<"WorkoutExercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.DecimalNullableWithAggregatesFilter<"WorkoutExercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.EnumLoadTrackingTypeNullableWithAggregatesFilter<"WorkoutExercise"> | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.EnumLoadEntryModeNullableWithAggregatesFilter<"WorkoutExercise"> | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntWithAggregatesFilter<"WorkoutExercise"> | number
   autoRest?: Prisma.BoolWithAggregatesFilter<"WorkoutExercise"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"WorkoutExercise"> | Date | string
@@ -363,6 +403,9 @@ export type WorkoutExerciseCreateInput = {
   sets: number
   targetReps?: number
   plannedWeightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
   restSeconds: number
   autoRest?: boolean
   createdAt?: Date | string
@@ -379,6 +422,9 @@ export type WorkoutExerciseUncheckedCreateInput = {
   sets: number
   targetReps?: number
   plannedWeightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
   restSeconds: number
   autoRest?: boolean
   createdAt?: Date | string
@@ -391,6 +437,9 @@ export type WorkoutExerciseUpdateInput = {
   sets?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   plannedWeightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -407,6 +456,9 @@ export type WorkoutExerciseUncheckedUpdateInput = {
   sets?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   plannedWeightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -421,6 +473,9 @@ export type WorkoutExerciseCreateManyInput = {
   sets: number
   targetReps?: number
   plannedWeightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
   restSeconds: number
   autoRest?: boolean
   createdAt?: Date | string
@@ -433,6 +488,9 @@ export type WorkoutExerciseUpdateManyMutationInput = {
   sets?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   plannedWeightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -447,6 +505,9 @@ export type WorkoutExerciseUncheckedUpdateManyInput = {
   sets?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   plannedWeightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -481,6 +542,9 @@ export type WorkoutExerciseCountOrderByAggregateInput = {
   sets?: Prisma.SortOrder
   targetReps?: Prisma.SortOrder
   plannedWeightKg?: Prisma.SortOrder
+  plannedLoadValue?: Prisma.SortOrder
+  loadTrackingTypeSnapshot?: Prisma.SortOrder
+  loadEntryModeSnapshot?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
   autoRest?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -492,6 +556,7 @@ export type WorkoutExerciseAvgOrderByAggregateInput = {
   sets?: Prisma.SortOrder
   targetReps?: Prisma.SortOrder
   plannedWeightKg?: Prisma.SortOrder
+  plannedLoadValue?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
 }
 
@@ -503,6 +568,9 @@ export type WorkoutExerciseMaxOrderByAggregateInput = {
   sets?: Prisma.SortOrder
   targetReps?: Prisma.SortOrder
   plannedWeightKg?: Prisma.SortOrder
+  plannedLoadValue?: Prisma.SortOrder
+  loadTrackingTypeSnapshot?: Prisma.SortOrder
+  loadEntryModeSnapshot?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
   autoRest?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -517,6 +585,9 @@ export type WorkoutExerciseMinOrderByAggregateInput = {
   sets?: Prisma.SortOrder
   targetReps?: Prisma.SortOrder
   plannedWeightKg?: Prisma.SortOrder
+  plannedLoadValue?: Prisma.SortOrder
+  loadTrackingTypeSnapshot?: Prisma.SortOrder
+  loadEntryModeSnapshot?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
   autoRest?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -528,6 +599,7 @@ export type WorkoutExerciseSumOrderByAggregateInput = {
   sets?: Prisma.SortOrder
   targetReps?: Prisma.SortOrder
   plannedWeightKg?: Prisma.SortOrder
+  plannedLoadValue?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
 }
 
@@ -623,12 +695,23 @@ export type NullableDecimalFieldUpdateOperationsInput = {
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
+export type NullableEnumLoadTrackingTypeFieldUpdateOperationsInput = {
+  set?: $Enums.LoadTrackingType | null
+}
+
+export type NullableEnumLoadEntryModeFieldUpdateOperationsInput = {
+  set?: $Enums.LoadEntryMode | null
+}
+
 export type WorkoutExerciseCreateWithoutExerciseInput = {
   id?: string
   position: number
   sets: number
   targetReps?: number
   plannedWeightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
   restSeconds: number
   autoRest?: boolean
   createdAt?: Date | string
@@ -643,6 +726,9 @@ export type WorkoutExerciseUncheckedCreateWithoutExerciseInput = {
   sets: number
   targetReps?: number
   plannedWeightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
   restSeconds: number
   autoRest?: boolean
   createdAt?: Date | string
@@ -686,6 +772,9 @@ export type WorkoutExerciseScalarWhereInput = {
   sets?: Prisma.IntFilter<"WorkoutExercise"> | number
   targetReps?: Prisma.IntFilter<"WorkoutExercise"> | number
   plannedWeightKg?: Prisma.DecimalNullableFilter<"WorkoutExercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.DecimalNullableFilter<"WorkoutExercise"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.EnumLoadTrackingTypeNullableFilter<"WorkoutExercise"> | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.EnumLoadEntryModeNullableFilter<"WorkoutExercise"> | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFilter<"WorkoutExercise"> | number
   autoRest?: Prisma.BoolFilter<"WorkoutExercise"> | boolean
   createdAt?: Prisma.DateTimeFilter<"WorkoutExercise"> | Date | string
@@ -698,6 +787,9 @@ export type WorkoutExerciseCreateWithoutWorkoutDayInput = {
   sets: number
   targetReps?: number
   plannedWeightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
   restSeconds: number
   autoRest?: boolean
   createdAt?: Date | string
@@ -712,6 +804,9 @@ export type WorkoutExerciseUncheckedCreateWithoutWorkoutDayInput = {
   sets: number
   targetReps?: number
   plannedWeightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
   restSeconds: number
   autoRest?: boolean
   createdAt?: Date | string
@@ -751,6 +846,9 @@ export type WorkoutExerciseCreateManyExerciseInput = {
   sets: number
   targetReps?: number
   plannedWeightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
   restSeconds: number
   autoRest?: boolean
   createdAt?: Date | string
@@ -763,6 +861,9 @@ export type WorkoutExerciseUpdateWithoutExerciseInput = {
   sets?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   plannedWeightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -777,6 +878,9 @@ export type WorkoutExerciseUncheckedUpdateWithoutExerciseInput = {
   sets?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   plannedWeightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -790,6 +894,9 @@ export type WorkoutExerciseUncheckedUpdateManyWithoutExerciseInput = {
   sets?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   plannedWeightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -803,6 +910,9 @@ export type WorkoutExerciseCreateManyWorkoutDayInput = {
   sets: number
   targetReps?: number
   plannedWeightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
   restSeconds: number
   autoRest?: boolean
   createdAt?: Date | string
@@ -815,6 +925,9 @@ export type WorkoutExerciseUpdateWithoutWorkoutDayInput = {
   sets?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   plannedWeightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -829,6 +942,9 @@ export type WorkoutExerciseUncheckedUpdateWithoutWorkoutDayInput = {
   sets?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   plannedWeightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -842,6 +958,9 @@ export type WorkoutExerciseUncheckedUpdateManyWithoutWorkoutDayInput = {
   sets?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   plannedWeightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  plannedLoadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -858,6 +977,9 @@ export type WorkoutExerciseSelect<ExtArgs extends runtime.Types.Extensions.Inter
   sets?: boolean
   targetReps?: boolean
   plannedWeightKg?: boolean
+  plannedLoadValue?: boolean
+  loadTrackingTypeSnapshot?: boolean
+  loadEntryModeSnapshot?: boolean
   restSeconds?: boolean
   autoRest?: boolean
   createdAt?: boolean
@@ -874,6 +996,9 @@ export type WorkoutExerciseSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   sets?: boolean
   targetReps?: boolean
   plannedWeightKg?: boolean
+  plannedLoadValue?: boolean
+  loadTrackingTypeSnapshot?: boolean
+  loadEntryModeSnapshot?: boolean
   restSeconds?: boolean
   autoRest?: boolean
   createdAt?: boolean
@@ -890,6 +1015,9 @@ export type WorkoutExerciseSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   sets?: boolean
   targetReps?: boolean
   plannedWeightKg?: boolean
+  plannedLoadValue?: boolean
+  loadTrackingTypeSnapshot?: boolean
+  loadEntryModeSnapshot?: boolean
   restSeconds?: boolean
   autoRest?: boolean
   createdAt?: boolean
@@ -906,13 +1034,16 @@ export type WorkoutExerciseSelectScalar = {
   sets?: boolean
   targetReps?: boolean
   plannedWeightKg?: boolean
+  plannedLoadValue?: boolean
+  loadTrackingTypeSnapshot?: boolean
+  loadEntryModeSnapshot?: boolean
   restSeconds?: boolean
   autoRest?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type WorkoutExerciseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workoutDayId" | "exerciseId" | "position" | "sets" | "targetReps" | "plannedWeightKg" | "restSeconds" | "autoRest" | "createdAt" | "updatedAt", ExtArgs["result"]["workoutExercise"]>
+export type WorkoutExerciseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workoutDayId" | "exerciseId" | "position" | "sets" | "targetReps" | "plannedWeightKg" | "plannedLoadValue" | "loadTrackingTypeSnapshot" | "loadEntryModeSnapshot" | "restSeconds" | "autoRest" | "createdAt" | "updatedAt", ExtArgs["result"]["workoutExercise"]>
 export type WorkoutExerciseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   workoutDay?: boolean | Prisma.WorkoutDayDefaultArgs<ExtArgs>
   exercise?: boolean | Prisma.ExerciseDefaultArgs<ExtArgs>
@@ -940,6 +1071,9 @@ export type $WorkoutExercisePayload<ExtArgs extends runtime.Types.Extensions.Int
     sets: number
     targetReps: number
     plannedWeightKg: runtime.Decimal | null
+    plannedLoadValue: runtime.Decimal | null
+    loadTrackingTypeSnapshot: $Enums.LoadTrackingType | null
+    loadEntryModeSnapshot: $Enums.LoadEntryMode | null
     restSeconds: number
     autoRest: boolean
     createdAt: Date
@@ -1376,6 +1510,9 @@ export interface WorkoutExerciseFieldRefs {
   readonly sets: Prisma.FieldRef<"WorkoutExercise", 'Int'>
   readonly targetReps: Prisma.FieldRef<"WorkoutExercise", 'Int'>
   readonly plannedWeightKg: Prisma.FieldRef<"WorkoutExercise", 'Decimal'>
+  readonly plannedLoadValue: Prisma.FieldRef<"WorkoutExercise", 'Decimal'>
+  readonly loadTrackingTypeSnapshot: Prisma.FieldRef<"WorkoutExercise", 'LoadTrackingType'>
+  readonly loadEntryModeSnapshot: Prisma.FieldRef<"WorkoutExercise", 'LoadEntryMode'>
   readonly restSeconds: Prisma.FieldRef<"WorkoutExercise", 'Int'>
   readonly autoRest: Prisma.FieldRef<"WorkoutExercise", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"WorkoutExercise", 'DateTime'>

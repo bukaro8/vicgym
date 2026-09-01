@@ -33,6 +33,13 @@ enum LoadEntryMode {
   NONE
 }
 
+enum LoadTrackingType {
+  KILOGRAM
+  MACHINE_LEVEL
+  BODYWEIGHT
+  REPS_ONLY
+}
+
 enum MuscleRole {
   PRIMARY
   SECONDARY
@@ -41,6 +48,11 @@ enum MuscleRole {
 enum MediaRole {
   PRIMARY
   REFERENCE
+}
+
+enum MediaKind {
+  IMAGE
+  VIDEO
 }
 
 enum ProgramStatus {
@@ -76,14 +88,16 @@ enum ClientMutationStatus {
 }
 
 model AppSettings {
-  id                  Int        @id @default(1)
-  timezone            String     @default("Europe/London")
-  weightUnit          WeightUnit @default(KG)
-  soundEnabled        Boolean    @default(false)
-  vibrationEnabled    Boolean    @default(false)
-  onboardingCompleted Boolean    @default(false)
-  createdAt           DateTime   @default(now())
-  updatedAt           DateTime   @updatedAt
+  id                  Int             @id @default(1)
+  activeProgramId     String?         @unique @db.Uuid
+  timezone            String          @default("Europe/London")
+  weightUnit          WeightUnit      @default(KG)
+  soundEnabled        Boolean         @default(false)
+  vibrationEnabled    Boolean         @default(false)
+  onboardingCompleted Boolean         @default(false)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  activeProgram       WorkoutProgram? @relation(fields: [activeProgramId], references: [id], onDelete: SetNull)
 }
 
 model Equipment {
@@ -109,6 +123,7 @@ model Exercise {
   active            Boolean           @default(true)
   repMode           RepMode           @default(TOTAL)
   loadEntryMode     LoadEntryMode     @default(STACK_TOTAL)
+  loadTrackingType  LoadTrackingType  @default(KILOGRAM)
   loadMultiplier    Decimal           @default(1) @db.Decimal(6, 3)
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
@@ -147,9 +162,14 @@ model ExerciseMedia {
   exerciseId     String?    @db.Uuid
   equipmentId    String?    @db.Uuid
   role           MediaRole
+  kind           MediaKind  @default(IMAGE)
   storagePath    String
   sourceFilename String
   altText        String
+  provider       String     @default("vicgym")
+  externalId     String?
+  sourceUrl      String?
+  attribution    String?
   sortOrder      Int        @default(0)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
@@ -157,23 +177,25 @@ model ExerciseMedia {
   equipment      Equipment? @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
 
   @@unique([equipmentId, sourceFilename])
+  @@unique([exerciseId, provider, externalId, kind])
   @@index([exerciseId, role, sortOrder])
   @@index([equipmentId, role, sortOrder])
 }
 
 model WorkoutProgram {
-  id              String           @id @default(uuid()) @db.Uuid
-  slug            String           @unique
-  name            String
-  isDemo          Boolean          @default(false)
-  status          ProgramStatus    @default(DRAFT)
-  activeVersionId String?          @unique @db.Uuid
-  notice          String?
-  activatedAt     DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  activeVersion   ProgramVersion?  @relation("ActiveProgramVersion", fields: [activeVersionId], references: [id], onDelete: SetNull)
-  versions        ProgramVersion[] @relation("ProgramVersions")
+  id               String           @id @default(uuid()) @db.Uuid
+  slug             String           @unique
+  name             String
+  isDemo           Boolean          @default(false)
+  status           ProgramStatus    @default(DRAFT)
+  activeVersionId  String?          @unique @db.Uuid
+  notice           String?
+  activatedAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  activeVersion    ProgramVersion?  @relation("ActiveProgramVersion", fields: [activeVersionId], references: [id], onDelete: SetNull)
+  activeInSettings AppSettings?
+  versions         ProgramVersion[] @relation("ProgramVersions")
 }
 
 model ProgramVersion {
@@ -209,19 +231,22 @@ model WorkoutDay {
 }
 
 model WorkoutExercise {
-  id              String     @id @default(uuid()) @db.Uuid
-  workoutDayId    String     @db.Uuid
-  exerciseId      String     @db.Uuid
-  position        Int
-  sets            Int
-  targetReps      Int        @default(12)
-  plannedWeightKg Decimal?   @db.Decimal(7, 2)
-  restSeconds     Int
-  autoRest        Boolean    @default(true)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  workoutDay      WorkoutDay @relation(fields: [workoutDayId], references: [id], onDelete: Cascade)
-  exercise        Exercise   @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+  id                       String            @id @default(uuid()) @db.Uuid
+  workoutDayId             String            @db.Uuid
+  exerciseId               String            @db.Uuid
+  position                 Int
+  sets                     Int
+  targetReps               Int               @default(12)
+  plannedWeightKg          Decimal?          @db.Decimal(7, 2)
+  plannedLoadValue         Decimal?          @db.Decimal(7, 2)
+  loadTrackingTypeSnapshot LoadTrackingType?
+  loadEntryModeSnapshot    LoadEntryMode?
+  restSeconds              Int
+  autoRest                 Boolean           @default(true)
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+  workoutDay               WorkoutDay        @relation(fields: [workoutDayId], references: [id], onDelete: Cascade)
+  exercise                 Exercise          @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
 
   @@unique([workoutDayId, position])
   @@unique([workoutDayId, exerciseId])
@@ -248,38 +273,43 @@ model WorkoutSession {
 }
 
 model ExerciseSession {
-  id                   String         @id @default(uuid()) @db.Uuid
-  workoutSessionId     String         @db.Uuid
-  exerciseId           String         @db.Uuid
-  position             Int
-  exerciseNameSnapshot String
-  plannedSets          Int
-  targetReps           Int            @default(12)
-  restSeconds          Int
-  autoRest             Boolean
-  notes                String?
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
-  workoutSession       WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  exercise             Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
-  setLogs              SetLog[]
+  id                       String            @id @default(uuid()) @db.Uuid
+  workoutSessionId         String            @db.Uuid
+  exerciseId               String            @db.Uuid
+  position                 Int
+  exerciseNameSnapshot     String
+  plannedSets              Int
+  targetReps               Int               @default(12)
+  restSeconds              Int
+  autoRest                 Boolean
+  loadTrackingTypeSnapshot LoadTrackingType?
+  loadEntryModeSnapshot    LoadEntryMode?
+  loadMultiplierSnapshot   Decimal?          @db.Decimal(6, 3)
+  notes                    String?
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+  workoutSession           WorkoutSession    @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  exercise                 Exercise          @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+  setLogs                  SetLog[]
 
   @@unique([workoutSessionId, position])
   @@index([exerciseId, createdAt])
 }
 
 model SetLog {
-  id                String          @id @default(uuid()) @db.Uuid
-  exerciseSessionId String          @db.Uuid
+  id                String            @id @default(uuid()) @db.Uuid
+  exerciseSessionId String            @db.Uuid
   setNumber         Int
-  targetReps        Int             @default(12)
+  targetReps        Int               @default(12)
   actualReps        Int?
-  weightKg          Decimal?        @db.Decimal(7, 2)
+  weightKg          Decimal?          @db.Decimal(7, 2)
+  loadValue         Decimal?          @db.Decimal(7, 2)
+  loadTrackingType  LoadTrackingType?
   completedAt       DateTime?
   notes             String?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  exerciseSession   ExerciseSession @relation(fields: [exerciseSessionId], references: [id], onDelete: Cascade)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  exerciseSession   ExerciseSession   @relation(fields: [exerciseSessionId], references: [id], onDelete: Cascade)
   restPeriod        RestPeriod?
 
   @@unique([exerciseSessionId, setNumber])

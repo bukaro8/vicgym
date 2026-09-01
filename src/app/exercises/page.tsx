@@ -13,6 +13,7 @@ export default async function ExercisesPage() {
       where: { active: true },
       orderBy: { name: "asc" },
       include: {
+        media: { orderBy: { sortOrder: "asc" } },
         equipment: { include: { media: { orderBy: { sortOrder: "asc" } } } },
         muscles: { include: { muscle: true } },
       },

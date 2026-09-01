@@ -15,9 +15,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ ses
     const set = await getPrisma().$transaction(async (tx) => {
       const exercise = await tx.exerciseSession.findFirst({ where: { id: exerciseSessionId, workoutSessionId: sessionId, workoutSession: { status: "IN_PROGRESS" } }, include: { setLogs: { orderBy: { setNumber: "desc" }, take: 1 } } });
       if (!exercise) throw new Error("EXERCISE_NOT_FOUND");
-      return tx.setLog.create({ data: { exerciseSessionId, setNumber: (exercise.setLogs[0]?.setNumber ?? 0) + 1, targetReps: exercise.targetReps, actualReps: exercise.targetReps } });
+      return tx.setLog.create({ data: { exerciseSessionId, setNumber: (exercise.setLogs[0]?.setNumber ?? 0) + 1, targetReps: exercise.targetReps, actualReps: exercise.targetReps, loadTrackingType: exercise.loadTrackingTypeSnapshot } });
     });
-    return NextResponse.json({ set: { ...set, weightKg: null } }, { status: 201 });
+    return NextResponse.json({ set: { ...set, weightKg: null, loadValue: null } }, { status: 201 });
   } catch (error) {
     if (error instanceof RequestPolicyError) return NextResponse.json({ error: error.message }, { status: error.status });
     if (error instanceof z.ZodError) return NextResponse.json({ error: "Invalid request" }, { status: 400 });

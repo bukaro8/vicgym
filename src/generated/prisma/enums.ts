@@ -47,6 +47,16 @@ export const LoadEntryMode = {
 export type LoadEntryMode = (typeof LoadEntryMode)[keyof typeof LoadEntryMode]
 
 
+export const LoadTrackingType = {
+  KILOGRAM: 'KILOGRAM',
+  MACHINE_LEVEL: 'MACHINE_LEVEL',
+  BODYWEIGHT: 'BODYWEIGHT',
+  REPS_ONLY: 'REPS_ONLY'
+} as const
+
+export type LoadTrackingType = (typeof LoadTrackingType)[keyof typeof LoadTrackingType]
+
+
 export const MuscleRole = {
   PRIMARY: 'PRIMARY',
   SECONDARY: 'SECONDARY'
@@ -61,6 +71,14 @@ export const MediaRole = {
 } as const
 
 export type MediaRole = (typeof MediaRole)[keyof typeof MediaRole]
+
+
+export const MediaKind = {
+  IMAGE: 'IMAGE',
+  VIDEO: 'VIDEO'
+} as const
+
+export type MediaKind = (typeof MediaKind)[keyof typeof MediaKind]
 
 
 export const ProgramStatus = {

@@ -394,10 +394,6 @@ export type EnumEquipmentTypeFieldUpdateOperationsInput = {
   set?: $Enums.EquipmentType
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type EquipmentCreateNestedOneWithoutExercisesInput = {
   create?: Prisma.XOR<Prisma.EquipmentCreateWithoutExercisesInput, Prisma.EquipmentUncheckedCreateWithoutExercisesInput>
   connectOrCreate?: Prisma.EquipmentCreateOrConnectWithoutExercisesInput

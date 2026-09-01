@@ -31,6 +31,7 @@ export type ExerciseSessionAvgAggregateOutputType = {
   plannedSets: number | null
   targetReps: number | null
   restSeconds: number | null
+  loadMultiplierSnapshot: runtime.Decimal | null
 }
 
 export type ExerciseSessionSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type ExerciseSessionSumAggregateOutputType = {
   plannedSets: number | null
   targetReps: number | null
   restSeconds: number | null
+  loadMultiplierSnapshot: runtime.Decimal | null
 }
 
 export type ExerciseSessionMinAggregateOutputType = {
@@ -50,6 +52,9 @@ export type ExerciseSessionMinAggregateOutputType = {
   targetReps: number | null
   restSeconds: number | null
   autoRest: boolean | null
+  loadTrackingTypeSnapshot: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot: runtime.Decimal | null
   notes: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -65,6 +70,9 @@ export type ExerciseSessionMaxAggregateOutputType = {
   targetReps: number | null
   restSeconds: number | null
   autoRest: boolean | null
+  loadTrackingTypeSnapshot: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot: runtime.Decimal | null
   notes: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -80,6 +88,9 @@ export type ExerciseSessionCountAggregateOutputType = {
   targetReps: number
   restSeconds: number
   autoRest: number
+  loadTrackingTypeSnapshot: number
+  loadEntryModeSnapshot: number
+  loadMultiplierSnapshot: number
   notes: number
   createdAt: number
   updatedAt: number
@@ -92,6 +103,7 @@ export type ExerciseSessionAvgAggregateInputType = {
   plannedSets?: true
   targetReps?: true
   restSeconds?: true
+  loadMultiplierSnapshot?: true
 }
 
 export type ExerciseSessionSumAggregateInputType = {
@@ -99,6 +111,7 @@ export type ExerciseSessionSumAggregateInputType = {
   plannedSets?: true
   targetReps?: true
   restSeconds?: true
+  loadMultiplierSnapshot?: true
 }
 
 export type ExerciseSessionMinAggregateInputType = {
@@ -111,6 +124,9 @@ export type ExerciseSessionMinAggregateInputType = {
   targetReps?: true
   restSeconds?: true
   autoRest?: true
+  loadTrackingTypeSnapshot?: true
+  loadEntryModeSnapshot?: true
+  loadMultiplierSnapshot?: true
   notes?: true
   createdAt?: true
   updatedAt?: true
@@ -126,6 +142,9 @@ export type ExerciseSessionMaxAggregateInputType = {
   targetReps?: true
   restSeconds?: true
   autoRest?: true
+  loadTrackingTypeSnapshot?: true
+  loadEntryModeSnapshot?: true
+  loadMultiplierSnapshot?: true
   notes?: true
   createdAt?: true
   updatedAt?: true
@@ -141,6 +160,9 @@ export type ExerciseSessionCountAggregateInputType = {
   targetReps?: true
   restSeconds?: true
   autoRest?: true
+  loadTrackingTypeSnapshot?: true
+  loadEntryModeSnapshot?: true
+  loadMultiplierSnapshot?: true
   notes?: true
   createdAt?: true
   updatedAt?: true
@@ -243,6 +265,9 @@ export type ExerciseSessionGroupByOutputType = {
   targetReps: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot: runtime.Decimal | null
   notes: string | null
   createdAt: Date
   updatedAt: Date
@@ -281,6 +306,9 @@ export type ExerciseSessionWhereInput = {
   targetReps?: Prisma.IntFilter<"ExerciseSession"> | number
   restSeconds?: Prisma.IntFilter<"ExerciseSession"> | number
   autoRest?: Prisma.BoolFilter<"ExerciseSession"> | boolean
+  loadTrackingTypeSnapshot?: Prisma.EnumLoadTrackingTypeNullableFilter<"ExerciseSession"> | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.EnumLoadEntryModeNullableFilter<"ExerciseSession"> | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.DecimalNullableFilter<"ExerciseSession"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.StringNullableFilter<"ExerciseSession"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ExerciseSession"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ExerciseSession"> | Date | string
@@ -299,6 +327,9 @@ export type ExerciseSessionOrderByWithRelationInput = {
   targetReps?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
   autoRest?: Prisma.SortOrder
+  loadTrackingTypeSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadEntryModeSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadMultiplierSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -321,6 +352,9 @@ export type ExerciseSessionWhereUniqueInput = Prisma.AtLeast<{
   targetReps?: Prisma.IntFilter<"ExerciseSession"> | number
   restSeconds?: Prisma.IntFilter<"ExerciseSession"> | number
   autoRest?: Prisma.BoolFilter<"ExerciseSession"> | boolean
+  loadTrackingTypeSnapshot?: Prisma.EnumLoadTrackingTypeNullableFilter<"ExerciseSession"> | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.EnumLoadEntryModeNullableFilter<"ExerciseSession"> | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.DecimalNullableFilter<"ExerciseSession"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.StringNullableFilter<"ExerciseSession"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ExerciseSession"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ExerciseSession"> | Date | string
@@ -339,6 +373,9 @@ export type ExerciseSessionOrderByWithAggregationInput = {
   targetReps?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
   autoRest?: Prisma.SortOrder
+  loadTrackingTypeSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadEntryModeSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadMultiplierSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -362,6 +399,9 @@ export type ExerciseSessionScalarWhereWithAggregatesInput = {
   targetReps?: Prisma.IntWithAggregatesFilter<"ExerciseSession"> | number
   restSeconds?: Prisma.IntWithAggregatesFilter<"ExerciseSession"> | number
   autoRest?: Prisma.BoolWithAggregatesFilter<"ExerciseSession"> | boolean
+  loadTrackingTypeSnapshot?: Prisma.EnumLoadTrackingTypeNullableWithAggregatesFilter<"ExerciseSession"> | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.EnumLoadEntryModeNullableWithAggregatesFilter<"ExerciseSession"> | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.DecimalNullableWithAggregatesFilter<"ExerciseSession"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"ExerciseSession"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ExerciseSession"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ExerciseSession"> | Date | string
@@ -375,6 +415,9 @@ export type ExerciseSessionCreateInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -393,6 +436,9 @@ export type ExerciseSessionUncheckedCreateInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -407,6 +453,9 @@ export type ExerciseSessionUpdateInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -425,6 +474,9 @@ export type ExerciseSessionUncheckedUpdateInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -441,6 +493,9 @@ export type ExerciseSessionCreateManyInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -454,6 +509,9 @@ export type ExerciseSessionUpdateManyMutationInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -469,6 +527,9 @@ export type ExerciseSessionUncheckedUpdateManyInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -499,6 +560,9 @@ export type ExerciseSessionCountOrderByAggregateInput = {
   targetReps?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
   autoRest?: Prisma.SortOrder
+  loadTrackingTypeSnapshot?: Prisma.SortOrder
+  loadEntryModeSnapshot?: Prisma.SortOrder
+  loadMultiplierSnapshot?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -509,6 +573,7 @@ export type ExerciseSessionAvgOrderByAggregateInput = {
   plannedSets?: Prisma.SortOrder
   targetReps?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
+  loadMultiplierSnapshot?: Prisma.SortOrder
 }
 
 export type ExerciseSessionMaxOrderByAggregateInput = {
@@ -521,6 +586,9 @@ export type ExerciseSessionMaxOrderByAggregateInput = {
   targetReps?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
   autoRest?: Prisma.SortOrder
+  loadTrackingTypeSnapshot?: Prisma.SortOrder
+  loadEntryModeSnapshot?: Prisma.SortOrder
+  loadMultiplierSnapshot?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -536,6 +604,9 @@ export type ExerciseSessionMinOrderByAggregateInput = {
   targetReps?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
   autoRest?: Prisma.SortOrder
+  loadTrackingTypeSnapshot?: Prisma.SortOrder
+  loadEntryModeSnapshot?: Prisma.SortOrder
+  loadMultiplierSnapshot?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -546,6 +617,7 @@ export type ExerciseSessionSumOrderByAggregateInput = {
   plannedSets?: Prisma.SortOrder
   targetReps?: Prisma.SortOrder
   restSeconds?: Prisma.SortOrder
+  loadMultiplierSnapshot?: Prisma.SortOrder
 }
 
 export type ExerciseSessionScalarRelationFilter = {
@@ -659,6 +731,9 @@ export type ExerciseSessionCreateWithoutExerciseInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -675,6 +750,9 @@ export type ExerciseSessionUncheckedCreateWithoutExerciseInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -720,6 +798,9 @@ export type ExerciseSessionScalarWhereInput = {
   targetReps?: Prisma.IntFilter<"ExerciseSession"> | number
   restSeconds?: Prisma.IntFilter<"ExerciseSession"> | number
   autoRest?: Prisma.BoolFilter<"ExerciseSession"> | boolean
+  loadTrackingTypeSnapshot?: Prisma.EnumLoadTrackingTypeNullableFilter<"ExerciseSession"> | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.EnumLoadEntryModeNullableFilter<"ExerciseSession"> | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.DecimalNullableFilter<"ExerciseSession"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.StringNullableFilter<"ExerciseSession"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ExerciseSession"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ExerciseSession"> | Date | string
@@ -733,6 +814,9 @@ export type ExerciseSessionCreateWithoutWorkoutSessionInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -749,6 +833,9 @@ export type ExerciseSessionUncheckedCreateWithoutWorkoutSessionInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -789,6 +876,9 @@ export type ExerciseSessionCreateWithoutSetLogsInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -806,6 +896,9 @@ export type ExerciseSessionUncheckedCreateWithoutSetLogsInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -835,6 +928,9 @@ export type ExerciseSessionUpdateWithoutSetLogsInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -852,6 +948,9 @@ export type ExerciseSessionUncheckedUpdateWithoutSetLogsInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -866,6 +965,9 @@ export type ExerciseSessionCreateManyExerciseInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -879,6 +981,9 @@ export type ExerciseSessionUpdateWithoutExerciseInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -895,6 +1000,9 @@ export type ExerciseSessionUncheckedUpdateWithoutExerciseInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -910,6 +1018,9 @@ export type ExerciseSessionUncheckedUpdateManyWithoutExerciseInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -924,6 +1035,9 @@ export type ExerciseSessionCreateManyWorkoutSessionInput = {
   targetReps?: number
   restSeconds: number
   autoRest: boolean
+  loadTrackingTypeSnapshot?: $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -937,6 +1051,9 @@ export type ExerciseSessionUpdateWithoutWorkoutSessionInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -953,6 +1070,9 @@ export type ExerciseSessionUncheckedUpdateWithoutWorkoutSessionInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -968,6 +1088,9 @@ export type ExerciseSessionUncheckedUpdateManyWithoutWorkoutSessionInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   restSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   autoRest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  loadTrackingTypeSnapshot?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
+  loadEntryModeSnapshot?: Prisma.NullableEnumLoadEntryModeFieldUpdateOperationsInput | $Enums.LoadEntryMode | null
+  loadMultiplierSnapshot?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1014,6 +1137,9 @@ export type ExerciseSessionSelect<ExtArgs extends runtime.Types.Extensions.Inter
   targetReps?: boolean
   restSeconds?: boolean
   autoRest?: boolean
+  loadTrackingTypeSnapshot?: boolean
+  loadEntryModeSnapshot?: boolean
+  loadMultiplierSnapshot?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1033,6 +1159,9 @@ export type ExerciseSessionSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   targetReps?: boolean
   restSeconds?: boolean
   autoRest?: boolean
+  loadTrackingTypeSnapshot?: boolean
+  loadEntryModeSnapshot?: boolean
+  loadMultiplierSnapshot?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1050,6 +1179,9 @@ export type ExerciseSessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   targetReps?: boolean
   restSeconds?: boolean
   autoRest?: boolean
+  loadTrackingTypeSnapshot?: boolean
+  loadEntryModeSnapshot?: boolean
+  loadMultiplierSnapshot?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1067,12 +1199,15 @@ export type ExerciseSessionSelectScalar = {
   targetReps?: boolean
   restSeconds?: boolean
   autoRest?: boolean
+  loadTrackingTypeSnapshot?: boolean
+  loadEntryModeSnapshot?: boolean
+  loadMultiplierSnapshot?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ExerciseSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workoutSessionId" | "exerciseId" | "position" | "exerciseNameSnapshot" | "plannedSets" | "targetReps" | "restSeconds" | "autoRest" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["exerciseSession"]>
+export type ExerciseSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workoutSessionId" | "exerciseId" | "position" | "exerciseNameSnapshot" | "plannedSets" | "targetReps" | "restSeconds" | "autoRest" | "loadTrackingTypeSnapshot" | "loadEntryModeSnapshot" | "loadMultiplierSnapshot" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["exerciseSession"]>
 export type ExerciseSessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   workoutSession?: boolean | Prisma.WorkoutSessionDefaultArgs<ExtArgs>
   exercise?: boolean | Prisma.ExerciseDefaultArgs<ExtArgs>
@@ -1105,6 +1240,9 @@ export type $ExerciseSessionPayload<ExtArgs extends runtime.Types.Extensions.Int
     targetReps: number
     restSeconds: number
     autoRest: boolean
+    loadTrackingTypeSnapshot: $Enums.LoadTrackingType | null
+    loadEntryModeSnapshot: $Enums.LoadEntryMode | null
+    loadMultiplierSnapshot: runtime.Decimal | null
     notes: string | null
     createdAt: Date
     updatedAt: Date
@@ -1543,6 +1681,9 @@ export interface ExerciseSessionFieldRefs {
   readonly targetReps: Prisma.FieldRef<"ExerciseSession", 'Int'>
   readonly restSeconds: Prisma.FieldRef<"ExerciseSession", 'Int'>
   readonly autoRest: Prisma.FieldRef<"ExerciseSession", 'Boolean'>
+  readonly loadTrackingTypeSnapshot: Prisma.FieldRef<"ExerciseSession", 'LoadTrackingType'>
+  readonly loadEntryModeSnapshot: Prisma.FieldRef<"ExerciseSession", 'LoadEntryMode'>
+  readonly loadMultiplierSnapshot: Prisma.FieldRef<"ExerciseSession", 'Decimal'>
   readonly notes: Prisma.FieldRef<"ExerciseSession", 'String'>
   readonly createdAt: Prisma.FieldRef<"ExerciseSession", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ExerciseSession", 'DateTime'>

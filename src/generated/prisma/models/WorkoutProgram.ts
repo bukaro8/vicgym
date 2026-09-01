@@ -223,6 +223,7 @@ export type WorkoutProgramWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"WorkoutProgram"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WorkoutProgram"> | Date | string
   activeVersion?: Prisma.XOR<Prisma.ProgramVersionNullableScalarRelationFilter, Prisma.ProgramVersionWhereInput> | null
+  activeInSettings?: Prisma.XOR<Prisma.AppSettingsNullableScalarRelationFilter, Prisma.AppSettingsWhereInput> | null
   versions?: Prisma.ProgramVersionListRelationFilter
 }
 
@@ -238,6 +239,7 @@ export type WorkoutProgramOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   activeVersion?: Prisma.ProgramVersionOrderByWithRelationInput
+  activeInSettings?: Prisma.AppSettingsOrderByWithRelationInput
   versions?: Prisma.ProgramVersionOrderByRelationAggregateInput
 }
 
@@ -256,6 +258,7 @@ export type WorkoutProgramWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"WorkoutProgram"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WorkoutProgram"> | Date | string
   activeVersion?: Prisma.XOR<Prisma.ProgramVersionNullableScalarRelationFilter, Prisma.ProgramVersionWhereInput> | null
+  activeInSettings?: Prisma.XOR<Prisma.AppSettingsNullableScalarRelationFilter, Prisma.AppSettingsWhereInput> | null
   versions?: Prisma.ProgramVersionListRelationFilter
 }, "id" | "slug" | "activeVersionId">
 
@@ -302,6 +305,7 @@ export type WorkoutProgramCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   activeVersion?: Prisma.ProgramVersionCreateNestedOneWithoutActiveForProgramInput
+  activeInSettings?: Prisma.AppSettingsCreateNestedOneWithoutActiveProgramInput
   versions?: Prisma.ProgramVersionCreateNestedManyWithoutProgramInput
 }
 
@@ -316,6 +320,7 @@ export type WorkoutProgramUncheckedCreateInput = {
   activatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  activeInSettings?: Prisma.AppSettingsUncheckedCreateNestedOneWithoutActiveProgramInput
   versions?: Prisma.ProgramVersionUncheckedCreateNestedManyWithoutProgramInput
 }
 
@@ -330,6 +335,7 @@ export type WorkoutProgramUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activeVersion?: Prisma.ProgramVersionUpdateOneWithoutActiveForProgramNestedInput
+  activeInSettings?: Prisma.AppSettingsUpdateOneWithoutActiveProgramNestedInput
   versions?: Prisma.ProgramVersionUpdateManyWithoutProgramNestedInput
 }
 
@@ -344,6 +350,7 @@ export type WorkoutProgramUncheckedUpdateInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeInSettings?: Prisma.AppSettingsUncheckedUpdateOneWithoutActiveProgramNestedInput
   versions?: Prisma.ProgramVersionUncheckedUpdateManyWithoutProgramNestedInput
 }
 
@@ -383,6 +390,11 @@ export type WorkoutProgramUncheckedUpdateManyInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type WorkoutProgramNullableScalarRelationFilter = {
+  is?: Prisma.WorkoutProgramWhereInput | null
+  isNot?: Prisma.WorkoutProgramWhereInput | null
 }
 
 export type WorkoutProgramCountOrderByAggregateInput = {
@@ -429,9 +441,20 @@ export type WorkoutProgramScalarRelationFilter = {
   isNot?: Prisma.WorkoutProgramWhereInput
 }
 
-export type WorkoutProgramNullableScalarRelationFilter = {
-  is?: Prisma.WorkoutProgramWhereInput | null
-  isNot?: Prisma.WorkoutProgramWhereInput | null
+export type WorkoutProgramCreateNestedOneWithoutActiveInSettingsInput = {
+  create?: Prisma.XOR<Prisma.WorkoutProgramCreateWithoutActiveInSettingsInput, Prisma.WorkoutProgramUncheckedCreateWithoutActiveInSettingsInput>
+  connectOrCreate?: Prisma.WorkoutProgramCreateOrConnectWithoutActiveInSettingsInput
+  connect?: Prisma.WorkoutProgramWhereUniqueInput
+}
+
+export type WorkoutProgramUpdateOneWithoutActiveInSettingsNestedInput = {
+  create?: Prisma.XOR<Prisma.WorkoutProgramCreateWithoutActiveInSettingsInput, Prisma.WorkoutProgramUncheckedCreateWithoutActiveInSettingsInput>
+  connectOrCreate?: Prisma.WorkoutProgramCreateOrConnectWithoutActiveInSettingsInput
+  upsert?: Prisma.WorkoutProgramUpsertWithoutActiveInSettingsInput
+  disconnect?: Prisma.WorkoutProgramWhereInput | boolean
+  delete?: Prisma.WorkoutProgramWhereInput | boolean
+  connect?: Prisma.WorkoutProgramWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WorkoutProgramUpdateToOneWithWhereWithoutActiveInSettingsInput, Prisma.WorkoutProgramUpdateWithoutActiveInSettingsInput>, Prisma.WorkoutProgramUncheckedUpdateWithoutActiveInSettingsInput>
 }
 
 export type EnumProgramStatusFieldUpdateOperationsInput = {
@@ -488,6 +511,78 @@ export type WorkoutProgramUncheckedUpdateOneWithoutActiveVersionNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WorkoutProgramUpdateToOneWithWhereWithoutActiveVersionInput, Prisma.WorkoutProgramUpdateWithoutActiveVersionInput>, Prisma.WorkoutProgramUncheckedUpdateWithoutActiveVersionInput>
 }
 
+export type WorkoutProgramCreateWithoutActiveInSettingsInput = {
+  id?: string
+  slug: string
+  name: string
+  isDemo?: boolean
+  status?: $Enums.ProgramStatus
+  notice?: string | null
+  activatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  activeVersion?: Prisma.ProgramVersionCreateNestedOneWithoutActiveForProgramInput
+  versions?: Prisma.ProgramVersionCreateNestedManyWithoutProgramInput
+}
+
+export type WorkoutProgramUncheckedCreateWithoutActiveInSettingsInput = {
+  id?: string
+  slug: string
+  name: string
+  isDemo?: boolean
+  status?: $Enums.ProgramStatus
+  activeVersionId?: string | null
+  notice?: string | null
+  activatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  versions?: Prisma.ProgramVersionUncheckedCreateNestedManyWithoutProgramInput
+}
+
+export type WorkoutProgramCreateOrConnectWithoutActiveInSettingsInput = {
+  where: Prisma.WorkoutProgramWhereUniqueInput
+  create: Prisma.XOR<Prisma.WorkoutProgramCreateWithoutActiveInSettingsInput, Prisma.WorkoutProgramUncheckedCreateWithoutActiveInSettingsInput>
+}
+
+export type WorkoutProgramUpsertWithoutActiveInSettingsInput = {
+  update: Prisma.XOR<Prisma.WorkoutProgramUpdateWithoutActiveInSettingsInput, Prisma.WorkoutProgramUncheckedUpdateWithoutActiveInSettingsInput>
+  create: Prisma.XOR<Prisma.WorkoutProgramCreateWithoutActiveInSettingsInput, Prisma.WorkoutProgramUncheckedCreateWithoutActiveInSettingsInput>
+  where?: Prisma.WorkoutProgramWhereInput
+}
+
+export type WorkoutProgramUpdateToOneWithWhereWithoutActiveInSettingsInput = {
+  where?: Prisma.WorkoutProgramWhereInput
+  data: Prisma.XOR<Prisma.WorkoutProgramUpdateWithoutActiveInSettingsInput, Prisma.WorkoutProgramUncheckedUpdateWithoutActiveInSettingsInput>
+}
+
+export type WorkoutProgramUpdateWithoutActiveInSettingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isDemo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumProgramStatusFieldUpdateOperationsInput | $Enums.ProgramStatus
+  notice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeVersion?: Prisma.ProgramVersionUpdateOneWithoutActiveForProgramNestedInput
+  versions?: Prisma.ProgramVersionUpdateManyWithoutProgramNestedInput
+}
+
+export type WorkoutProgramUncheckedUpdateWithoutActiveInSettingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isDemo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumProgramStatusFieldUpdateOperationsInput | $Enums.ProgramStatus
+  activeVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  versions?: Prisma.ProgramVersionUncheckedUpdateManyWithoutProgramNestedInput
+}
+
 export type WorkoutProgramCreateWithoutVersionsInput = {
   id?: string
   slug: string
@@ -499,6 +594,7 @@ export type WorkoutProgramCreateWithoutVersionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   activeVersion?: Prisma.ProgramVersionCreateNestedOneWithoutActiveForProgramInput
+  activeInSettings?: Prisma.AppSettingsCreateNestedOneWithoutActiveProgramInput
 }
 
 export type WorkoutProgramUncheckedCreateWithoutVersionsInput = {
@@ -512,6 +608,7 @@ export type WorkoutProgramUncheckedCreateWithoutVersionsInput = {
   activatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  activeInSettings?: Prisma.AppSettingsUncheckedCreateNestedOneWithoutActiveProgramInput
 }
 
 export type WorkoutProgramCreateOrConnectWithoutVersionsInput = {
@@ -529,6 +626,7 @@ export type WorkoutProgramCreateWithoutActiveVersionInput = {
   activatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  activeInSettings?: Prisma.AppSettingsCreateNestedOneWithoutActiveProgramInput
   versions?: Prisma.ProgramVersionCreateNestedManyWithoutProgramInput
 }
 
@@ -542,6 +640,7 @@ export type WorkoutProgramUncheckedCreateWithoutActiveVersionInput = {
   activatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  activeInSettings?: Prisma.AppSettingsUncheckedCreateNestedOneWithoutActiveProgramInput
   versions?: Prisma.ProgramVersionUncheckedCreateNestedManyWithoutProgramInput
 }
 
@@ -572,6 +671,7 @@ export type WorkoutProgramUpdateWithoutVersionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activeVersion?: Prisma.ProgramVersionUpdateOneWithoutActiveForProgramNestedInput
+  activeInSettings?: Prisma.AppSettingsUpdateOneWithoutActiveProgramNestedInput
 }
 
 export type WorkoutProgramUncheckedUpdateWithoutVersionsInput = {
@@ -585,6 +685,7 @@ export type WorkoutProgramUncheckedUpdateWithoutVersionsInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeInSettings?: Prisma.AppSettingsUncheckedUpdateOneWithoutActiveProgramNestedInput
 }
 
 export type WorkoutProgramUpsertWithoutActiveVersionInput = {
@@ -608,6 +709,7 @@ export type WorkoutProgramUpdateWithoutActiveVersionInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeInSettings?: Prisma.AppSettingsUpdateOneWithoutActiveProgramNestedInput
   versions?: Prisma.ProgramVersionUpdateManyWithoutProgramNestedInput
 }
 
@@ -621,6 +723,7 @@ export type WorkoutProgramUncheckedUpdateWithoutActiveVersionInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeInSettings?: Prisma.AppSettingsUncheckedUpdateOneWithoutActiveProgramNestedInput
   versions?: Prisma.ProgramVersionUncheckedUpdateManyWithoutProgramNestedInput
 }
 
@@ -667,6 +770,7 @@ export type WorkoutProgramSelect<ExtArgs extends runtime.Types.Extensions.Intern
   createdAt?: boolean
   updatedAt?: boolean
   activeVersion?: boolean | Prisma.WorkoutProgram$activeVersionArgs<ExtArgs>
+  activeInSettings?: boolean | Prisma.WorkoutProgram$activeInSettingsArgs<ExtArgs>
   versions?: boolean | Prisma.WorkoutProgram$versionsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkoutProgramCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workoutProgram"]>
@@ -715,6 +819,7 @@ export type WorkoutProgramSelectScalar = {
 export type WorkoutProgramOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "isDemo" | "status" | "activeVersionId" | "notice" | "activatedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["workoutProgram"]>
 export type WorkoutProgramInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   activeVersion?: boolean | Prisma.WorkoutProgram$activeVersionArgs<ExtArgs>
+  activeInSettings?: boolean | Prisma.WorkoutProgram$activeInSettingsArgs<ExtArgs>
   versions?: boolean | Prisma.WorkoutProgram$versionsArgs<ExtArgs>
   _count?: boolean | Prisma.WorkoutProgramCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -729,6 +834,7 @@ export type $WorkoutProgramPayload<ExtArgs extends runtime.Types.Extensions.Inte
   name: "WorkoutProgram"
   objects: {
     activeVersion: Prisma.$ProgramVersionPayload<ExtArgs> | null
+    activeInSettings: Prisma.$AppSettingsPayload<ExtArgs> | null
     versions: Prisma.$ProgramVersionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1137,6 +1243,7 @@ readonly fields: WorkoutProgramFieldRefs;
 export interface Prisma__WorkoutProgramClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   activeVersion<T extends Prisma.WorkoutProgram$activeVersionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkoutProgram$activeVersionArgs<ExtArgs>>): Prisma.Prisma__ProgramVersionClient<runtime.Types.Result.GetResult<Prisma.$ProgramVersionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  activeInSettings<T extends Prisma.WorkoutProgram$activeInSettingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkoutProgram$activeInSettingsArgs<ExtArgs>>): Prisma.Prisma__AppSettingsClient<runtime.Types.Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   versions<T extends Prisma.WorkoutProgram$versionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkoutProgram$versionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProgramVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1594,6 +1701,25 @@ export type WorkoutProgram$activeVersionArgs<ExtArgs extends runtime.Types.Exten
    */
   include?: Prisma.ProgramVersionInclude<ExtArgs> | null
   where?: Prisma.ProgramVersionWhereInput
+}
+
+/**
+ * WorkoutProgram.activeInSettings
+ */
+export type WorkoutProgram$activeInSettingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AppSettings
+   */
+  select?: Prisma.AppSettingsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AppSettings
+   */
+  omit?: Prisma.AppSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AppSettingsInclude<ExtArgs> | null
+  where?: Prisma.AppSettingsWhereInput
 }
 
 /**

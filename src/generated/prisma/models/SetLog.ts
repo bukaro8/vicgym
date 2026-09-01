@@ -31,6 +31,7 @@ export type SetLogAvgAggregateOutputType = {
   targetReps: number | null
   actualReps: number | null
   weightKg: runtime.Decimal | null
+  loadValue: runtime.Decimal | null
 }
 
 export type SetLogSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type SetLogSumAggregateOutputType = {
   targetReps: number | null
   actualReps: number | null
   weightKg: runtime.Decimal | null
+  loadValue: runtime.Decimal | null
 }
 
 export type SetLogMinAggregateOutputType = {
@@ -47,6 +49,8 @@ export type SetLogMinAggregateOutputType = {
   targetReps: number | null
   actualReps: number | null
   weightKg: runtime.Decimal | null
+  loadValue: runtime.Decimal | null
+  loadTrackingType: $Enums.LoadTrackingType | null
   completedAt: Date | null
   notes: string | null
   createdAt: Date | null
@@ -60,6 +64,8 @@ export type SetLogMaxAggregateOutputType = {
   targetReps: number | null
   actualReps: number | null
   weightKg: runtime.Decimal | null
+  loadValue: runtime.Decimal | null
+  loadTrackingType: $Enums.LoadTrackingType | null
   completedAt: Date | null
   notes: string | null
   createdAt: Date | null
@@ -73,6 +79,8 @@ export type SetLogCountAggregateOutputType = {
   targetReps: number
   actualReps: number
   weightKg: number
+  loadValue: number
+  loadTrackingType: number
   completedAt: number
   notes: number
   createdAt: number
@@ -86,6 +94,7 @@ export type SetLogAvgAggregateInputType = {
   targetReps?: true
   actualReps?: true
   weightKg?: true
+  loadValue?: true
 }
 
 export type SetLogSumAggregateInputType = {
@@ -93,6 +102,7 @@ export type SetLogSumAggregateInputType = {
   targetReps?: true
   actualReps?: true
   weightKg?: true
+  loadValue?: true
 }
 
 export type SetLogMinAggregateInputType = {
@@ -102,6 +112,8 @@ export type SetLogMinAggregateInputType = {
   targetReps?: true
   actualReps?: true
   weightKg?: true
+  loadValue?: true
+  loadTrackingType?: true
   completedAt?: true
   notes?: true
   createdAt?: true
@@ -115,6 +127,8 @@ export type SetLogMaxAggregateInputType = {
   targetReps?: true
   actualReps?: true
   weightKg?: true
+  loadValue?: true
+  loadTrackingType?: true
   completedAt?: true
   notes?: true
   createdAt?: true
@@ -128,6 +142,8 @@ export type SetLogCountAggregateInputType = {
   targetReps?: true
   actualReps?: true
   weightKg?: true
+  loadValue?: true
+  loadTrackingType?: true
   completedAt?: true
   notes?: true
   createdAt?: true
@@ -228,6 +244,8 @@ export type SetLogGroupByOutputType = {
   targetReps: number
   actualReps: number | null
   weightKg: runtime.Decimal | null
+  loadValue: runtime.Decimal | null
+  loadTrackingType: $Enums.LoadTrackingType | null
   completedAt: Date | null
   notes: string | null
   createdAt: Date
@@ -264,6 +282,8 @@ export type SetLogWhereInput = {
   targetReps?: Prisma.IntFilter<"SetLog"> | number
   actualReps?: Prisma.IntNullableFilter<"SetLog"> | number | null
   weightKg?: Prisma.DecimalNullableFilter<"SetLog"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.DecimalNullableFilter<"SetLog"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeNullableFilter<"SetLog"> | $Enums.LoadTrackingType | null
   completedAt?: Prisma.DateTimeNullableFilter<"SetLog"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"SetLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"SetLog"> | Date | string
@@ -279,6 +299,8 @@ export type SetLogOrderByWithRelationInput = {
   targetReps?: Prisma.SortOrder
   actualReps?: Prisma.SortOrderInput | Prisma.SortOrder
   weightKg?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadValue?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadTrackingType?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -298,6 +320,8 @@ export type SetLogWhereUniqueInput = Prisma.AtLeast<{
   targetReps?: Prisma.IntFilter<"SetLog"> | number
   actualReps?: Prisma.IntNullableFilter<"SetLog"> | number | null
   weightKg?: Prisma.DecimalNullableFilter<"SetLog"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.DecimalNullableFilter<"SetLog"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeNullableFilter<"SetLog"> | $Enums.LoadTrackingType | null
   completedAt?: Prisma.DateTimeNullableFilter<"SetLog"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"SetLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"SetLog"> | Date | string
@@ -313,6 +337,8 @@ export type SetLogOrderByWithAggregationInput = {
   targetReps?: Prisma.SortOrder
   actualReps?: Prisma.SortOrderInput | Prisma.SortOrder
   weightKg?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadValue?: Prisma.SortOrderInput | Prisma.SortOrder
+  loadTrackingType?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -334,6 +360,8 @@ export type SetLogScalarWhereWithAggregatesInput = {
   targetReps?: Prisma.IntWithAggregatesFilter<"SetLog"> | number
   actualReps?: Prisma.IntNullableWithAggregatesFilter<"SetLog"> | number | null
   weightKg?: Prisma.DecimalNullableWithAggregatesFilter<"SetLog"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.DecimalNullableWithAggregatesFilter<"SetLog"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeNullableWithAggregatesFilter<"SetLog"> | $Enums.LoadTrackingType | null
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"SetLog"> | Date | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"SetLog"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"SetLog"> | Date | string
@@ -346,6 +374,8 @@ export type SetLogCreateInput = {
   targetReps?: number
   actualReps?: number | null
   weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: $Enums.LoadTrackingType | null
   completedAt?: Date | string | null
   notes?: string | null
   createdAt?: Date | string
@@ -361,6 +391,8 @@ export type SetLogUncheckedCreateInput = {
   targetReps?: number
   actualReps?: number | null
   weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: $Enums.LoadTrackingType | null
   completedAt?: Date | string | null
   notes?: string | null
   createdAt?: Date | string
@@ -374,6 +406,8 @@ export type SetLogUpdateInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   actualReps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -389,6 +423,8 @@ export type SetLogUncheckedUpdateInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   actualReps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -403,6 +439,8 @@ export type SetLogCreateManyInput = {
   targetReps?: number
   actualReps?: number | null
   weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: $Enums.LoadTrackingType | null
   completedAt?: Date | string | null
   notes?: string | null
   createdAt?: Date | string
@@ -415,6 +453,8 @@ export type SetLogUpdateManyMutationInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   actualReps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -428,6 +468,8 @@ export type SetLogUncheckedUpdateManyInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   actualReps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -456,6 +498,8 @@ export type SetLogCountOrderByAggregateInput = {
   targetReps?: Prisma.SortOrder
   actualReps?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
+  loadValue?: Prisma.SortOrder
+  loadTrackingType?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -467,6 +511,7 @@ export type SetLogAvgOrderByAggregateInput = {
   targetReps?: Prisma.SortOrder
   actualReps?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
+  loadValue?: Prisma.SortOrder
 }
 
 export type SetLogMaxOrderByAggregateInput = {
@@ -476,6 +521,8 @@ export type SetLogMaxOrderByAggregateInput = {
   targetReps?: Prisma.SortOrder
   actualReps?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
+  loadValue?: Prisma.SortOrder
+  loadTrackingType?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -489,6 +536,8 @@ export type SetLogMinOrderByAggregateInput = {
   targetReps?: Prisma.SortOrder
   actualReps?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
+  loadValue?: Prisma.SortOrder
+  loadTrackingType?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -500,6 +549,7 @@ export type SetLogSumOrderByAggregateInput = {
   targetReps?: Prisma.SortOrder
   actualReps?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
+  loadValue?: Prisma.SortOrder
 }
 
 export type SetLogScalarRelationFilter = {
@@ -577,6 +627,8 @@ export type SetLogCreateWithoutExerciseSessionInput = {
   targetReps?: number
   actualReps?: number | null
   weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: $Enums.LoadTrackingType | null
   completedAt?: Date | string | null
   notes?: string | null
   createdAt?: Date | string
@@ -590,6 +642,8 @@ export type SetLogUncheckedCreateWithoutExerciseSessionInput = {
   targetReps?: number
   actualReps?: number | null
   weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: $Enums.LoadTrackingType | null
   completedAt?: Date | string | null
   notes?: string | null
   createdAt?: Date | string
@@ -633,6 +687,8 @@ export type SetLogScalarWhereInput = {
   targetReps?: Prisma.IntFilter<"SetLog"> | number
   actualReps?: Prisma.IntNullableFilter<"SetLog"> | number | null
   weightKg?: Prisma.DecimalNullableFilter<"SetLog"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.DecimalNullableFilter<"SetLog"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.EnumLoadTrackingTypeNullableFilter<"SetLog"> | $Enums.LoadTrackingType | null
   completedAt?: Prisma.DateTimeNullableFilter<"SetLog"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"SetLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"SetLog"> | Date | string
@@ -645,6 +701,8 @@ export type SetLogCreateWithoutRestPeriodInput = {
   targetReps?: number
   actualReps?: number | null
   weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: $Enums.LoadTrackingType | null
   completedAt?: Date | string | null
   notes?: string | null
   createdAt?: Date | string
@@ -659,6 +717,8 @@ export type SetLogUncheckedCreateWithoutRestPeriodInput = {
   targetReps?: number
   actualReps?: number | null
   weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: $Enums.LoadTrackingType | null
   completedAt?: Date | string | null
   notes?: string | null
   createdAt?: Date | string
@@ -687,6 +747,8 @@ export type SetLogUpdateWithoutRestPeriodInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   actualReps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -701,6 +763,8 @@ export type SetLogUncheckedUpdateWithoutRestPeriodInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   actualReps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -713,6 +777,8 @@ export type SetLogCreateManyExerciseSessionInput = {
   targetReps?: number
   actualReps?: number | null
   weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: $Enums.LoadTrackingType | null
   completedAt?: Date | string | null
   notes?: string | null
   createdAt?: Date | string
@@ -725,6 +791,8 @@ export type SetLogUpdateWithoutExerciseSessionInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   actualReps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -738,6 +806,8 @@ export type SetLogUncheckedUpdateWithoutExerciseSessionInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   actualReps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -751,6 +821,8 @@ export type SetLogUncheckedUpdateManyWithoutExerciseSessionInput = {
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
   actualReps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  loadTrackingType?: Prisma.NullableEnumLoadTrackingTypeFieldUpdateOperationsInput | $Enums.LoadTrackingType | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -766,6 +838,8 @@ export type SetLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   targetReps?: boolean
   actualReps?: boolean
   weightKg?: boolean
+  loadValue?: boolean
+  loadTrackingType?: boolean
   completedAt?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -781,6 +855,8 @@ export type SetLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   targetReps?: boolean
   actualReps?: boolean
   weightKg?: boolean
+  loadValue?: boolean
+  loadTrackingType?: boolean
   completedAt?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -795,6 +871,8 @@ export type SetLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   targetReps?: boolean
   actualReps?: boolean
   weightKg?: boolean
+  loadValue?: boolean
+  loadTrackingType?: boolean
   completedAt?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -809,13 +887,15 @@ export type SetLogSelectScalar = {
   targetReps?: boolean
   actualReps?: boolean
   weightKg?: boolean
+  loadValue?: boolean
+  loadTrackingType?: boolean
   completedAt?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SetLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "exerciseSessionId" | "setNumber" | "targetReps" | "actualReps" | "weightKg" | "completedAt" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["setLog"]>
+export type SetLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "exerciseSessionId" | "setNumber" | "targetReps" | "actualReps" | "weightKg" | "loadValue" | "loadTrackingType" | "completedAt" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["setLog"]>
 export type SetLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   exerciseSession?: boolean | Prisma.ExerciseSessionDefaultArgs<ExtArgs>
   restPeriod?: boolean | Prisma.SetLog$restPeriodArgs<ExtArgs>
@@ -840,6 +920,8 @@ export type $SetLogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     targetReps: number
     actualReps: number | null
     weightKg: runtime.Decimal | null
+    loadValue: runtime.Decimal | null
+    loadTrackingType: $Enums.LoadTrackingType | null
     completedAt: Date | null
     notes: string | null
     createdAt: Date
@@ -1275,6 +1357,8 @@ export interface SetLogFieldRefs {
   readonly targetReps: Prisma.FieldRef<"SetLog", 'Int'>
   readonly actualReps: Prisma.FieldRef<"SetLog", 'Int'>
   readonly weightKg: Prisma.FieldRef<"SetLog", 'Decimal'>
+  readonly loadValue: Prisma.FieldRef<"SetLog", 'Decimal'>
+  readonly loadTrackingType: Prisma.FieldRef<"SetLog", 'LoadTrackingType'>
   readonly completedAt: Prisma.FieldRef<"SetLog", 'DateTime'>
   readonly notes: Prisma.FieldRef<"SetLog", 'String'>
   readonly createdAt: Prisma.FieldRef<"SetLog", 'DateTime'>

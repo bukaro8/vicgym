@@ -4,7 +4,7 @@ import {
   ProgramStatus,
   ProgramVersionSource,
 } from "../src/generated/prisma/enums";
-import { DEFAULT_TARGET_REPS, DEMO_SETS, demoProgrammeSeed, equipmentSeed, exerciseSeed, mediaStem, muscleSeed } from "../src/data/phase-2-catalogue";
+import { DEFAULT_TARGET_REPS, DEMO_SETS, demoProgrammeSeed, equipmentSeed, exerciseSeed, localExerciseMediaSeed, localExerciseMediaStem, mediaStem, muscleSeed } from "../src/data/phase-2-catalogue";
 import { getPrisma } from "../src/lib/prisma";
 
 const prisma = getPrisma();
@@ -90,6 +90,7 @@ for (const item of exerciseSeed) {
       active: true,
       repMode: item.repMode,
       loadEntryMode: item.loadEntryMode,
+      loadTrackingType: item.loadTrackingType,
     },
     update: {
       name: item.name,
@@ -98,6 +99,7 @@ for (const item of exerciseSeed) {
       active: true,
       repMode: item.repMode,
       loadEntryMode: item.loadEntryMode,
+      loadTrackingType: item.loadTrackingType,
     },
   });
   exerciseIds.set(item.slug, exercise.id);
@@ -124,6 +126,32 @@ for (const item of exerciseSeed) {
       update: { role: relationship.role },
     });
   }
+}
+
+// These filenames document equipment, not the movement. Remove only the
+// historical incorrect exercise-owned associations; the equipment media itself
+// remains available in the verified equipment catalogue.
+for (const [exerciseSlug, sourceFilename] of [
+  ["step-up", "20260830_142012.jpg"],
+  ["goblet-squat", "20260830_141924.jpg"],
+  ["dumbbell-romanian-deadlift", "20260830_141924.jpg"],
+  ["one-arm-dumbbell-row", "20260830_141924.jpg"],
+  ["standing-dumbbell-shoulder-press", "20260830_141924.jpg"],
+  ["dumbbell-biceps-curl", "20260830_141924.jpg"],
+  ["dumbbell-lateral-raise", "20260830_141924.jpg"],
+] as const) {
+  const exerciseId = exerciseIds.get(exerciseSlug);
+  if (exerciseId) await prisma.exerciseMedia.deleteMany({ where: { exerciseId, sourceFilename } });
+}
+
+for (const media of localExerciseMediaSeed) {
+  const exerciseId = exerciseIds.get(media.exerciseSlug);
+  if (!exerciseId) throw new Error(`Missing exercise for local media: ${media.exerciseSlug}`);
+  await prisma.exerciseMedia.upsert({
+    where: { exerciseId_provider_externalId_kind: { exerciseId, provider: "vicgym-local", externalId: media.filename, kind: "IMAGE" } },
+    create: { exerciseId, role: MediaRole.PRIMARY, kind: "IMAGE", storagePath: `${localExerciseMediaStem(media.exerciseSlug, media.filename)}-1280.webp`, sourceFilename: media.filename, altText: media.alt, provider: "vicgym-local", externalId: media.filename, attribution: "VicGym supplied exercise movement image.", sortOrder: 0 },
+    update: { role: MediaRole.PRIMARY, storagePath: `${localExerciseMediaStem(media.exerciseSlug, media.filename)}-1280.webp`, sourceFilename: media.filename, altText: media.alt, attribution: "VicGym supplied exercise movement image.", sortOrder: 0 },
+  });
 }
 
 const program = await prisma.workoutProgram.upsert({
@@ -190,6 +218,9 @@ if (!existingVersion) {
                 sets: DEMO_SETS,
                 targetReps: DEFAULT_TARGET_REPS,
                 plannedWeightKg: null,
+                plannedLoadValue: null,
+                loadTrackingTypeSnapshot: exerciseSeed.find((item) => item.slug === exerciseSlug)?.loadTrackingType,
+                loadEntryModeSnapshot: exerciseSeed.find((item) => item.slug === exerciseSlug)?.loadEntryMode,
                 restSeconds: compoundExercises.has(exerciseSlug) ? 120 : 90,
                 autoRest: true,
               };

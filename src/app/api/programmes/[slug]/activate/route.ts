@@ -2,9 +2,9 @@ import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { ProgramStatus } from "@/generated/prisma/enums";
 import { assertSameOriginJson, RequestPolicyError } from "@/lib/http/same-origin";
 import { getPrisma } from "@/lib/prisma";
+import { setActiveProgramme } from "@/server/active-programme";
 
 export const runtime = "nodejs";
 
@@ -19,11 +19,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     const program = await prisma.workoutProgram.findUnique({ where: { slug }, include: { versions: { where: { versionNumber: body.version }, select: { id: true } } } });
     if (!program || !program.isDemo || program.versions.length !== 1) return NextResponse.json({ error: "Demo programme version not found" }, { status: 404 });
 
-    const updated = await prisma.workoutProgram.update({
-      where: { id: program.id },
-      data: { activeVersionId: program.versions[0].id, status: ProgramStatus.ACTIVE, activatedAt: new Date() },
-      select: { slug: true, status: true, activeVersionId: true },
-    });
+    const updated = await prisma.$transaction((tx) => setActiveProgramme(tx, program.id, program.versions[0].id));
     revalidatePath("/");
     revalidatePath("/programme");
     return NextResponse.json({ program: updated });

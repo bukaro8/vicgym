@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import { SerwistProvider } from "@serwist/turbopack/react";
 
+import { OfflineProvider } from "@/components/offline-provider";
 import { RestTimerProvider } from "@/components/rest-timer-provider";
 
 import "./globals.css";
@@ -32,7 +34,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className="min-h-dvh antialiased"><RestTimerProvider>{children}</RestTimerProvider></body>
+      <body className="min-h-dvh antialiased"><SerwistProvider swUrl="/serwist/sw.js"><OfflineProvider><RestTimerProvider>{children}</RestTimerProvider></OfflineProvider></SerwistProvider></body>
     </html>
   );
 }

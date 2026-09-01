@@ -11,9 +11,10 @@ async function main() {
   const manifestPath = path.join(projectRoot, "public/media/equipment/manifest.json");
   const manifest = JSON.parse(await readFile(manifestPath, "utf8")) as { items: Array<{ equipmentSlug: string; originalFilename: string; originalSha256: string; derivatives: string[] }> };
   const expectedPhotos = equipmentSeed.flatMap((equipment) => equipment.photos.map((photo) => ({ equipmentSlug: equipment.slug, filename: photo.filename })));
-  assert.equal(manifest.items.length, expectedPhotos.length);
+  const equipmentItems = manifest.items.filter((item) => !item.equipmentSlug.startsWith("exercise:"));
+  assert.equal(equipmentItems.length, expectedPhotos.length);
 
-  for (const item of manifest.items) {
+  for (const item of equipmentItems) {
     assert(expectedPhotos.some((expected) => expected.equipmentSlug === item.equipmentSlug && expected.filename === item.originalFilename));
     const original = await readFile(path.join(projectRoot, "gym-pictures", item.originalFilename));
     assert.equal(createHash("sha256").update(original).digest("hex"), item.originalSha256);
@@ -35,6 +36,8 @@ async function main() {
   assert.deepEqual(exercises.map((item) => item.slug).sort(), exerciseSeed.map((item) => item.slug).sort());
   assert(exercises.every((exercise) => exercise.defaultTargetReps === DEFAULT_TARGET_REPS && exercise.active));
   assert(exercises.every((exercise) => exercise.equipmentId === null || exercise.equipment?.available));
+  assert(exercises.filter((exercise) => exercise.loadEntryMode === "STACK_TOTAL").every((exercise) => exercise.loadTrackingType === "MACHINE_LEVEL"));
+  assert(exercises.filter((exercise) => exercise.loadEntryMode === "PER_DUMBBELL" || exercise.loadEntryMode === "TOTAL_LOAD").every((exercise) => exercise.loadTrackingType === "KILOGRAM"));
   assert.equal(muscles.length, muscleSeed.length);
   assert(program);
   assert.equal(program.isDemo, true);
@@ -46,6 +49,7 @@ async function main() {
   const programmeExercises = program.versions[0].days.flatMap((day) => day.workoutExercises);
   assert.equal(programmeExercises.length, 20);
   assert(programmeExercises.every((item) => item.sets === DEMO_SETS && item.targetReps === DEFAULT_TARGET_REPS && item.plannedWeightKg === null));
+  assert(programmeExercises.every((item) => item.loadTrackingTypeSnapshot !== null && item.loadEntryModeSnapshot !== null));
   assert(programmeExercises.every((item) => item.exercise.active));
   assert.equal(sessionCount, 0);
 

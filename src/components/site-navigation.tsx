@@ -1,6 +1,6 @@
 "use client";
 
-import { Dumbbell, Home, ListChecks } from "lucide-react";
+import { BarChart3, Dumbbell, Ellipsis, Home, PlayCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -8,8 +8,10 @@ import { cn } from "@/lib/utils";
 
 const items = [
   { href: "/", label: "Home", icon: Home },
+  { href: "/workouts", label: "Workouts", icon: PlayCircle },
   { href: "/exercises", label: "Exercises", icon: Dumbbell },
-  { href: "/programme", label: "Programme", icon: ListChecks },
+  { href: "/progress", label: "Progress", icon: BarChart3 },
+  { href: "/more", label: "More", icon: Ellipsis },
 ] as const;
 
 export function SiteNavigation({ variant }: Readonly<{ variant: "desktop" | "mobile" }>) {
@@ -30,7 +32,7 @@ export function SiteNavigation({ variant }: Readonly<{ variant: "desktop" | "mob
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden" aria-label="Primary navigation">
-      <div className="mx-auto grid max-w-md grid-cols-3">
+      <div className="mx-auto grid max-w-md grid-cols-5">
         {items.map(({ href, label, icon: Icon }) => {
           const active = href === "/" ? pathname === href : pathname.startsWith(href);
           return (

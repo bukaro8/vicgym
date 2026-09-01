@@ -1,10 +1,12 @@
-import { ArrowLeft, Dumbbell, ExternalLink, Repeat2 } from "lucide-react";
+import { ArrowLeft, BarChart3, Dumbbell, ExternalLink, Repeat2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AppShell } from "@/components/app-shell";
 import { ResponsiveEquipmentImage } from "@/components/responsive-equipment-image";
 import { equipmentTypeLabel } from "@/lib/display";
+import { getExercisePrimaryMedia, getExerciseReferenceMedia, getExerciseVideoMedia } from "@/lib/exercise-media";
+import { loadInputLabel } from "@/lib/load-tracking";
 import { getPrisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +16,7 @@ export default async function ExerciseDetailPage({ params }: PageProps<"/exercis
   const exercise = await getPrisma().exercise.findUnique({
     where: { slug, active: true },
     include: {
+      media: { orderBy: { sortOrder: "asc" } },
       equipment: { include: { media: { orderBy: { sortOrder: "asc" } } } },
       muscles: { include: { muscle: true } },
     },
@@ -22,8 +25,9 @@ export default async function ExerciseDetailPage({ params }: PageProps<"/exercis
 
   const primaryMuscle = exercise.muscles.find((relationship) => relationship.role === "PRIMARY")?.muscle;
   const secondaryMuscles = exercise.muscles.filter((relationship) => relationship.role === "SECONDARY").map((relationship) => relationship.muscle);
-  const primaryPhoto = exercise.equipment?.media.find((media) => media.role === "PRIMARY");
-  const referencePhotos = exercise.equipment?.media.filter((media) => media.role === "REFERENCE") ?? [];
+  const primaryPhoto = getExercisePrimaryMedia(exercise);
+  const referencePhotos = getExerciseReferenceMedia(exercise);
+  const movementVideo = getExerciseVideoMedia(exercise);
 
   return (
     <AppShell>
@@ -40,16 +44,18 @@ export default async function ExerciseDetailPage({ params }: PageProps<"/exercis
                 <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-5xl">{exercise.name}</h1>
                 <p className="mt-3 text-sm text-muted-foreground">{exercise.equipment?.name ?? "Bodyweight / no equipment"}</p>
               </div>
-              {exercise.techniqueUrl && (
-                <a href={exercise.techniqueUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Technique video<ExternalLink className="size-4" aria-hidden="true" /></a>
+              {(movementVideo?.sourceUrl || exercise.techniqueUrl) && (
+                <a href={movementVideo?.sourceUrl ?? exercise.techniqueUrl ?? "#"} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Watch movement<ExternalLink className="size-4" aria-hidden="true" /></a>
               )}
             </div>
 
-            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+            <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <div className="rounded-2xl border bg-background p-4"><Dumbbell className="size-5 text-primary" aria-hidden="true" /><p className="mt-3 text-xs text-muted-foreground">Primary muscle</p><p className="mt-1 font-semibold">{primaryMuscle?.name ?? "—"}</p></div>
               <div className="rounded-2xl border bg-background p-4"><Repeat2 className="size-5 text-primary" aria-hidden="true" /><p className="mt-3 text-xs text-muted-foreground">Default target</p><p className="mt-1 font-semibold">{exercise.defaultTargetReps} reps{exercise.repMode === "PER_SIDE" ? " per side" : ""}</p></div>
               <div className="rounded-2xl border bg-background p-4"><p className="text-xs text-muted-foreground">Secondary muscles</p><p className="mt-2 font-semibold leading-6">{secondaryMuscles.length ? secondaryMuscles.map((muscle) => muscle.name).join(", ") : "None recorded"}</p></div>
+              <div className="rounded-2xl border bg-background p-4"><p className="text-xs text-muted-foreground">Load tracking</p><p className="mt-2 font-semibold leading-6">{loadInputLabel(exercise.loadTrackingType, exercise.loadEntryMode) ?? (exercise.loadTrackingType === "BODYWEIGHT" ? "Bodyweight" : "Reps only")}</p></div>
             </div>
+            <Link href={`/progress/exercises/${exercise.slug}`} className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-2xl border bg-background px-4 text-sm font-semibold text-primary"><BarChart3 className="size-4" />View progress history</Link>
           </div>
         </article>
 

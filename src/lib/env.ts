@@ -3,6 +3,8 @@ import { z } from "zod";
 export const serverEnvSchema = z.object({
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   APP_TIMEZONE: z.string().min(1).default("Europe/London"),
+  RAPIDAPI_KEY: z.string().min(1).optional(),
+  RAPIDAPI_HOST: z.string().regex(/^[a-z0-9.-]+$/i, "RAPIDAPI_HOST is invalid").default("edb-with-videos-and-images-by-ascendapi.p.rapidapi.com"),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 });
 
