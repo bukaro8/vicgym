@@ -71,5 +71,8 @@
   },
   "overrides": {
     "deepmerge-ts": "^8.0.0"
-  }
+  },
+  "engines": {
+  "node": ">=22.22.2"
+}
 }
