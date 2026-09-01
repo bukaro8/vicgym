@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
-import { DEFAULT_TARGET_REPS, DEMO_SETS, demoProgrammeSeed, equipmentSeed, exerciseSeed, muscleSeed } from "../src/data/phase-2-catalogue";
+import { DEFAULT_TARGET_REPS, DEMO_SETS, demoProgrammeSeed, equipmentSeed, exerciseDbMediaSeed, exerciseSeed, muscleSeed } from "../src/data/phase-2-catalogue";
 import { getPrisma } from "../src/lib/prisma";
 
 async function main() {
@@ -23,10 +23,11 @@ async function main() {
   }
 
   const prisma = getPrisma();
-  const [equipment, exercises, muscles, program, sessionCount] = await Promise.all([
+  const [equipment, exercises, muscles, providerMedia, program, sessionCount] = await Promise.all([
     prisma.equipment.findMany({ include: { media: true }, orderBy: { slug: "asc" } }),
     prisma.exercise.findMany({ include: { equipment: true }, orderBy: { slug: "asc" } }),
     prisma.muscle.findMany(),
+    prisma.exerciseMedia.findMany({ where: { provider: "ascendapi-exercisedb" } }),
     prisma.workoutProgram.findUnique({ where: { slug: demoProgrammeSeed.slug }, include: { versions: { include: { days: { include: { workoutExercises: { include: { exercise: true } } } } } } } }),
     prisma.workoutSession.count(),
   ]);
@@ -38,6 +39,9 @@ async function main() {
   assert(exercises.every((exercise) => exercise.equipmentId === null || exercise.equipment?.available));
   assert(exercises.filter((exercise) => exercise.loadEntryMode === "STACK_TOTAL").every((exercise) => exercise.loadTrackingType === "MACHINE_LEVEL"));
   assert(exercises.filter((exercise) => exercise.loadEntryMode === "PER_DUMBBELL" || exercise.loadEntryMode === "TOTAL_LOAD").every((exercise) => exercise.loadTrackingType === "KILOGRAM"));
+  assert.equal(providerMedia.filter((media) => media.kind === "IMAGE").length, exerciseDbMediaSeed.length);
+  assert.equal(providerMedia.filter((media) => media.kind === "VIDEO").length, exerciseDbMediaSeed.length);
+  for (const media of providerMedia.filter((item) => item.kind === "IMAGE")) await stat(path.join(projectRoot, "public", media.storagePath));
   assert.equal(muscles.length, muscleSeed.length);
   assert(program);
   assert.equal(program.isDemo, true);
