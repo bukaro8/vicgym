@@ -7,6 +7,7 @@ import { adjustedRemainingMilliseconds, formatTimer, remainingMilliseconds } fro
 import { getActiveOfflineWorkout, getOfflineTimer, putOfflineTimer } from "@/lib/offline-db";
 import { syncOfflineMutations } from "@/lib/offline-sync";
 import { offlineTimerDto, updateTimerLocally } from "@/lib/offline-workout";
+import { playTimerAlert, vibrateTimerAlert } from "@/lib/timer-alerts";
 import type { RestTimerDto, TimerAction } from "@/server/rest-timers";
 
 type TimerSettings = { soundEnabled: boolean; vibrationEnabled: boolean };
@@ -33,7 +34,7 @@ export function RestTimerProvider({ children }: Readonly<{ children: React.React
   const begin = useCallback((value: RestTimerDto) => { completedRef.current = null; setTimer(value); setRemainingMs(calculate(value)); setOverlay(true); }, [calculate]);
 
   useEffect(() => {
-    Promise.all([getActiveOfflineWorkout(), getOfflineTimer()]).then(([workout, localTimer]) => { sessionIdRef.current = workout?.id ?? null; if (localTimer) { const dto = offlineTimerDto(localTimer); setTimer(dto); setRemainingMs(calculate(dto)); return; } return fetch("/api/rest-periods/active", { cache: "no-store" }).then((response) => response.ok ? response.json() : null).then(async (data: { timer: RestTimerDto | null; settings: TimerSettings } | null) => { if (!data) return; setSettings(data.settings); setTimer(data.timer); setRemainingMs(calculate(data.timer)); if (data.timer) await putOfflineTimer({ id: data.timer.id, setLogId: data.timer.setLogId, status: data.timer.status, configuredSeconds: data.timer.configuredSeconds, startedAt: data.timer.startedAt, endsAt: data.timer.endsAt, pausedAt: data.timer.pausedAt, pausedRemainingMs: data.timer.pausedRemainingMs, exerciseName: data.timer.exerciseName, completedSetNumber: data.timer.completedSetNumber, nextSetId: data.timer.nextSetId, updatedAt: data.timer.updatedAt }); }); }).catch(() => undefined);
+    Promise.all([getActiveOfflineWorkout(), getOfflineTimer()]).then(([workout, localTimer]) => { sessionIdRef.current = workout?.id ?? null; if (localTimer) { const dto = offlineTimerDto(localTimer); setTimer(dto); setRemainingMs(calculate(dto)); } return fetch("/api/rest-periods/active", { cache: "no-store" }).then((response) => response.ok ? response.json() : null).then(async (data: { timer: RestTimerDto | null; settings: TimerSettings } | null) => { if (!data) return; setSettings(data.settings); if (localTimer) return; setTimer(data.timer); setRemainingMs(calculate(data.timer)); if (data.timer) await putOfflineTimer({ id: data.timer.id, setLogId: data.timer.setLogId, status: data.timer.status, configuredSeconds: data.timer.configuredSeconds, startedAt: data.timer.startedAt, endsAt: data.timer.endsAt, pausedAt: data.timer.pausedAt, pausedRemainingMs: data.timer.pausedRemainingMs, exerciseName: data.timer.exerciseName, completedSetNumber: data.timer.completedSetNumber, nextSetId: data.timer.nextSetId, updatedAt: data.timer.updatedAt }); }); }).catch(() => undefined);
     const listener = (event: Event) => begin((event as TimerEvent).detail.timer);
     window.addEventListener("vicgym:timer-started", listener);
     return () => window.removeEventListener("vicgym:timer-started", listener);
@@ -55,10 +56,8 @@ export function RestTimerProvider({ children }: Readonly<{ children: React.React
       setRemainingMs(next);
       if (next === 0 && completedRef.current !== timer.id) {
         completedRef.current = timer.id;
-        if (settings.soundEnabled) {
-          try { const context = new AudioContext(); const oscillator = context.createOscillator(); oscillator.connect(context.destination); oscillator.start(); oscillator.stop(context.currentTime + 0.18); } catch { /* best effort */ }
-        }
-        if (settings.vibrationEnabled && "vibrate" in navigator) navigator.vibrate([180, 80, 180]);
+        if (settings.soundEnabled) playTimerAlert();
+        if (settings.vibrationEnabled) vibrateTimerAlert();
         void action("COMPLETE");
       }
     };
