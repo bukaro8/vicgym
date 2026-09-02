@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { validatedSyncLoad } from "@/server/sync";
+import { resolveTimerReplay, validatedSyncLoad } from "@/server/sync";
 
 describe("offline sync load compatibility", () => {
   it("recovers a pending legacy field using a typed machine session snapshot", () => {
@@ -29,5 +29,19 @@ describe("offline sync load compatibility", () => {
     expect(() => validatedSyncLoad({ weightKg: 5 }, { loadTrackingTypeSnapshot: "BODYWEIGHT" })).toThrow("does not accept an external load");
     expect(() => validatedSyncLoad({ loadValue: 8, loadTrackingType: "KILOGRAM" }, { loadTrackingTypeSnapshot: "MACHINE_LEVEL" })).toThrow("does not match session type");
     expect(() => validatedSyncLoad({ weightKg: 8.5 }, { loadTrackingTypeSnapshot: "MACHINE_LEVEL" })).toThrow("integer");
+  });
+});
+
+describe("offline timer replay compatibility", () => {
+  it("keeps same-session timers unchanged", () => {
+    expect(resolveTimerReplay("RUNNING", "session-1", "session-1")).toEqual({ action: "apply", status: "RUNNING", recoveredSessionMismatch: false });
+  });
+
+  it("turns a cross-session active timer into a safe historical skip", () => {
+    expect(resolveTimerReplay("RUNNING", "session-2", "session-1")).toEqual({ action: "apply", status: "SKIPPED", recoveredSessionMismatch: true });
+  });
+
+  it("acknowledges an orphan timer so it cannot block later workout data", () => {
+    expect(resolveTimerReplay("SKIPPED", "session-1", null)).toEqual({ action: "orphan" });
   });
 });

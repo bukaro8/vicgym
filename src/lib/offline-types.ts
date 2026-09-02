@@ -49,6 +49,8 @@ export type OfflineWorkout = {
 
 export type OfflineTimer = {
   id: string;
+  /** Optional only for timers persisted by VicGym versions before timer ownership was recorded. */
+  sessionId?: string;
   setLogId: string;
   status: "RUNNING" | "PAUSED";
   configuredSeconds: number;

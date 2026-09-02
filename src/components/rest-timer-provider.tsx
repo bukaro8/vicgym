@@ -31,10 +31,10 @@ export function RestTimerProvider({ children }: Readonly<{ children: React.React
   const sessionIdRef = useRef<string | null>(null);
 
   const calculate = useCallback((value: RestTimerDto | null) => value?.status === "PAUSED" ? (value.pausedRemainingMs ?? 0) : remainingMilliseconds(value?.endsAt ?? null), []);
-  const begin = useCallback((value: RestTimerDto) => { completedRef.current = null; setTimer(value); setRemainingMs(calculate(value)); setOverlay(true); }, [calculate]);
+  const begin = useCallback((value: RestTimerDto) => { completedRef.current = null; sessionIdRef.current = value.sessionId; setTimer(value); setRemainingMs(calculate(value)); setOverlay(true); }, [calculate]);
 
   useEffect(() => {
-    Promise.all([getActiveOfflineWorkout(), getOfflineTimer()]).then(([workout, localTimer]) => { sessionIdRef.current = workout?.id ?? null; if (localTimer) { const dto = offlineTimerDto(localTimer); setTimer(dto); setRemainingMs(calculate(dto)); } return fetch("/api/rest-periods/active", { cache: "no-store" }).then((response) => response.ok ? response.json() : null).then(async (data: { timer: RestTimerDto | null; settings: TimerSettings } | null) => { if (!data) return; setSettings(data.settings); if (localTimer) return; setTimer(data.timer); setRemainingMs(calculate(data.timer)); if (data.timer) await putOfflineTimer({ id: data.timer.id, setLogId: data.timer.setLogId, status: data.timer.status, configuredSeconds: data.timer.configuredSeconds, startedAt: data.timer.startedAt, endsAt: data.timer.endsAt, pausedAt: data.timer.pausedAt, pausedRemainingMs: data.timer.pausedRemainingMs, exerciseName: data.timer.exerciseName, completedSetNumber: data.timer.completedSetNumber, nextSetId: data.timer.nextSetId, updatedAt: data.timer.updatedAt }); }); }).catch(() => undefined);
+    Promise.all([getActiveOfflineWorkout(), getOfflineTimer()]).then(([workout, localTimer]) => { sessionIdRef.current = localTimer?.sessionId ?? workout?.id ?? null; if (localTimer) { const dto = offlineTimerDto(localTimer); setTimer(dto); setRemainingMs(calculate(dto)); } return fetch("/api/rest-periods/active", { cache: "no-store" }).then((response) => response.ok ? response.json() : null).then(async (data: { timer: RestTimerDto | null; settings: TimerSettings } | null) => { if (!data) return; setSettings(data.settings); if (localTimer) return; setTimer(data.timer); setRemainingMs(calculate(data.timer)); if (data.timer) { sessionIdRef.current = data.timer.sessionId; await putOfflineTimer({ id: data.timer.id, sessionId: data.timer.sessionId ?? undefined, setLogId: data.timer.setLogId, status: data.timer.status, configuredSeconds: data.timer.configuredSeconds, startedAt: data.timer.startedAt, endsAt: data.timer.endsAt, pausedAt: data.timer.pausedAt, pausedRemainingMs: data.timer.pausedRemainingMs, exerciseName: data.timer.exerciseName, completedSetNumber: data.timer.completedSetNumber, nextSetId: data.timer.nextSetId, updatedAt: data.timer.updatedAt }); } }); }).catch(() => undefined);
     const listener = (event: Event) => begin((event as TimerEvent).detail.timer);
     window.addEventListener("vicgym:timer-started", listener);
     return () => window.removeEventListener("vicgym:timer-started", listener);
@@ -44,7 +44,7 @@ export function RestTimerProvider({ children }: Readonly<{ children: React.React
     if (!timer || busy) return;
     setBusy(true);
     try {
-      const sessionId = sessionIdRef.current ?? (await getActiveOfflineWorkout())?.id; if (!sessionId) throw new Error("Timer workout unavailable"); sessionIdRef.current = sessionId;
+      const sessionId = timer.sessionId ?? sessionIdRef.current ?? (await getActiveOfflineWorkout())?.id; if (!sessionId) throw new Error("Timer workout unavailable"); sessionIdRef.current = sessionId;
       const next = await updateTimerLocally(sessionId, nextAction); setTimer(next); setRemainingMs(calculate(next)); if (!next) setOverlay(false); void syncOfflineMutations();
     } finally { setBusy(false); }
   }, [busy, calculate, timer]);

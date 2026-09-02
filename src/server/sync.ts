@@ -10,6 +10,14 @@ function asDate(value: unknown, field: string): Date { if (typeof value !== "str
 function asNumber(value: unknown, field: string): number { if (typeof value !== "number" || !Number.isFinite(value)) throw new Error(`Invalid ${field}`); return value; }
 function asNullableNumber(value: unknown, field: string): number | null { return value === null ? null : asNumber(value, field); }
 function asOptionalNullableNumber(value: unknown, field: string): number | null { return value === undefined || value === null ? null : asNumber(value, field); }
+type TimerStatus = "RUNNING" | "PAUSED" | "COMPLETED" | "SKIPPED";
+export function resolveTimerReplay(requestedStatus: unknown, mutationSessionId: string, owningSessionId: string | null): { action: "orphan" } | { action: "apply"; status: TimerStatus; recoveredSessionMismatch: boolean } {
+  const status = String(requestedStatus);
+  if (!["RUNNING", "PAUSED", "COMPLETED", "SKIPPED"].includes(status)) throw new Error("Invalid timer status");
+  if (!owningSessionId) return { action: "orphan" };
+  const recoveredSessionMismatch = owningSessionId !== mutationSessionId;
+  return { action: "apply", status: recoveredSessionMismatch && (status === "RUNNING" || status === "PAUSED") ? "SKIPPED" : status as TimerStatus, recoveredSessionMismatch };
+}
 export function validatedSyncLoad(payload: Record<string, unknown>, exercise: { loadTrackingTypeSnapshot: "KILOGRAM" | "MACHINE_LEVEL" | "BODYWEIGHT" | "REPS_ONLY" | null }) {
   const trackingType = exercise.loadTrackingTypeSnapshot;
   const weightKg = asOptionalNullableNumber(payload.weightKg, "weightKg");
@@ -54,10 +62,17 @@ async function applyMutation(tx: Prisma.TransactionClient, mutation: OfflineMuta
     return;
   }
   if (mutation.type === "UPSERT_TIMER") {
-    const setLogId = String(payload.setLogId); const set = await tx.setLog.findFirst({ where: { id: setLogId, exerciseSession: { workoutSessionId: mutation.sessionId } } }); if (!set) throw new Error("Timer set was not found");
-    const status = String(payload.status); if (!["RUNNING", "PAUSED", "COMPLETED", "SKIPPED"].includes(status)) throw new Error("Invalid timer status");
+    const setLogId = String(payload.setLogId);
+    const set = await tx.setLog.findUnique({ where: { id: setLogId }, include: { exerciseSession: { select: { workoutSessionId: true } } } });
+    const resolution = resolveTimerReplay(payload.status, mutation.sessionId, set?.exerciseSession.workoutSessionId ?? null);
+    if (resolution.action === "orphan") {
+      console.warn("Acknowledged orphaned offline timer mutation", { mutationId: mutation.id, mutationType: mutation.type, sequence: mutation.sequence, sessionId: mutation.sessionId, targetId: mutation.targetId, setLogId });
+      return;
+    }
+    const status = resolution.status;
+    if (resolution.recoveredSessionMismatch) console.warn("Recovered offline timer session mismatch", { mutationId: mutation.id, mutationType: mutation.type, sequence: mutation.sequence, suppliedSessionId: mutation.sessionId, owningSessionId: set!.exerciseSession.workoutSessionId, targetId: mutation.targetId, setLogId, requestedStatus: String(payload.status), appliedStatus: status });
     await tx.restPeriod.updateMany({ where: { status: { in: ["RUNNING", "PAUSED"] }, NOT: { setLogId } }, data: { status: "SKIPPED", skippedAt: new Date(), endsAt: null, pausedRemainingMs: null, pausedRemainingSeconds: null } });
-    const timerData = { status: status as "RUNNING" | "PAUSED" | "COMPLETED" | "SKIPPED", configuredSeconds: asNumber(payload.configuredSeconds, "configuredSeconds"), startedAt: asDate(payload.startedAt, "startedAt"), endsAt: payload.endsAt === null ? null : asDate(payload.endsAt, "endsAt"), pausedAt: payload.pausedAt === null ? null : asDate(payload.pausedAt, "pausedAt"), pausedRemainingMs: asNullableNumber(payload.pausedRemainingMs, "pausedRemainingMs"), pausedRemainingSeconds: payload.pausedRemainingMs === null ? null : Math.ceil(asNumber(payload.pausedRemainingMs, "pausedRemainingMs") / 1000), completedAt: status === "COMPLETED" ? asDate(payload.updatedAt, "updatedAt") : null, skippedAt: status === "SKIPPED" ? asDate(payload.updatedAt, "updatedAt") : null };
+    const timerData = { status, configuredSeconds: asNumber(payload.configuredSeconds, "configuredSeconds"), startedAt: asDate(payload.startedAt, "startedAt"), endsAt: status === "RUNNING" && payload.endsAt !== null ? asDate(payload.endsAt, "endsAt") : null, pausedAt: status === "PAUSED" && payload.pausedAt !== null ? asDate(payload.pausedAt, "pausedAt") : null, pausedRemainingMs: status === "PAUSED" ? asNullableNumber(payload.pausedRemainingMs, "pausedRemainingMs") : null, pausedRemainingSeconds: status === "PAUSED" && payload.pausedRemainingMs !== null ? Math.ceil(asNumber(payload.pausedRemainingMs, "pausedRemainingMs") / 1000) : null, completedAt: status === "COMPLETED" ? asDate(payload.updatedAt, "updatedAt") : null, skippedAt: status === "SKIPPED" ? asDate(payload.updatedAt, "updatedAt") : null };
     const existing = await tx.restPeriod.findUnique({ where: { setLogId } });
     if (existing) await tx.restPeriod.update({ where: { id: existing.id }, data: timerData }); else await tx.restPeriod.create({ data: { id: mutation.targetId, setLogId, ...timerData } });
     return;

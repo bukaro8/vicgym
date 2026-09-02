@@ -51,6 +51,12 @@ async function putValue(store: StoreName, value: unknown): Promise<void> {
 export async function putOfflineWorkout(workout: OfflineWorkout): Promise<void> { await putValue(WORKOUTS, workout); }
 export async function getOfflineWorkout(id: string): Promise<OfflineWorkout | null> { return getValue(WORKOUTS, id); }
 export async function getActiveOfflineWorkout(): Promise<OfflineWorkout | null> { return (await getAll<OfflineWorkout>(WORKOUTS)).filter((item) => item.status === "IN_PROGRESS").sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0] ?? null; }
+export async function findOfflineWorkoutSessionForSet(setLogId: string): Promise<string | null> {
+  const workout = (await getAll<OfflineWorkout>(WORKOUTS)).find((item) => item.exercises.some((exercise) => exercise.sets.some((set) => set.id === setLogId)));
+  if (workout) return workout.id;
+  const mutation = (await getAll<OfflineMutation>(OUTBOX)).find((item) => (item.type === "ADD_SET" || item.type === "UPSERT_SET") && item.targetId === setLogId);
+  return mutation?.sessionId ?? null;
+}
 export async function updateOfflineWorkout(id: string, update: (workout: OfflineWorkout) => OfflineWorkout): Promise<OfflineWorkout | null> { const current = await getOfflineWorkout(id); if (!current) return null; const next = update(current); await putOfflineWorkout(next); return next; }
 
 export async function putOfflineTimer(timer: OfflineTimer): Promise<void> { const existing = await getAll<OfflineTimer>(TIMERS); const db = await openOfflineDb(); const transaction = db.transaction(TIMERS, "readwrite"); const store = transaction.objectStore(TIMERS); existing.forEach((item) => store.delete(item.id)); store.put(timer); await transactionDone(transaction); db.close(); }
