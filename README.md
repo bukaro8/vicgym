@@ -621,7 +621,7 @@ idempotent verified catalogue seed
 standalone Next.js server
 ```
 
-The server command is `node .next/standalone/server.js` (also exposed as `npm start`). A post-build packaging step places `public` and `.next/static` inside the standalone bundle so the minimal server can serve PWA icons, exercise media, styles, and client JavaScript. Do not set Coolify's start command to `next start`. If Coolify requires a custom Docker start command, use `./docker-entrypoint.sh` to retain migration and catalogue-seed startup behavior.
+The image declares `node .next/standalone/server.js` as its Docker command (also exposed as `npm start`). Its entrypoint runs migrations and seeding before executing that command. A post-build packaging step places `public` and `.next/static` inside the standalone bundle so the minimal server can serve PWA icons, exercise media, styles, and client JavaScript. Do not set Coolify's start command to `next start`; leave the custom command empty so it uses the image command.
 
 If migration or seeding fails, the server does not start. `/api/health` returns `200` only when the application can reach the database; database failure returns `503`.
 

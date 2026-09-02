@@ -26,7 +26,7 @@ Keep `DATABASE_URL` in Coolify's secret environment configuration. Do not commit
 
 The container entrypoint runs `prisma migrate deploy` and the idempotent verified catalogue seed before starting the standalone Next.js server with `node .next/standalone/server.js`. If migration or seeding fails, the application does not start and cannot report healthy. The seed never activates the demo programme and does not overwrite an existing programme version.
 
-`npm start` uses the same standalone server command. The build's `postbuild` step copies `public` and `.next/static` into `.next/standalone`, so the minimal server can serve PWA icons, exercise media, styles, and client bundles. Do not configure `next start` as a Coolify start command. If a custom command is unavoidable, use `./docker-entrypoint.sh` so migrations and seeding still run before the server starts.
+The image declares `node .next/standalone/server.js` as its Docker `CMD`; `docker-entrypoint.sh` applies migrations and seeding before executing that command. `npm start` uses the same standalone server command. The build's `postbuild` step copies `public` and `.next/static` into `.next/standalone`, so the minimal server can serve PWA icons, exercise media, styles, and client bundles. Do not configure `next start` as a Coolify start command. Leave the custom command empty so Coolify uses the image command; if Coolify supplies a custom command, the entrypoint will execute it after migration and seeding.
 
 All future mutation routes must call the shared same-origin JSON guard. `APP_ORIGIN` is the authoritative public origin; the deployment should also preserve `Host`, `X-Forwarded-Host`, and `X-Forwarded-Proto`. Do not add permissive CORS headers.
 
