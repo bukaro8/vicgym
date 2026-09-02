@@ -259,6 +259,7 @@ export const exerciseSeed: ExerciseSeed[] = [
   { slug: "biceps-curl", name: "Biceps Curl", equipmentSlug: "biceps-curl", primaryMuscle: "biceps", secondaryMuscles: ["forearms"], repMode: "TOTAL", loadEntryMode: "STACK_TOTAL", loadTrackingType: machineLevel },
   { slug: "machine-abdominal-crunch", name: "Machine Abdominal Crunch", equipmentSlug: "abdominal-machine", primaryMuscle: "abdominals", secondaryMuscles: ["obliques"], repMode: "TOTAL", loadEntryMode: "STACK_TOTAL", loadTrackingType: machineLevel },
   { slug: "seated-leg-curl", name: "Seated Leg Curl", equipmentSlug: "seated-leg-curl", primaryMuscle: "hamstrings", secondaryMuscles: ["calves"], repMode: "TOTAL", loadEntryMode: "STACK_TOTAL", loadTrackingType: machineLevel },
+  { slug: "dumbbell-chest-press", name: "Dumbbell Chest Press", equipmentSlug: "dumbbells", primaryMuscle: "chest", secondaryMuscles: ["triceps", "anterior-deltoids"], repMode: "TOTAL", loadEntryMode: "PER_DUMBBELL", loadTrackingType: kilogram },
   { slug: "goblet-squat", name: "Goblet Squat", equipmentSlug: "dumbbells", primaryMuscle: "quadriceps", secondaryMuscles: ["glutes", "hamstrings"], repMode: "TOTAL", loadEntryMode: "TOTAL_LOAD", loadTrackingType: kilogram },
   { slug: "dumbbell-romanian-deadlift", name: "Dumbbell Romanian Deadlift", equipmentSlug: "dumbbells", primaryMuscle: "hamstrings", secondaryMuscles: ["glutes", "lower-back", "forearms"], repMode: "TOTAL", loadEntryMode: "PER_DUMBBELL", loadTrackingType: kilogram },
   { slug: "one-arm-dumbbell-row", name: "One-arm Dumbbell Row", equipmentSlug: "dumbbells", primaryMuscle: "lats", secondaryMuscles: ["upper-back", "biceps", "forearms"], repMode: "PER_SIDE", loadEntryMode: "PER_DUMBBELL", loadTrackingType: kilogram },
@@ -270,8 +271,8 @@ export const exerciseSeed: ExerciseSeed[] = [
   { slug: "reverse-lunge", name: "Reverse Lunge", equipmentSlug: null, primaryMuscle: "quadriceps", secondaryMuscles: ["glutes", "hamstrings"], repMode: "PER_SIDE", loadEntryMode: "BODYWEIGHT", loadTrackingType: bodyweight },
   { slug: "glute-bridge", name: "Glute Bridge", equipmentSlug: null, primaryMuscle: "glutes", secondaryMuscles: ["hamstrings"], repMode: "TOTAL", loadEntryMode: "BODYWEIGHT", loadTrackingType: bodyweight },
   { slug: "step-up", name: "Step-up", equipmentSlug: "studio-accessories", primaryMuscle: "quadriceps", secondaryMuscles: ["glutes", "hamstrings"], repMode: "PER_SIDE", loadEntryMode: "NONE", loadTrackingType: repsOnly },
-  { slug: "hip-raises", name: "Hip Raises", equipmentSlug: null, primaryMuscle: "glutes", secondaryMuscles: ["hamstrings", "lower-back"], repMode: "TOTAL", loadEntryMode: "BODYWEIGHT", loadTrackingType: bodyweight },
-  { slug: "calf-raises", name: "Calf Raises", equipmentSlug: null, primaryMuscle: "calves", secondaryMuscles: [], repMode: "TOTAL", loadEntryMode: "BODYWEIGHT", loadTrackingType: bodyweight },
+  { slug: "hip-raises", name: "Hip Raises", equipmentSlug: "dumbbells", primaryMuscle: "glutes", secondaryMuscles: ["hamstrings", "lower-back"], repMode: "TOTAL", loadEntryMode: "TOTAL_LOAD", loadTrackingType: kilogram },
+  { slug: "calf-raises", name: "Calf Raises", equipmentSlug: "dumbbells", primaryMuscle: "calves", secondaryMuscles: [], repMode: "TOTAL", loadEntryMode: "TOTAL_LOAD", loadTrackingType: kilogram },
   { slug: "plank", name: "Plank", equipmentSlug: null, primaryMuscle: "abdominals", secondaryMuscles: ["obliques"], repMode: "TOTAL", loadEntryMode: "BODYWEIGHT", loadTrackingType: bodyweight },
   { slug: "lying-leg-raises", name: "Lying Leg Raises", equipmentSlug: null, primaryMuscle: "abdominals", secondaryMuscles: ["hip-flexors"], repMode: "TOTAL", loadEntryMode: "BODYWEIGHT", loadTrackingType: bodyweight },
 ];

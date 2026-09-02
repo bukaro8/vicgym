@@ -4,7 +4,7 @@ VicGym uses Coolify's Traefik HTTP Basic Authentication as its only authenticati
 
 ## Application
 
-1. Create a standard Coolify application from this repository and build it with the included `Dockerfile`.
+1. Create a standard Coolify application from this repository and select the included `Dockerfile` as the build pack. Leave Coolify's custom start command empty so the image runs `docker-entrypoint.sh`.
 2. Route the application domain to container port `3000` through Coolify's proxy. Do not publish or forward the container port directly on the host; doing so would bypass authentication.
 3. Configure the public domain with HTTPS and automatic certificate renewal. Redirect HTTP to HTTPS.
 4. Enable HTTP Basic Authentication for the application in Coolify. Use a long, unique password generated and stored by a password manager. Coolify stores the configured password as a bcrypt hash.
@@ -24,7 +24,9 @@ Keep `DATABASE_URL` in Coolify's secret environment configuration. Do not commit
 
 ## Startup and network boundary
 
-The container entrypoint runs `prisma migrate deploy` and the idempotent verified catalogue seed before starting the standalone Next.js server. If migration or seeding fails, the application does not start and cannot report healthy. The seed never activates the demo programme and does not overwrite an existing programme version.
+The container entrypoint runs `prisma migrate deploy` and the idempotent verified catalogue seed before starting the standalone Next.js server with `node .next/standalone/server.js`. If migration or seeding fails, the application does not start and cannot report healthy. The seed never activates the demo programme and does not overwrite an existing programme version.
+
+`npm start` uses the same standalone server command. The build's `postbuild` step copies `public` and `.next/static` into `.next/standalone`, so the minimal server can serve PWA icons, exercise media, styles, and client bundles. Do not configure `next start` as a Coolify start command. If a custom command is unavoidable, use `./docker-entrypoint.sh` so migrations and seeding still run before the server starts.
 
 All future mutation routes must call the shared same-origin JSON guard. `APP_ORIGIN` is the authoritative public origin; the deployment should also preserve `Host`, `X-Forwarded-Host`, and `X-Forwarded-Proto`. Do not add permissive CORS headers.
 

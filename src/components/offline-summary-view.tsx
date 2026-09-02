@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Clock3, CloudOff, ListChecks } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { AppShell } from "@/components/app-shell";
 import { getOfflineOutbox, getOfflineWorkout } from "@/lib/offline-db";
@@ -11,7 +11,9 @@ import type { OfflineWorkout } from "@/lib/offline-types";
 export function OfflineSummaryView({ sessionId }: Readonly<{ sessionId: string }>) {
   const router = useRouter();
   const [data, setData] = useState<{ workout: OfflineWorkout | null; pending: number }>();
-  useEffect(() => { void Promise.all([getOfflineWorkout(sessionId), getOfflineOutbox()]).then(([workout, outbox]) => setData({ workout, pending: outbox.filter((item) => item.sessionId === sessionId).length })).catch(() => setData({ workout: null, pending: 0 })); }, [sessionId]);
+  const inspect = useCallback(() => Promise.all([getOfflineWorkout(sessionId), getOfflineOutbox()]).then(([workout, outbox]) => setData({ workout, pending: outbox.filter((item) => item.sessionId === sessionId).length })).catch(() => setData({ workout: null, pending: 0 })), [sessionId]);
+  useEffect(() => { const changed = () => void inspect(); void inspect(); window.addEventListener("vicgym:outbox-changed", changed); window.addEventListener("vicgym:sync-status", changed); return () => { window.removeEventListener("vicgym:outbox-changed", changed); window.removeEventListener("vicgym:sync-status", changed); }; }, [inspect]);
+  useEffect(() => { if (data?.workout?.status === "COMPLETED" && data.pending === 0) { router.replace(`/workouts/${sessionId}/summary`); router.refresh(); } }, [data, router, sessionId]);
   const completedSets = data?.workout?.exercises.flatMap((item) => item.sets).filter((set) => set.completedAt).length ?? 0;
   const completedExercises = data?.workout?.exercises.filter((item) => item.sets.filter((set) => set.completedAt).length >= item.plannedSets).length ?? 0; const duration = data?.workout?.completedAt ? Math.max(0, Math.floor((new Date(data.workout.completedAt).getTime() - new Date(data.workout.startedAt).getTime()) / 60_000)) : 0;
   const synchronized = data?.pending === 0;

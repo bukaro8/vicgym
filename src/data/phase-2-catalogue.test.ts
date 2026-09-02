@@ -19,6 +19,26 @@ describe("Phase 2 fixture boundaries", () => {
     }
   });
 
+  it("uses explicit kilogram semantics for the supported dumbbell exercises", () => {
+    expect(exerciseSeed.find((exercise) => exercise.slug === "dumbbell-chest-press")).toMatchObject({
+      equipmentSlug: "dumbbells",
+      loadTrackingType: "KILOGRAM",
+      loadEntryMode: "PER_DUMBBELL",
+    });
+    for (const slug of ["hip-raises", "calf-raises"]) {
+      expect(exerciseSeed.find((exercise) => exercise.slug === slug)).toMatchObject({
+        equipmentSlug: "dumbbells",
+        loadTrackingType: "KILOGRAM",
+        loadEntryMode: "TOTAL_LOAD",
+      });
+    }
+    expect(exerciseSeed.find((exercise) => exercise.slug === "dumbbell-romanian-deadlift")).toMatchObject({
+      equipmentSlug: "dumbbells",
+      loadTrackingType: "KILOGRAM",
+      loadEntryMode: "PER_DUMBBELL",
+    });
+  });
+
   it("keeps the demo programme constrained to the exercise library", () => {
     const exercises = new Set(exerciseSeed.map((exercise) => exercise.slug));
     const programmeExercises = demoProgrammeSeed.days.flatMap((day) => [...day.exercises]);
