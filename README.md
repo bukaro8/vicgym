@@ -50,6 +50,9 @@ There is no manual programme editor. The exercise catalogue is authoritative, pr
 ### Workout experience
 
 - Start a workout from an active programme version.
+- Choose whether the session includes generic cardio before it starts.
+- Start and stop the separate timestamp-based cardio counter when ready.
+- Preserve cardio duration through navigation, refreshes, and offline synchronization.
 - Only one workout can be in progress at a time.
 - Exercise order and planned values are snapshotted when the session starts.
 - Record and edit actual reps and compatible load values per set.
@@ -156,6 +159,8 @@ During an exercise:
 - allow `autoRest` to open the rest timer after a newly completed set.
 
 On the finish screen, VicGym reports incomplete planned sets and requires confirmation. The summary and history use only data actually saved for that session.
+
+When cardio was selected at workout start, a separate **Start cardio** control appears throughout the active workout. The counter does not begin until pressed. **Stop** records its duration; finishing the workout also stops a running cardio counter. Cardio is displayed separately while remaining part of the whole session elapsed time.
 
 ### Exercises
 

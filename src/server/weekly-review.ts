@@ -99,13 +99,14 @@ export async function getWeeklyReview(prisma: PrismaClient, requestedWeek?: stri
     }
   }));
 
-  let completedSets = 0; let totalMinutes = 0; let volume = 0; let incomplete = 0; let skippedExercises = 0; let skippedRests = 0; let completedRests = 0; let completedRestSeconds = 0; let adjustedRestSeconds = 0;
+  let completedSets = 0; let totalMinutes = 0; let cardioSeconds = 0; let volume = 0; let incomplete = 0; let skippedExercises = 0; let skippedRests = 0; let completedRests = 0; let completedRestSeconds = 0; let adjustedRestSeconds = 0;
   const primaryTotals = new Map<string, number>(); const secondaryTotals = new Map<string, number>();
   if (!sessions.length) lines.push("No completed workouts in this week.");
 
   for (const session of sessions) {
     lines.push("", `### ${session.workoutDayNameSnapshot} [${session.workoutDay.slug}]`, `Completed: ${localDate(session.completedAt!)} · Programme version ${session.programVersion.versionNumber}`);
     const minutes = durationMinutes(session.startedAt, session.completedAt); if (minutes) totalMinutes += minutes;
+    if (session.cardioPlanned) { cardioSeconds += session.cardioDurationSeconds; lines.push(`Cardio: ${session.cardioDurationSeconds ? `${Math.floor(session.cardioDurationSeconds / 60)} min ${session.cardioDurationSeconds % 60} sec` : "planned but not recorded"}`); }
     for (const item of session.exerciseSessions) {
       const sets: ReportSet[] = item.setLogs.filter((set) => set.completedAt).map((set) => ({ setNumber: set.setNumber, actualReps: set.actualReps, targetReps: set.targetReps, weightKg: set.weightKg === null ? null : Number(set.weightKg), loadValue: set.loadValue === null ? null : Number(set.loadValue), loadTrackingType: item.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null, loadEntryMode: item.loadEntryModeSnapshot as LoadEntryModeValue | null, notes: set.notes }));
       const primary = item.exercise.muscles.filter((muscle) => muscle.role === "PRIMARY").map((muscle) => muscle.muscle.name);
@@ -132,7 +133,7 @@ export async function getWeeklyReview(prisma: PrismaClient, requestedWeek?: stri
       }
     }
   }
-  lines.push("", "## SUMMARY", `Workouts completed: ${sessions.length}`, `Completed working sets: ${completedSets}`, `Workout duration: ${totalMinutes} min`, `Logged external-load volume: ${volume ? `${volume.toFixed(1)} kg-reps` : "not available"}`, `Incomplete / missed planned sets: ${incomplete}`, `Skipped exercises: ${skippedExercises}`, `Direct working sets by primary muscle: ${[...primaryTotals.entries()].map(([name, count]) => `${name} ${count}`).join(", ") || "none"}`, `Secondary-muscle involvement sets: ${[...secondaryTotals.entries()].map(([name, count]) => `${name} ${count}`).join(", ") || "none"}`);
+  lines.push("", "## SUMMARY", `Workouts completed: ${sessions.length}`, `Completed working sets: ${completedSets}`, `Whole-session duration: ${totalMinutes} min`, `Cardio time: ${Math.floor(cardioSeconds / 60)} min ${cardioSeconds % 60} sec`, `Logged external-load volume: ${volume ? `${volume.toFixed(1)} kg-reps` : "not available"}`, `Incomplete / missed planned sets: ${incomplete}`, `Skipped exercises: ${skippedExercises}`, `Direct working sets by primary muscle: ${[...primaryTotals.entries()].map(([name, count]) => `${name} ${count}`).join(", ") || "none"}`, `Secondary-muscle involvement sets: ${[...secondaryTotals.entries()].map(([name, count]) => `${name} ${count}`).join(", ") || "none"}`);
   if (skippedRests || completedRests || adjustedRestSeconds) lines.push("", "## REST INFORMATION", `Completed rest periods: ${completedRests}${completedRests ? ` · average elapsed ${Math.round(completedRestSeconds / completedRests)} sec` : ""}`, `Skipped rest periods: ${skippedRests}`, `Net manual rest adjustment: ${adjustedRestSeconds >= 0 ? "+" : ""}${adjustedRestSeconds} sec`);
   const categories = new Map<string, string[]>();
   for (const exercise of availableExercises) {

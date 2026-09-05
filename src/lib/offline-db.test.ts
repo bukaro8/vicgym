@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { clearPrivateOfflineData, getOfflineOutbox, getOfflineTimer, getOfflineWorkout, putOfflineTimer, putOfflineWorkout, queueOfflineMutation } from "@/lib/offline-db";
 import type { OfflineTimer, OfflineWorkout } from "@/lib/offline-types";
-import { saveSetLocally, updateTimerLocally } from "@/lib/offline-workout";
+import { saveSetLocally, startCardioLocally, stopCardioLocally, updateTimerLocally } from "@/lib/offline-workout";
 
 const workout: OfflineWorkout = { schemaVersion: 1, id: "session-1", programId: "program-1", programSlug: "demo-upper-lower", programName: "Demo Upper/Lower", programVersionId: "version-1", programVersionNumber: 1, workoutDayId: "day-1", workoutDaySlug: "upper-a", status: "IN_PROGRESS", workoutDayName: "Demo Upper A", startedAt: "2026-08-31T09:00:00.000Z", completedAt: null, currentExerciseId: "exercise-session-1", updatedAt: "2026-08-31T09:00:00.000Z", exercises: [{ id: "exercise-session-1", exerciseId: "exercise-1", slug: "chest-press", name: "Chest Press", position: 1, plannedSets: 3, targetReps: 12, restSeconds: 120, autoRest: true, equipmentName: "Chest Press", imagePath: "/media/equipment/chest-press-1280.webp", sets: [{ id: "set-1", setNumber: 1, targetReps: 12, actualReps: 12, weightKg: 30, completedAt: null }] }] };
 
@@ -37,6 +37,14 @@ describe("offline database", () => {
       ["UPSERT_SET", workout.id],
       ["UPSERT_TIMER", workout.id],
     ]);
+  });
+
+  it("stores cardio as a timestamp counter and queues start then stop in order", async () => {
+    await putOfflineWorkout({ ...workout, cardioPlanned: true, cardioStartedAt: null, cardioStoppedAt: null, cardioDurationSeconds: 0 });
+    await startCardioLocally(workout.id, new Date("2026-09-05T09:00:00.000Z"));
+    await stopCardioLocally(workout.id, new Date("2026-09-05T09:12:34.900Z"));
+    expect(await getOfflineWorkout(workout.id)).toMatchObject({ cardioStartedAt: "2026-09-05T09:00:00.000Z", cardioStoppedAt: "2026-09-05T09:12:34.900Z", cardioDurationSeconds: 754 });
+    expect((await getOfflineOutbox()).map((item) => [item.type, item.payload.action])).toEqual([["UPDATE_CARDIO", "START"], ["UPDATE_CARDIO", "STOP"]]);
   });
 
   it("clears the workout, timer, and outbox on explicit private-data reset", async () => {

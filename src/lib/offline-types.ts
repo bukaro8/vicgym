@@ -42,6 +42,10 @@ export type OfflineWorkout = {
   workoutDayName: string;
   startedAt: string;
   completedAt: string | null;
+  cardioPlanned?: boolean;
+  cardioStartedAt?: string | null;
+  cardioStoppedAt?: string | null;
+  cardioDurationSeconds?: number;
   currentExerciseId: string | null;
   exercises: OfflineExercise[];
   updatedAt: string;
@@ -64,7 +68,7 @@ export type OfflineTimer = {
   updatedAt: string;
 };
 
-export type OfflineMutationType = "ADD_SET" | "UPSERT_SET" | "UPSERT_TIMER" | "FINISH_WORKOUT";
+export type OfflineMutationType = "ADD_SET" | "UPSERT_SET" | "UPSERT_TIMER" | "UPDATE_CARDIO" | "FINISH_WORKOUT";
 export type OfflineMutation = {
   id: string;
   sequence: number;

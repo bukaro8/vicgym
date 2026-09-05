@@ -261,6 +261,10 @@ model WorkoutSession {
   workoutDayNameSnapshot String
   startedAt              DateTime             @default(now())
   completedAt            DateTime?
+  cardioPlanned          Boolean              @default(false)
+  cardioStartedAt        DateTime?
+  cardioStoppedAt        DateTime?
+  cardioDurationSeconds  Int                  @default(0)
   notes                  String?
   updatedAt              DateTime             @updatedAt
   programVersion         ProgramVersion       @relation(fields: [programVersionId], references: [id], onDelete: Restrict)

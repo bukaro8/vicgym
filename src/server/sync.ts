@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 
 import { Prisma, type PrismaClient } from "@/generated/prisma/client";
+import { cardioDurationSeconds } from "@/lib/cardio";
 import type { OfflineMutation } from "@/lib/offline-types";
 
 export type SyncResult = { id: string; type: OfflineMutation["type"]; sequence: number; status: "applied" | "duplicate" | "failed"; error?: string };
@@ -77,11 +78,29 @@ async function applyMutation(tx: Prisma.TransactionClient, mutation: OfflineMuta
     if (existing) await tx.restPeriod.update({ where: { id: existing.id }, data: timerData }); else await tx.restPeriod.create({ data: { id: mutation.targetId, setLogId, ...timerData } });
     return;
   }
+  if (mutation.type === "UPDATE_CARDIO") {
+    const session = await tx.workoutSession.findUnique({ where: { id: mutation.sessionId } });
+    if (!session || session.status !== "IN_PROGRESS") throw new Error("Cardio workout session was not found");
+    if (!session.cardioPlanned) throw new Error("Cardio was not selected for this workout");
+    const action = String(payload.action);
+    const at = asDate(payload.at, "at");
+    if (action === "START") {
+      if (session.cardioStoppedAt) throw new Error("Cardio has already been completed");
+      if (!session.cardioStartedAt) await tx.workoutSession.update({ where: { id: session.id }, data: { cardioStartedAt: at, cardioStoppedAt: null, cardioDurationSeconds: 0 } });
+      return;
+    }
+    if (action === "STOP") {
+      if (!session.cardioStartedAt) throw new Error("Cardio has not been started");
+      if (!session.cardioStoppedAt) await tx.workoutSession.update({ where: { id: session.id }, data: { cardioStoppedAt: at, cardioDurationSeconds: cardioDurationSeconds(session.cardioStartedAt, at) } });
+      return;
+    }
+    throw new Error("Invalid cardio action");
+  }
   if (mutation.type === "FINISH_WORKOUT") {
     const session = await tx.workoutSession.findUnique({ where: { id: mutation.sessionId } }); if (!session) throw new Error("Workout session was not found"); if (session.status === "COMPLETED") return;
     const completedAt = asDate(payload.completedAt, "completedAt");
     await tx.restPeriod.updateMany({ where: { setLog: { exerciseSession: { workoutSessionId: mutation.sessionId } }, status: { in: ["RUNNING", "PAUSED"] } }, data: { status: "SKIPPED", skippedAt: completedAt, endsAt: null, pausedRemainingMs: null, pausedRemainingSeconds: null } });
-    await tx.workoutSession.update({ where: { id: mutation.sessionId }, data: { status: "COMPLETED", completedAt } });
+    await tx.workoutSession.update({ where: { id: mutation.sessionId }, data: { status: "COMPLETED", completedAt, cardioStoppedAt: session.cardioStartedAt && !session.cardioStoppedAt ? completedAt : session.cardioStoppedAt, cardioDurationSeconds: session.cardioStartedAt && !session.cardioStoppedAt ? cardioDurationSeconds(session.cardioStartedAt, completedAt) : session.cardioDurationSeconds } });
   }
 }
 

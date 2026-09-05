@@ -20,8 +20,18 @@ export type WorkoutSessionModel = runtime.Types.Result.DefaultSelection<Prisma.$
 
 export type AggregateWorkoutSession = {
   _count: WorkoutSessionCountAggregateOutputType | null
+  _avg: WorkoutSessionAvgAggregateOutputType | null
+  _sum: WorkoutSessionSumAggregateOutputType | null
   _min: WorkoutSessionMinAggregateOutputType | null
   _max: WorkoutSessionMaxAggregateOutputType | null
+}
+
+export type WorkoutSessionAvgAggregateOutputType = {
+  cardioDurationSeconds: number | null
+}
+
+export type WorkoutSessionSumAggregateOutputType = {
+  cardioDurationSeconds: number | null
 }
 
 export type WorkoutSessionMinAggregateOutputType = {
@@ -32,6 +42,10 @@ export type WorkoutSessionMinAggregateOutputType = {
   workoutDayNameSnapshot: string | null
   startedAt: Date | null
   completedAt: Date | null
+  cardioPlanned: boolean | null
+  cardioStartedAt: Date | null
+  cardioStoppedAt: Date | null
+  cardioDurationSeconds: number | null
   notes: string | null
   updatedAt: Date | null
 }
@@ -44,6 +58,10 @@ export type WorkoutSessionMaxAggregateOutputType = {
   workoutDayNameSnapshot: string | null
   startedAt: Date | null
   completedAt: Date | null
+  cardioPlanned: boolean | null
+  cardioStartedAt: Date | null
+  cardioStoppedAt: Date | null
+  cardioDurationSeconds: number | null
   notes: string | null
   updatedAt: Date | null
 }
@@ -56,11 +74,23 @@ export type WorkoutSessionCountAggregateOutputType = {
   workoutDayNameSnapshot: number
   startedAt: number
   completedAt: number
+  cardioPlanned: number
+  cardioStartedAt: number
+  cardioStoppedAt: number
+  cardioDurationSeconds: number
   notes: number
   updatedAt: number
   _all: number
 }
 
+
+export type WorkoutSessionAvgAggregateInputType = {
+  cardioDurationSeconds?: true
+}
+
+export type WorkoutSessionSumAggregateInputType = {
+  cardioDurationSeconds?: true
+}
 
 export type WorkoutSessionMinAggregateInputType = {
   id?: true
@@ -70,6 +100,10 @@ export type WorkoutSessionMinAggregateInputType = {
   workoutDayNameSnapshot?: true
   startedAt?: true
   completedAt?: true
+  cardioPlanned?: true
+  cardioStartedAt?: true
+  cardioStoppedAt?: true
+  cardioDurationSeconds?: true
   notes?: true
   updatedAt?: true
 }
@@ -82,6 +116,10 @@ export type WorkoutSessionMaxAggregateInputType = {
   workoutDayNameSnapshot?: true
   startedAt?: true
   completedAt?: true
+  cardioPlanned?: true
+  cardioStartedAt?: true
+  cardioStoppedAt?: true
+  cardioDurationSeconds?: true
   notes?: true
   updatedAt?: true
 }
@@ -94,6 +132,10 @@ export type WorkoutSessionCountAggregateInputType = {
   workoutDayNameSnapshot?: true
   startedAt?: true
   completedAt?: true
+  cardioPlanned?: true
+  cardioStartedAt?: true
+  cardioStoppedAt?: true
+  cardioDurationSeconds?: true
   notes?: true
   updatedAt?: true
   _all?: true
@@ -106,13 +148,13 @@ export type WorkoutSessionAggregateArgs<ExtArgs extends runtime.Types.Extensions
   where?: Prisma.WorkoutSessionWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of WorkoutSessions to fetch.
    */
   orderBy?: Prisma.WorkoutSessionOrderByWithRelationInput | Prisma.WorkoutSessionOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.WorkoutSessionWhereUniqueInput
@@ -134,6 +176,18 @@ export type WorkoutSessionAggregateArgs<ExtArgs extends runtime.Types.Extensions
    * Count returned WorkoutSessions
   **/
   _count?: true | WorkoutSessionCountAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
+   * Select which fields to average
+  **/
+  _avg?: WorkoutSessionAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
+   * Select which fields to sum
+  **/
+  _sum?: WorkoutSessionSumAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
@@ -167,6 +221,8 @@ export type WorkoutSessionGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   _count?: WorkoutSessionCountAggregateInputType | true
+  _avg?: WorkoutSessionAvgAggregateInputType
+  _sum?: WorkoutSessionSumAggregateInputType
   _min?: WorkoutSessionMinAggregateInputType
   _max?: WorkoutSessionMaxAggregateInputType
 }
@@ -179,9 +235,15 @@ export type WorkoutSessionGroupByOutputType = {
   workoutDayNameSnapshot: string
   startedAt: Date
   completedAt: Date | null
+  cardioPlanned: boolean
+  cardioStartedAt: Date | null
+  cardioStoppedAt: Date | null
+  cardioDurationSeconds: number
   notes: string | null
   updatedAt: Date
   _count: WorkoutSessionCountAggregateOutputType | null
+  _avg: WorkoutSessionAvgAggregateOutputType | null
+  _sum: WorkoutSessionSumAggregateOutputType | null
   _min: WorkoutSessionMinAggregateOutputType | null
   _max: WorkoutSessionMaxAggregateOutputType | null
 }
@@ -212,6 +274,10 @@ export type WorkoutSessionWhereInput = {
   workoutDayNameSnapshot?: Prisma.StringFilter<"WorkoutSession"> | string
   startedAt?: Prisma.DateTimeFilter<"WorkoutSession"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"WorkoutSession"> | Date | string | null
+  cardioPlanned?: Prisma.BoolFilter<"WorkoutSession"> | boolean
+  cardioStartedAt?: Prisma.DateTimeNullableFilter<"WorkoutSession"> | Date | string | null
+  cardioStoppedAt?: Prisma.DateTimeNullableFilter<"WorkoutSession"> | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFilter<"WorkoutSession"> | number
   notes?: Prisma.StringNullableFilter<"WorkoutSession"> | string | null
   updatedAt?: Prisma.DateTimeFilter<"WorkoutSession"> | Date | string
   programVersion?: Prisma.XOR<Prisma.ProgramVersionScalarRelationFilter, Prisma.ProgramVersionWhereInput>
@@ -227,6 +293,10 @@ export type WorkoutSessionOrderByWithRelationInput = {
   workoutDayNameSnapshot?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardioPlanned?: Prisma.SortOrder
+  cardioStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardioStoppedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardioDurationSeconds?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   programVersion?: Prisma.ProgramVersionOrderByWithRelationInput
@@ -245,6 +315,10 @@ export type WorkoutSessionWhereUniqueInput = Prisma.AtLeast<{
   workoutDayNameSnapshot?: Prisma.StringFilter<"WorkoutSession"> | string
   startedAt?: Prisma.DateTimeFilter<"WorkoutSession"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"WorkoutSession"> | Date | string | null
+  cardioPlanned?: Prisma.BoolFilter<"WorkoutSession"> | boolean
+  cardioStartedAt?: Prisma.DateTimeNullableFilter<"WorkoutSession"> | Date | string | null
+  cardioStoppedAt?: Prisma.DateTimeNullableFilter<"WorkoutSession"> | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFilter<"WorkoutSession"> | number
   notes?: Prisma.StringNullableFilter<"WorkoutSession"> | string | null
   updatedAt?: Prisma.DateTimeFilter<"WorkoutSession"> | Date | string
   programVersion?: Prisma.XOR<Prisma.ProgramVersionScalarRelationFilter, Prisma.ProgramVersionWhereInput>
@@ -260,11 +334,17 @@ export type WorkoutSessionOrderByWithAggregationInput = {
   workoutDayNameSnapshot?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardioPlanned?: Prisma.SortOrder
+  cardioStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardioStoppedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardioDurationSeconds?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.WorkoutSessionCountOrderByAggregateInput
+  _avg?: Prisma.WorkoutSessionAvgOrderByAggregateInput
   _max?: Prisma.WorkoutSessionMaxOrderByAggregateInput
   _min?: Prisma.WorkoutSessionMinOrderByAggregateInput
+  _sum?: Prisma.WorkoutSessionSumOrderByAggregateInput
 }
 
 export type WorkoutSessionScalarWhereWithAggregatesInput = {
@@ -278,6 +358,10 @@ export type WorkoutSessionScalarWhereWithAggregatesInput = {
   workoutDayNameSnapshot?: Prisma.StringWithAggregatesFilter<"WorkoutSession"> | string
   startedAt?: Prisma.DateTimeWithAggregatesFilter<"WorkoutSession"> | Date | string
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WorkoutSession"> | Date | string | null
+  cardioPlanned?: Prisma.BoolWithAggregatesFilter<"WorkoutSession"> | boolean
+  cardioStartedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WorkoutSession"> | Date | string | null
+  cardioStoppedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WorkoutSession"> | Date | string | null
+  cardioDurationSeconds?: Prisma.IntWithAggregatesFilter<"WorkoutSession"> | number
   notes?: Prisma.StringNullableWithAggregatesFilter<"WorkoutSession"> | string | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"WorkoutSession"> | Date | string
 }
@@ -288,6 +372,10 @@ export type WorkoutSessionCreateInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
   programVersion: Prisma.ProgramVersionCreateNestedOneWithoutWorkoutSessionsInput
@@ -303,6 +391,10 @@ export type WorkoutSessionUncheckedCreateInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
   exerciseSessions?: Prisma.ExerciseSessionUncheckedCreateNestedManyWithoutWorkoutSessionInput
@@ -314,6 +406,10 @@ export type WorkoutSessionUpdateInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   programVersion?: Prisma.ProgramVersionUpdateOneRequiredWithoutWorkoutSessionsNestedInput
@@ -329,6 +425,10 @@ export type WorkoutSessionUncheckedUpdateInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exerciseSessions?: Prisma.ExerciseSessionUncheckedUpdateManyWithoutWorkoutSessionNestedInput
@@ -342,6 +442,10 @@ export type WorkoutSessionCreateManyInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
 }
@@ -352,6 +456,10 @@ export type WorkoutSessionUpdateManyMutationInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -364,6 +472,10 @@ export type WorkoutSessionUncheckedUpdateManyInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -386,8 +498,16 @@ export type WorkoutSessionCountOrderByAggregateInput = {
   workoutDayNameSnapshot?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  cardioPlanned?: Prisma.SortOrder
+  cardioStartedAt?: Prisma.SortOrder
+  cardioStoppedAt?: Prisma.SortOrder
+  cardioDurationSeconds?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type WorkoutSessionAvgOrderByAggregateInput = {
+  cardioDurationSeconds?: Prisma.SortOrder
 }
 
 export type WorkoutSessionMaxOrderByAggregateInput = {
@@ -398,6 +518,10 @@ export type WorkoutSessionMaxOrderByAggregateInput = {
   workoutDayNameSnapshot?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  cardioPlanned?: Prisma.SortOrder
+  cardioStartedAt?: Prisma.SortOrder
+  cardioStoppedAt?: Prisma.SortOrder
+  cardioDurationSeconds?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -410,8 +534,16 @@ export type WorkoutSessionMinOrderByAggregateInput = {
   workoutDayNameSnapshot?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  cardioPlanned?: Prisma.SortOrder
+  cardioStartedAt?: Prisma.SortOrder
+  cardioStoppedAt?: Prisma.SortOrder
+  cardioDurationSeconds?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type WorkoutSessionSumOrderByAggregateInput = {
+  cardioDurationSeconds?: Prisma.SortOrder
 }
 
 export type WorkoutSessionScalarRelationFilter = {
@@ -527,6 +659,10 @@ export type WorkoutSessionCreateWithoutProgramVersionInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
   workoutDay: Prisma.WorkoutDayCreateNestedOneWithoutWorkoutSessionsInput
@@ -540,6 +676,10 @@ export type WorkoutSessionUncheckedCreateWithoutProgramVersionInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
   exerciseSessions?: Prisma.ExerciseSessionUncheckedCreateNestedManyWithoutWorkoutSessionInput
@@ -582,6 +722,10 @@ export type WorkoutSessionScalarWhereInput = {
   workoutDayNameSnapshot?: Prisma.StringFilter<"WorkoutSession"> | string
   startedAt?: Prisma.DateTimeFilter<"WorkoutSession"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"WorkoutSession"> | Date | string | null
+  cardioPlanned?: Prisma.BoolFilter<"WorkoutSession"> | boolean
+  cardioStartedAt?: Prisma.DateTimeNullableFilter<"WorkoutSession"> | Date | string | null
+  cardioStoppedAt?: Prisma.DateTimeNullableFilter<"WorkoutSession"> | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFilter<"WorkoutSession"> | number
   notes?: Prisma.StringNullableFilter<"WorkoutSession"> | string | null
   updatedAt?: Prisma.DateTimeFilter<"WorkoutSession"> | Date | string
 }
@@ -592,6 +736,10 @@ export type WorkoutSessionCreateWithoutWorkoutDayInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
   programVersion: Prisma.ProgramVersionCreateNestedOneWithoutWorkoutSessionsInput
@@ -605,6 +753,10 @@ export type WorkoutSessionUncheckedCreateWithoutWorkoutDayInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
   exerciseSessions?: Prisma.ExerciseSessionUncheckedCreateNestedManyWithoutWorkoutSessionInput
@@ -642,6 +794,10 @@ export type WorkoutSessionCreateWithoutExerciseSessionsInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
   programVersion: Prisma.ProgramVersionCreateNestedOneWithoutWorkoutSessionsInput
@@ -656,6 +812,10 @@ export type WorkoutSessionUncheckedCreateWithoutExerciseSessionsInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
 }
@@ -682,6 +842,10 @@ export type WorkoutSessionUpdateWithoutExerciseSessionsInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   programVersion?: Prisma.ProgramVersionUpdateOneRequiredWithoutWorkoutSessionsNestedInput
@@ -696,6 +860,10 @@ export type WorkoutSessionUncheckedUpdateWithoutExerciseSessionsInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -707,6 +875,10 @@ export type WorkoutSessionCreateManyProgramVersionInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
 }
@@ -717,6 +889,10 @@ export type WorkoutSessionUpdateWithoutProgramVersionInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workoutDay?: Prisma.WorkoutDayUpdateOneRequiredWithoutWorkoutSessionsNestedInput
@@ -730,6 +906,10 @@ export type WorkoutSessionUncheckedUpdateWithoutProgramVersionInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exerciseSessions?: Prisma.ExerciseSessionUncheckedUpdateManyWithoutWorkoutSessionNestedInput
@@ -742,6 +922,10 @@ export type WorkoutSessionUncheckedUpdateManyWithoutProgramVersionInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -753,6 +937,10 @@ export type WorkoutSessionCreateManyWorkoutDayInput = {
   workoutDayNameSnapshot: string
   startedAt?: Date | string
   completedAt?: Date | string | null
+  cardioPlanned?: boolean
+  cardioStartedAt?: Date | string | null
+  cardioStoppedAt?: Date | string | null
+  cardioDurationSeconds?: number
   notes?: string | null
   updatedAt?: Date | string
 }
@@ -763,6 +951,10 @@ export type WorkoutSessionUpdateWithoutWorkoutDayInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   programVersion?: Prisma.ProgramVersionUpdateOneRequiredWithoutWorkoutSessionsNestedInput
@@ -776,6 +968,10 @@ export type WorkoutSessionUncheckedUpdateWithoutWorkoutDayInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exerciseSessions?: Prisma.ExerciseSessionUncheckedUpdateManyWithoutWorkoutSessionNestedInput
@@ -788,6 +984,10 @@ export type WorkoutSessionUncheckedUpdateManyWithoutWorkoutDayInput = {
   workoutDayNameSnapshot?: Prisma.StringFieldUpdateOperationsInput | string
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioPlanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardioStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioStoppedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardioDurationSeconds?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -831,6 +1031,10 @@ export type WorkoutSessionSelect<ExtArgs extends runtime.Types.Extensions.Intern
   workoutDayNameSnapshot?: boolean
   startedAt?: boolean
   completedAt?: boolean
+  cardioPlanned?: boolean
+  cardioStartedAt?: boolean
+  cardioStoppedAt?: boolean
+  cardioDurationSeconds?: boolean
   notes?: boolean
   updatedAt?: boolean
   programVersion?: boolean | Prisma.ProgramVersionDefaultArgs<ExtArgs>
@@ -847,6 +1051,10 @@ export type WorkoutSessionSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   workoutDayNameSnapshot?: boolean
   startedAt?: boolean
   completedAt?: boolean
+  cardioPlanned?: boolean
+  cardioStartedAt?: boolean
+  cardioStoppedAt?: boolean
+  cardioDurationSeconds?: boolean
   notes?: boolean
   updatedAt?: boolean
   programVersion?: boolean | Prisma.ProgramVersionDefaultArgs<ExtArgs>
@@ -861,6 +1069,10 @@ export type WorkoutSessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   workoutDayNameSnapshot?: boolean
   startedAt?: boolean
   completedAt?: boolean
+  cardioPlanned?: boolean
+  cardioStartedAt?: boolean
+  cardioStoppedAt?: boolean
+  cardioDurationSeconds?: boolean
   notes?: boolean
   updatedAt?: boolean
   programVersion?: boolean | Prisma.ProgramVersionDefaultArgs<ExtArgs>
@@ -875,11 +1087,15 @@ export type WorkoutSessionSelectScalar = {
   workoutDayNameSnapshot?: boolean
   startedAt?: boolean
   completedAt?: boolean
+  cardioPlanned?: boolean
+  cardioStartedAt?: boolean
+  cardioStoppedAt?: boolean
+  cardioDurationSeconds?: boolean
   notes?: boolean
   updatedAt?: boolean
 }
 
-export type WorkoutSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "programVersionId" | "workoutDayId" | "status" | "workoutDayNameSnapshot" | "startedAt" | "completedAt" | "notes" | "updatedAt", ExtArgs["result"]["workoutSession"]>
+export type WorkoutSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "programVersionId" | "workoutDayId" | "status" | "workoutDayNameSnapshot" | "startedAt" | "completedAt" | "cardioPlanned" | "cardioStartedAt" | "cardioStoppedAt" | "cardioDurationSeconds" | "notes" | "updatedAt", ExtArgs["result"]["workoutSession"]>
 export type WorkoutSessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   programVersion?: boolean | Prisma.ProgramVersionDefaultArgs<ExtArgs>
   workoutDay?: boolean | Prisma.WorkoutDayDefaultArgs<ExtArgs>
@@ -910,6 +1126,10 @@ export type $WorkoutSessionPayload<ExtArgs extends runtime.Types.Extensions.Inte
     workoutDayNameSnapshot: string
     startedAt: Date
     completedAt: Date | null
+    cardioPlanned: boolean
+    cardioStartedAt: Date | null
+    cardioStoppedAt: Date | null
+    cardioDurationSeconds: number
     notes: string | null
     updatedAt: Date
   }, ExtArgs["result"]["workoutSession"]>
@@ -1345,6 +1565,10 @@ export interface WorkoutSessionFieldRefs {
   readonly workoutDayNameSnapshot: Prisma.FieldRef<"WorkoutSession", 'String'>
   readonly startedAt: Prisma.FieldRef<"WorkoutSession", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"WorkoutSession", 'DateTime'>
+  readonly cardioPlanned: Prisma.FieldRef<"WorkoutSession", 'Boolean'>
+  readonly cardioStartedAt: Prisma.FieldRef<"WorkoutSession", 'DateTime'>
+  readonly cardioStoppedAt: Prisma.FieldRef<"WorkoutSession", 'DateTime'>
+  readonly cardioDurationSeconds: Prisma.FieldRef<"WorkoutSession", 'Int'>
   readonly notes: Prisma.FieldRef<"WorkoutSession", 'String'>
   readonly updatedAt: Prisma.FieldRef<"WorkoutSession", 'DateTime'>
 }

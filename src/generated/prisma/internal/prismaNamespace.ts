@@ -1739,6 +1739,10 @@ export const WorkoutSessionScalarFieldEnum = {
   workoutDayNameSnapshot: 'workoutDayNameSnapshot',
   startedAt: 'startedAt',
   completedAt: 'completedAt',
+  cardioPlanned: 'cardioPlanned',
+  cardioStartedAt: 'cardioStartedAt',
+  cardioStoppedAt: 'cardioStoppedAt',
+  cardioDurationSeconds: 'cardioDurationSeconds',
   notes: 'notes',
   updatedAt: 'updatedAt'
 } as const

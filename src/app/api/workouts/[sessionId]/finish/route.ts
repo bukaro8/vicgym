@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { assertSameOriginJson, RequestPolicyError } from "@/lib/http/same-origin";
+import { cardioDurationSeconds } from "@/lib/cardio";
 import { getPrisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -20,7 +21,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ ses
       const incomplete = session.exerciseSessions.some((exercise) => exercise.setLogs.filter((set) => set.completedAt).length < exercise.plannedSets);
       if (incomplete && !confirmIncomplete) throw new Error("INCOMPLETE_CONFIRMATION_REQUIRED");
       await tx.restPeriod.updateMany({ where: { status: { in: ["RUNNING", "PAUSED"] } }, data: { status: "SKIPPED", skippedAt: completedAt, endsAt: null, pausedRemainingMs: null, pausedRemainingSeconds: null } });
-      await tx.workoutSession.update({ where: { id: sessionId }, data: { status: "COMPLETED", completedAt } });
+      await tx.workoutSession.update({ where: { id: sessionId }, data: { status: "COMPLETED", completedAt, cardioStoppedAt: session.cardioStartedAt && !session.cardioStoppedAt ? completedAt : session.cardioStoppedAt, cardioDurationSeconds: session.cardioStartedAt && !session.cardioStoppedAt ? cardioDurationSeconds(session.cardioStartedAt, completedAt) : session.cardioDurationSeconds } });
     });
     revalidatePath("/");
     revalidatePath("/workouts");

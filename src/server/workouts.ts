@@ -14,7 +14,7 @@ export function prefillLoads(setCount: number, previousSets: PreviousTypedSet[])
   return Array.from({ length: setCount }, (_, index) => previousSets.find((set) => set.setNumber === index + 1)?.loadValue ?? latestLoad);
 }
 
-export async function startWorkout(prisma: PrismaClient, workoutDayId: string) {
+export async function startWorkout(prisma: PrismaClient, workoutDayId: string, cardioPlanned = false) {
   const existing = await prisma.workoutSession.findFirst({ where: { status: "IN_PROGRESS" }, select: { id: true, exerciseSessions: { orderBy: { position: "asc" }, take: 1, select: { id: true } } } });
   if (existing) return { ...existing, resumed: true };
 
@@ -53,6 +53,7 @@ export async function startWorkout(prisma: PrismaClient, workoutDayId: string) {
           programVersionId: day.programVersionId,
           workoutDayId: day.id,
           workoutDayNameSnapshot: day.name,
+          cardioPlanned,
           exerciseSessions: {
             create: day.workoutExercises.map((planned) => {
               const isLegacy = planned.loadTrackingTypeSnapshot === null || planned.loadEntryModeSnapshot === null;

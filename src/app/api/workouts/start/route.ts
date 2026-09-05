@@ -6,13 +6,13 @@ import { getPrisma } from "@/lib/prisma";
 import { startWorkout } from "@/server/workouts";
 
 export const runtime = "nodejs";
-const schema = z.object({ workoutDayId: z.string().uuid() });
+const schema = z.object({ workoutDayId: z.string().uuid(), cardioPlanned: z.boolean().default(false) });
 
 export async function POST(request: Request) {
   try {
     assertSameOriginJson(request);
-    const { workoutDayId } = schema.parse(await request.json());
-    const session = await startWorkout(getPrisma(), workoutDayId);
+    const { workoutDayId, cardioPlanned } = schema.parse(await request.json());
+    const session = await startWorkout(getPrisma(), workoutDayId, cardioPlanned);
     return NextResponse.json({ sessionId: session.id, exerciseSessionId: session.exerciseSessions[0]?.id, resumed: "resumed" in session && session.resumed });
   } catch (error) {
     if (error instanceof RequestPolicyError) return NextResponse.json({ error: error.message }, { status: error.status });

@@ -1,5 +1,6 @@
 import { adjustedRemainingMilliseconds, remainingMilliseconds } from "@/lib/rest-timer";
 import { clearOfflineTimer, findOfflineWorkoutSessionForSet, getOfflineTimer, putOfflineTimer, queueOfflineMutation, updateOfflineWorkout } from "@/lib/offline-db";
+import { cardioDurationSeconds } from "@/lib/cardio";
 import type { OfflineSet, OfflineTimer } from "@/lib/offline-types";
 import type { RestTimerDto, TimerAction } from "@/server/rest-timers";
 
@@ -24,6 +25,37 @@ export async function addSetLocally(sessionId: string, exerciseSessionId: string
   await queueOfflineMutation({ type: "ADD_SET", sessionId, targetId: id, payload: { exerciseSessionId, setNumber: created.setNumber, targetReps: created.targetReps, actualReps: created.actualReps, weightKg: null, loadValue: null, loadTrackingType: created.loadTrackingType } }); return created;
 }
 
+export async function startCardioLocally(sessionId: string, now = new Date()): Promise<string> {
+  const startedAt = now.toISOString();
+  const workout = await updateOfflineWorkout(sessionId, (current) => {
+    if (!current.cardioPlanned) throw new Error("CARDIO_NOT_PLANNED");
+    if (current.cardioStoppedAt) throw new Error("CARDIO_ALREADY_COMPLETED");
+    return current.cardioStartedAt ? current : { ...current, cardioStartedAt: startedAt, cardioStoppedAt: null, cardioDurationSeconds: 0, updatedAt: startedAt };
+  });
+  if (!workout) throw new Error("LOCAL_WORKOUT_NOT_FOUND");
+  const effectiveStartedAt = workout.cardioStartedAt ?? startedAt;
+  await queueOfflineMutation({ type: "UPDATE_CARDIO", sessionId, targetId: sessionId, payload: { action: "START", at: effectiveStartedAt } });
+  return effectiveStartedAt;
+}
+
+export async function stopCardioLocally(sessionId: string, now = new Date()): Promise<{ stoppedAt: string; durationSeconds: number }> {
+  const stoppedAt = now.toISOString();
+  let durationSeconds = 0;
+  const workout = await updateOfflineWorkout(sessionId, (current) => {
+    if (!current.cardioStartedAt) throw new Error("CARDIO_NOT_STARTED");
+    if (current.cardioStoppedAt) {
+      durationSeconds = current.cardioDurationSeconds ?? cardioDurationSeconds(current.cardioStartedAt, current.cardioStoppedAt);
+      return current;
+    }
+    durationSeconds = cardioDurationSeconds(current.cardioStartedAt, stoppedAt);
+    return { ...current, cardioStoppedAt: stoppedAt, cardioDurationSeconds: durationSeconds, updatedAt: stoppedAt };
+  });
+  if (!workout) throw new Error("LOCAL_WORKOUT_NOT_FOUND");
+  const effectiveStoppedAt = workout.cardioStoppedAt ?? stoppedAt;
+  await queueOfflineMutation({ type: "UPDATE_CARDIO", sessionId, targetId: sessionId, payload: { action: "STOP", at: effectiveStoppedAt } });
+  return { stoppedAt: effectiveStoppedAt, durationSeconds: workout.cardioDurationSeconds ?? durationSeconds };
+}
+
 async function queueTimerState(sessionId: string, timer: OfflineTimer, status: "RUNNING" | "PAUSED" | "COMPLETED" | "SKIPPED") {
   const ownerSessionId = timer.sessionId ?? await findOfflineWorkoutSessionForSet(timer.setLogId) ?? sessionId;
   await queueOfflineMutation({ type: "UPSERT_TIMER", sessionId: ownerSessionId, targetId: timer.id, payload: { setLogId: timer.setLogId, status, configuredSeconds: timer.configuredSeconds, startedAt: timer.startedAt, endsAt: timer.endsAt, pausedAt: timer.pausedAt, pausedRemainingMs: timer.pausedRemainingMs, updatedAt: timer.updatedAt } });
@@ -46,5 +78,5 @@ export async function updateTimerLocally(sessionId: string, action: TimerAction)
 
 export async function finishWorkoutLocally(sessionId: string): Promise<string> {
   const completedAt = new Date().toISOString(); const timer = await getOfflineTimer(); if (timer) { const ownerSessionId = timer.sessionId ?? await findOfflineWorkoutSessionForSet(timer.setLogId) ?? sessionId; await queueTimerState(ownerSessionId, { ...timer, sessionId: ownerSessionId, endsAt: null, pausedRemainingMs: null, updatedAt: completedAt }, "SKIPPED"); await clearOfflineTimer(); }
-  await updateOfflineWorkout(sessionId, (workout) => ({ ...workout, status: "COMPLETED", completedAt, updatedAt: completedAt })); await queueOfflineMutation({ type: "FINISH_WORKOUT", sessionId, targetId: sessionId, payload: { completedAt, confirmIncomplete: true } }); return completedAt;
+  await updateOfflineWorkout(sessionId, (workout) => ({ ...workout, status: "COMPLETED", completedAt, cardioStoppedAt: workout.cardioStartedAt && !workout.cardioStoppedAt ? completedAt : workout.cardioStoppedAt, cardioDurationSeconds: workout.cardioStartedAt && !workout.cardioStoppedAt ? cardioDurationSeconds(workout.cardioStartedAt, completedAt) : (workout.cardioDurationSeconds ?? 0), updatedAt: completedAt })); await queueOfflineMutation({ type: "FINISH_WORKOUT", sessionId, targetId: sessionId, payload: { completedAt, confirmIncomplete: true } }); return completedAt;
 }
