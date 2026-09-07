@@ -1,5 +1,6 @@
 import type { PrismaClient } from "@/generated/prisma/client";
 import { formatLoad, jsonLoadType, type LoadEntryModeValue, type LoadTrackingTypeValue } from "@/lib/load-tracking";
+import { completedWorkoutDurationMinutes } from "@/lib/workout-duration";
 import { getActiveProgramme } from "@/server/active-programme";
 
 const LONDON = "Europe/London";
@@ -38,7 +39,8 @@ export function londonWeekRange(weekStart?: string, now = new Date()): WeekRange
   if (!startDate) {
     const today = parts(now);
     const offset = Math.max(0, ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(today.weekday));
-    startDate = addDays(`${today.year}-${today.month}-${today.day}`, -offset);
+    const currentWeekStart = addDays(`${today.year}-${today.month}-${today.day}`, -offset);
+    startDate = addDays(currentWeekStart, -7);
   }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate) || new Date(`${startDate}T00:00:00.000Z`).getUTCDay() !== 1) throw new Error("INVALID_WEEK");
   const endDate = addDays(startDate, 7);
@@ -59,8 +61,6 @@ function comparePerformance(current: ReportSet[], previous: ReportSet[] | undefi
 }
 
 function reportLoad(set: ReportSet): string { return formatLoad(set.loadTrackingType, set.loadEntryMode, set.loadValue, { blank: "not entered", legacyWeightKg: set.weightKg }); }
-function durationMinutes(startedAt: Date, completedAt: Date | null): number | null { return completedAt ? Math.max(1, Math.round((completedAt.getTime() - startedAt.getTime()) / 60_000)) : null; }
-
 export async function getWeeklyReview(prisma: PrismaClient, requestedWeek?: string): Promise<WeeklyReview> {
   const range = londonWeekRange(requestedWeek);
   const sessions = await prisma.workoutSession.findMany({
@@ -105,7 +105,7 @@ export async function getWeeklyReview(prisma: PrismaClient, requestedWeek?: stri
 
   for (const session of sessions) {
     lines.push("", `### ${session.workoutDayNameSnapshot} [${session.workoutDay.slug}]`, `Completed: ${localDate(session.completedAt!)} · Programme version ${session.programVersion.versionNumber}`);
-    const minutes = durationMinutes(session.startedAt, session.completedAt); if (minutes) totalMinutes += minutes;
+    const minutes = completedWorkoutDurationMinutes(session); if (minutes) totalMinutes += minutes;
     if (session.cardioPlanned) { cardioSeconds += session.cardioDurationSeconds; lines.push(`Cardio: ${session.cardioDurationSeconds ? `${Math.floor(session.cardioDurationSeconds / 60)} min ${session.cardioDurationSeconds % 60} sec` : "planned but not recorded"}`); }
     for (const item of session.exerciseSessions) {
       const sets: ReportSet[] = item.setLogs.filter((set) => set.completedAt).map((set) => ({ setNumber: set.setNumber, actualReps: set.actualReps, targetReps: set.targetReps, weightKg: set.weightKg === null ? null : Number(set.weightKg), loadValue: set.loadValue === null ? null : Number(set.loadValue), loadTrackingType: item.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null, loadEntryMode: item.loadEntryModeSnapshot as LoadEntryModeValue | null, notes: set.notes }));
@@ -133,7 +133,7 @@ export async function getWeeklyReview(prisma: PrismaClient, requestedWeek?: stri
       }
     }
   }
-  lines.push("", "## SUMMARY", `Workouts completed: ${sessions.length}`, `Completed working sets: ${completedSets}`, `Whole-session duration: ${totalMinutes} min`, `Cardio time: ${Math.floor(cardioSeconds / 60)} min ${cardioSeconds % 60} sec`, `Logged external-load volume: ${volume ? `${volume.toFixed(1)} kg-reps` : "not available"}`, `Incomplete / missed planned sets: ${incomplete}`, `Skipped exercises: ${skippedExercises}`, `Direct working sets by primary muscle: ${[...primaryTotals.entries()].map(([name, count]) => `${name} ${count}`).join(", ") || "none"}`, `Secondary-muscle involvement sets: ${[...secondaryTotals.entries()].map(([name, count]) => `${name} ${count}`).join(", ") || "none"}`);
+  lines.push("", "## SUMMARY", `Workouts completed: ${sessions.length}`, `Completed working sets: ${completedSets}`, `Recorded training time: ${totalMinutes} min`, `Cardio time: ${Math.floor(cardioSeconds / 60)} min ${cardioSeconds % 60} sec`, `Logged external-load volume: ${volume ? `${volume.toFixed(1)} kg-reps` : "not available"}`, `Incomplete / missed planned sets: ${incomplete}`, `Skipped exercises: ${skippedExercises}`, `Direct working sets by primary muscle: ${[...primaryTotals.entries()].map(([name, count]) => `${name} ${count}`).join(", ") || "none"}`, `Secondary-muscle involvement sets: ${[...secondaryTotals.entries()].map(([name, count]) => `${name} ${count}`).join(", ") || "none"}`);
   if (skippedRests || completedRests || adjustedRestSeconds) lines.push("", "## REST INFORMATION", `Completed rest periods: ${completedRests}${completedRests ? ` · average elapsed ${Math.round(completedRestSeconds / completedRests)} sec` : ""}`, `Skipped rest periods: ${skippedRests}`, `Net manual rest adjustment: ${adjustedRestSeconds >= 0 ? "+" : ""}${adjustedRestSeconds} sec`);
   const categories = new Map<string, string[]>();
   for (const exercise of availableExercises) {

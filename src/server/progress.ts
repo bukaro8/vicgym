@@ -1,4 +1,5 @@
 import type { PrismaClient } from "@/generated/prisma/client";
+import { completedWorkoutDurationMinutes } from "@/lib/workout-duration";
 import { performanceFromSession, periodStart, progressChange, setVolume, type CompletedExerciseSession, type ProgressPeriod, weeklyBuckets } from "@/server/progress-calculations";
 
 export type ProgressOverview = {
@@ -10,10 +11,6 @@ export type ProgressOverview = {
   highlights: Array<{ slug: string; name: string; change: string; current: ReturnType<typeof performanceFromSession>; previous: ReturnType<typeof performanceFromSession> | null }>;
   hasActivity: boolean;
 };
-
-function durationMinutes(startedAt: Date, completedAt: Date): number {
-  return Math.max(1, Math.round((completedAt.getTime() - startedAt.getTime()) / 60_000));
-}
 
 function totalVolume(session: CompletedExerciseSession): number | null {
   const volumes = session.sets.map((set) => setVolume(set, session.loadTrackingType, session.loadMultiplier)).filter((value): value is number => value !== null);
@@ -42,7 +39,7 @@ export async function getProgressOverview(prisma: PrismaClient, period: Progress
     include: { exerciseSessions: { include: { setLogs: { where: { completedAt: { not: null } } }, exercise: { include: { muscles: { include: { muscle: true } } } } } } },
   });
   const raw = sessions.flatMap((session) => session.exerciseSessions.map((item) => toCompletedExerciseSession({ ...item, workoutSession: session })).filter((item): item is CompletedExerciseSession => item !== null));
-  const totals = { workouts: sessions.length, sets: raw.reduce((total, item) => total + item.sets.length, 0), minutes: sessions.reduce((total, session) => total + durationMinutes(session.startedAt, session.completedAt!), 0), volumeKgReps: null as number | null };
+  const totals = { workouts: sessions.length, sets: raw.reduce((total, item) => total + item.sets.length, 0), minutes: sessions.reduce((total, session) => total + (completedWorkoutDurationMinutes(session) ?? 0), 0), volumeKgReps: null as number | null };
   const volumes = raw.map(totalVolume).filter((value): value is number => value !== null); totals.volumeKgReps = volumes.length ? volumes.reduce((total, value) => total + value, 0) : null;
   const primary = new Map<string, number>(); const secondary = new Map<string, number>();
   for (const item of raw) for (let index = 0; index < item.sets.length; index += 1) { item.primaryMuscles.forEach((name) => primary.set(name, (primary.get(name) ?? 0) + 1)); item.secondaryMuscles.forEach((name) => secondary.set(name, (secondary.get(name) ?? 0) + 1)); }
