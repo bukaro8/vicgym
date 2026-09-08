@@ -11,10 +11,12 @@ import { getPrisma } from "@/lib/prisma";
 
 export { AUTH_COOKIE_NAME } from "@/lib/auth-constants";
 export const MAGIC_LINK_TTL_MS = 15 * 60 * 1000;
+export const MAGIC_LINK_REQUEST_COOLDOWN_MS = 60 * 1000;
 export const AUTH_SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 export type AuthenticatedUser = { id: string; email: string };
 export class AuthenticationRequiredError extends Error {}
+export class MagicLinkRateLimitError extends Error {}
 
 export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
@@ -38,6 +40,8 @@ export async function createMagicLinkToken(prisma: PrismaClient, email: string, 
   const tokenHash = hashOpaqueToken(token);
   const expiresAt = new Date(now.getTime() + MAGIC_LINK_TTL_MS);
   await prisma.$transaction(async (tx) => {
+    const recent = await tx.magicLinkToken.findFirst({ where: { email: normalizedEmail, createdAt: { gt: new Date(now.getTime() - MAGIC_LINK_REQUEST_COOLDOWN_MS) } }, select: { id: true } });
+    if (recent) throw new MagicLinkRateLimitError("A sign-in link was requested recently");
     await tx.magicLinkToken.updateMany({ where: { email: normalizedEmail, usedAt: null }, data: { usedAt: now } });
     await tx.magicLinkToken.create({ data: { email: normalizedEmail, tokenHash, expiresAt } });
   });
@@ -84,7 +88,11 @@ export async function requireApiUser(): Promise<AuthenticatedUser> {
 
 export async function deleteCurrentAuthSession(prisma = getPrisma()): Promise<void> {
   const token = (await cookies()).get(AUTH_COOKIE_NAME)?.value;
-  if (token) await prisma.authSession.deleteMany({ where: { tokenHash: hashOpaqueToken(token) } });
+  if (token) await deleteAuthSessionByToken(prisma, token);
+}
+
+export async function deleteAuthSessionByToken(prisma: PrismaClient, token: string): Promise<void> {
+  await prisma.authSession.deleteMany({ where: { tokenHash: hashOpaqueToken(token) } });
 }
 
 export function sessionCookieOptions(expiresAt: Date, secure: boolean) {

@@ -2,14 +2,22 @@ import "fake-indexeddb/auto";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { clearPrivateOfflineData, getOfflineOutbox, getOfflineTimer, getOfflineWorkout, putOfflineTimer, putOfflineWorkout, queueOfflineMutation } from "@/lib/offline-db";
+import { clearPrivateOfflineData, configureOfflineOwner, getOfflineOutbox, getOfflineTimer, getOfflineWorkout, putOfflineTimer, putOfflineWorkout, queueOfflineMutation } from "@/lib/offline-db";
 import type { OfflineTimer, OfflineWorkout } from "@/lib/offline-types";
 import { addExerciseLocally, saveSetLocally, startCardioLocally, stopCardioLocally, updateTimerLocally } from "@/lib/offline-workout";
 
 const workout: OfflineWorkout = { schemaVersion: 1, id: "session-1", programId: "program-1", programSlug: "demo-upper-lower", programName: "Demo Upper/Lower", programVersionId: "version-1", programVersionNumber: 1, workoutDayId: "day-1", workoutDaySlug: "upper-a", status: "IN_PROGRESS", workoutDayName: "Demo Upper A", startedAt: "2026-08-31T09:00:00.000Z", completedAt: null, currentExerciseId: "exercise-session-1", updatedAt: "2026-08-31T09:00:00.000Z", exercises: [{ id: "exercise-session-1", exerciseId: "exercise-1", slug: "chest-press", name: "Chest Press", position: 1, plannedSets: 3, targetReps: 12, restSeconds: 120, autoRest: true, equipmentName: "Chest Press", imagePath: "/media/equipment/chest-press-1280.webp", sets: [{ id: "set-1", setNumber: 1, targetReps: 12, actualReps: 12, weightKg: 30, completedAt: null }] }] };
 
 describe("offline database", () => {
-  beforeEach(async () => { vi.restoreAllMocks(); await clearPrivateOfflineData(); });
+  beforeEach(async () => { vi.restoreAllMocks(); configureOfflineOwner("test-user"); await clearPrivateOfflineData(); });
+
+  it("keeps offline workouts and mutation queues isolated by authenticated user", async () => {
+    configureOfflineOwner("user-a"); await putOfflineWorkout(workout); await queueOfflineMutation({ type: "UPSERT_SET", sessionId: workout.id, targetId: "set-1", payload: { actualReps: 12 } });
+    configureOfflineOwner("user-b"); expect(await getOfflineWorkout(workout.id)).toBeNull(); expect(await getOfflineOutbox()).toEqual([]);
+    await putOfflineWorkout({ ...workout, workoutDayName: "User B workout" });
+    configureOfflineOwner("user-a"); expect((await getOfflineWorkout(workout.id))?.workoutDayName).toBe("Demo Upper A"); expect(await getOfflineOutbox()).toHaveLength(1); await clearPrivateOfflineData();
+    configureOfflineOwner("user-b"); await clearPrivateOfflineData();
+  });
 
   it("persists workout snapshots and keeps outbox mutations in deterministic order", async () => {
     await putOfflineWorkout(workout);

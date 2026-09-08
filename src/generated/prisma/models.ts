@@ -9,6 +9,9 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/AppSettings'
+export type * from './models/User'
+export type * from './models/MagicLinkToken'
+export type * from './models/AuthSession'
 export type * from './models/Equipment'
 export type * from './models/Exercise'
 export type * from './models/Muscle'

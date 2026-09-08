@@ -12,7 +12,7 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
             <span className="grid size-10 place-items-center rounded-2xl bg-primary text-sm font-bold text-primary-foreground" aria-hidden="true">VG</span>
             <div>
               <p className="font-semibold tracking-tight">VicGym</p>
-              <p className="text-xs text-muted-foreground">Private workout log</p>
+              <p className="text-xs text-muted-foreground">Your private workout log</p>
             </div>
           </Link>
           <SiteNavigation variant="desktop" />

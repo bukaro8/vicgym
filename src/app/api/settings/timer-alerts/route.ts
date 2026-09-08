@@ -11,9 +11,14 @@ const timerAlertSettingsSchema = z.object({ soundEnabled: z.boolean(), vibration
 export const runtime = "nodejs";
 
 export async function GET() {
-  const user = await requireApiUser();
-  const settings = await getPrisma().appSettings.findUnique({ where: { userId: user.id }, select: { soundEnabled: true, vibrationEnabled: true } });
-  return NextResponse.json(settings ?? { soundEnabled: false, vibrationEnabled: false }, { headers: { "Cache-Control": "no-store" } });
+  try {
+    const user = await requireApiUser();
+    const settings = await getPrisma().appSettings.findUnique({ where: { userId: user.id }, select: { soundEnabled: true, vibrationEnabled: true } });
+    return NextResponse.json(settings ?? { soundEnabled: false, vibrationEnabled: false }, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    const authResponse = authenticationErrorResponse(error); if (authResponse) return authResponse;
+    return NextResponse.json({ error: "Timer alert settings could not be loaded" }, { status: 500 });
+  }
 }
 
 export async function PATCH(request: Request) {

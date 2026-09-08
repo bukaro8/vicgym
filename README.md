@@ -1,6 +1,6 @@
 # VicGym
 
-VicGym is a private, mobile-first progressive web application for running a single-owner workout programme, recording raw training data, reviewing completed history, and exchanging controlled programme updates with a dedicated ChatGPT coaching conversation.
+VicGym is a mobile-first progressive web application for a small group of users to run private workout programmes, record raw training data, review completed history, and exchange controlled programme updates with a dedicated ChatGPT coaching conversation.
 
 The application does not generate training advice and does not call the OpenAI API. ChatGPT interaction is deliberately manual and reviewable:
 
@@ -11,7 +11,7 @@ VicGym weekly report → paste into ChatGPT → receive VicGym JSON
 
 There is no manual programme editor. The exercise catalogue is authoritative, programme versions are immutable, and imported JSON can only reference active exercises that already exist in VicGym.
 
-> The seeded four-day programme is demo fixture data for exercising the software workflow. It is labelled **“Demo programme — not training advice”**, remains inactive after a fresh seed, and is not a recommendation or the owner's actual programme. VicGym makes no assumptions about health, injuries, ability, experience, or programme suitability.
+The shared seed creates only the verified exercise/equipment catalogue. Each new account starts without a programme and can create its own initial programme through the validated Coach Changes JSON workflow. VicGym does not make assumptions about health, injuries, ability, experience, or programme suitability.
 
 ## Contents
 
@@ -37,7 +37,7 @@ There is no manual programme editor. The exercise catalogue is authoritative, pr
 
 ### Programme management
 
-- One authoritative active programme selected by `AppSettings.activeProgramId`.
+- One authoritative active programme per user, selected by that user's `AppSettings.activeProgramId`.
 - Initial programme creation from validated `schemaVersion: 2` JSON.
 - Weekly patch updates through backwards-compatible `schemaVersion: 1` JSON.
 - Paste, validate, preview, explicit-confirmation, and apply workflow.
@@ -99,14 +99,18 @@ There is no manual programme editor. The exercise catalogue is authoritative, pr
 - Ordered mutation outbox with client UUID idempotency keys.
 - Synchronization on startup, reconnection, focus, manual retry, and supported Background Sync events.
 - Offline workout, finish, and summary routes.
-- Versioned page and media caches using Serwist.
+- Versioned account-neutral offline-shell and media caches using Serwist; authenticated server-rendered pages are never runtime-cached.
 - Network-only authenticated API responses.
 - Local sync status and explicitly confirmed private-data reset.
 
 ### Security and deployment
 
-- Single-owner database with no `User`, `Account`, or application-session tables.
-- Authentication delegated to Coolify/Traefik HTTP Basic Authentication.
+- Passwordless email magic-link authentication through Resend.
+- Fifteen-minute, single-use login tokens; only SHA-256 token hashes are stored, with a one-minute per-email request cooldown.
+- Secure, HTTP-only, same-site application sessions with a 30-day expiry.
+- Personal programmes, settings, sessions, history, reports, and synchronization records are scoped to the authenticated user.
+- The browser's offline database is namespaced by authenticated user so accounts cannot see or replay one another's local mutations.
+- Optional `AUTH_ALLOWED_EMAILS` registration allowlist for a small private deployment.
 - HTTPS-only production deployment boundary.
 - Same-origin JSON checks for mutation routes.
 - Explicit `APP_ORIGIN` support for reverse proxies.
@@ -422,7 +426,7 @@ To install it on a phone:
 
 Before relying on offline mode, open the workout while connected so VicGym can prepare the required routes and media. Active-workout actions are saved locally first and queued for synchronization. The interface reports whether changes are synchronized, saved locally, syncing, offline, or need attention.
 
-API responses are not runtime-cached. Prepared workout pages, framework assets, and same-origin optimized media may be cached privately in the browser. **More → Offline & synchronization** provides manual retry and an explicitly confirmed local reset. Resetting private offline data clears IndexedDB, the local outbox, active local workout/timer state, and private runtime caches; it does not delete synchronized PostgreSQL history.
+API responses and authenticated server-rendered pages are not runtime-cached. Account-neutral offline route shells, framework assets, and same-origin optimized media may be cached in the browser; the personal workout payload remains in the user's namespaced IndexedDB. **More → Offline & synchronization** provides manual retry and an explicitly confirmed local reset. Resetting private offline data clears the current account's IndexedDB, local outbox, and active local workout/timer state, plus shared runtime shell/media caches; it does not delete synchronized PostgreSQL history.
 
 ## Architecture and data integrity
 
@@ -442,36 +446,44 @@ Server components handle normal dashboard, catalogue, programme, history, and re
 
 ### Core relational model
 
-- `AppSettings`: singleton timezone, active-programme pointer, units, alerts, and onboarding state.
+- `User`: one account per normalized email address.
+- `MagicLinkToken`: hashed, expiring, single-use email login challenges.
+- `AuthSession`: hashed server-side session tokens and expiry dates.
+- `AppSettings`: per-user timezone, active-programme pointer, units, alerts, and onboarding state.
 - `Equipment`, `Exercise`, `Muscle`, `ExerciseMuscle`, `ExerciseMedia`: authoritative verified catalogue.
-- `WorkoutProgram`: stable programme identity.
+- `WorkoutProgram`: stable programme identity owned by a user.
 - `ProgramVersion`: immutable version container.
 - `WorkoutDay`, `WorkoutExercise`: a version's ordered programme configuration.
-- `WorkoutSession`, `ExerciseSession`, `SetLog`, `RestPeriod`: raw workout facts and immutable semantic snapshots.
-- `ClientMutation`: idempotent offline replay ledger.
+- `WorkoutSession`, `ExerciseSession`, `SetLog`, `RestPeriod`: user-owned raw workout facts and immutable semantic snapshots.
+- `ClientMutation`: per-user idempotent offline replay ledger.
 
-Database constraints enforce unique programme-version numbers, unique day slugs/rotation positions per version, unique exercise positions per day, one active workout, and one active rest period. Apply operations use transactions, and historical session foreign keys use restrictive deletion semantics.
+Database constraints enforce unique programme slugs per user, unique programme-version numbers, unique day slugs/rotation positions per version, unique exercise positions per day, and one active workout per user. Apply operations use transactions, and historical session foreign keys use restrictive deletion semantics.
 
 ### Authentication and request security
 
-VicGym is intentionally single-owner. It does not install Better Auth or maintain user/account/session records. Coolify's Traefik HTTP Basic Authentication protects the entire domain and API surface before requests reach the application.
+VicGym uses a small custom passwordless authentication layer rather than a large authentication framework. A user enters an email on `/login`; the server creates a cryptographically random, 15-minute token, stores only its SHA-256 hash, and sends the raw token only in a Resend magic-link email. Consuming the link atomically marks it used, creates the user on first login, and creates a separate random session whose hash is stored in PostgreSQL. The browser receives the raw session token in an HTTP-only, `SameSite=Lax`, HTTPS-secure production cookie. Logout deletes the server session and expires the cookie.
+
+Every personal server query derives the user from that cookie. Client JSON never supplies an authoritative `userId`. Programmes and workout sessions have direct ownership; immutable versions, days, exercises, sets, rest periods, and historical data inherit ownership through those parents. Shared equipment, exercises, muscles, and media remain global. Offline IndexedDB databases and server idempotency records are also separated by user.
 
 Production requirements:
 
 - HTTPS with HTTP redirected to HTTPS;
-- a long unique Basic Auth password stored in a password manager;
+- a verified Resend sending domain and domain-matching `RESEND_FROM_EMAIL`;
+- `RESEND_API_KEY` stored only as a Coolify secret;
+- exact HTTPS `APP_ORIGIN` configuration;
+- an `AUTH_ALLOWED_EMAILS` allowlist for private deployments unless open email registration is intentional;
 - no directly published container port bypassing Traefik;
 - private PostgreSQL connectivity;
-- exact `APP_ORIGIN` configuration;
 - no permissive CORS headers;
 - tested database backups.
 
-Mutation routes accept same-origin JSON only. Browser-cached offline data is protected by the phone/browser profile, not by an additional in-app lock. Browser-native Basic Authentication has an awkward logout flow; clear site credentials and reset private offline data before handing an unlocked browser profile to another person.
+Mutation routes accept same-origin JSON only. Route handlers always revalidate the server-side session even though the Next.js proxy performs an early cookie-presence check. Browser-cached offline data is protected by the phone/browser profile and account namespace, not by an additional encryption key. Signing out preserves that account's unsynchronized local queue so it can recover after the same user signs in again; another account receives a distinct local database.
 
 ## Application routes
 
 | Route | Purpose |
 |---|---|
+| `/login` | Request a passwordless email magic link |
 | `/` | Home, active programme, rotation, current session, and recent summary |
 | `/workouts` | Choose, start, or resume a workout |
 | `/workouts/[sessionId]` | Active-session redirect/navigation |
@@ -489,7 +501,7 @@ Mutation routes accept same-origin JSON only. Browser-cached offline data is pro
 | `/offline` | Offline workout recovery |
 | `/api/health` | Application/database readiness |
 
-Mutation APIs exist for workout start, set logging, timer actions, workout finish, offline synchronization, programme activation, Coach Changes preview/apply, and timer-alert settings. They are application-internal endpoints rather than a public third-party API.
+Authentication APIs send and consume magic links and end sessions. Mutation APIs exist for workout start, set logging, timer actions, workout finish, offline synchronization, programme activation, Coach Changes preview/apply, and timer-alert settings. They are application-internal endpoints rather than a public third-party API.
 
 ## Local development
 
@@ -509,7 +521,7 @@ npm run phase2:setup
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The local database URL supplied by `compose.dev.yml` is:
+Before logging in, configure a Resend key/from address and set `APP_ORIGIN=http://localhost:3000` in `.env`. Open [http://localhost:3000](http://localhost:3000), request a magic link, and follow the email. The local database URL supplied by `compose.dev.yml` is:
 
 ```dotenv
 DATABASE_URL=postgresql://vicgym:vicgym-local-only@localhost:5432/vicgym
@@ -528,13 +540,16 @@ npm run db:seed
 | Variable | Required | Purpose |
 |---|---|---|
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `APP_ORIGIN` | Production | Exact public origin used for same-origin mutation validation, such as `https://gym.example.com`; no path or trailing slash |
+| `APP_ORIGIN` | Login/runtime | Exact public origin used in magic links and same-origin validation, such as `https://gym.example.com`; no path or trailing slash |
 | `APP_TIMEZONE` | No | Application/reporting timezone; defaults to `Europe/London` |
+| `RESEND_API_KEY` | Login/runtime | Server-only Resend API key used to send magic links |
+| `RESEND_FROM_EMAIL` | Login/runtime | Sender on a verified Resend domain, such as `VicGym <login@auth.example.com>` |
+| `AUTH_ALLOWED_EMAILS` | Recommended | Optional comma-separated list of email addresses allowed to create/sign into accounts; empty means open registration |
 | `RAPIDAPI_KEY` | Developer media import only | Server-only ExerciseDB credential; never expose as `NEXT_PUBLIC_*` |
 | `RAPIDAPI_HOST` | Developer media import only | ExerciseDB provider host; a default is supplied |
 | `NODE_ENV` | Runtime-managed | `development`, `test`, or `production` |
 
-Do not commit `.env` files or print/log RapidAPI credentials. `APP_ORIGIN` is not needed for ordinary local development when request and browser origins match directly.
+Do not commit `.env` files or print/log Resend or RapidAPI credentials. `APP_ORIGIN`, `RESEND_API_KEY`, and `RESEND_FROM_EMAIL` are checked when a magic link is requested. A production deployment must use its exact public HTTPS origin.
 
 ## Database and seed
 
@@ -552,14 +567,12 @@ npm run db:seed
 
 The seed is idempotent. It creates or updates:
 
-- singleton application settings without selecting a real programme;
 - 14 verified equipment records and supplied-photo metadata;
 - 16 muscles;
-- 25 active exercises and muscle relationships;
-- approved exercise-specific image/video metadata;
-- the inactive demo programme/version used as software fixture data.
+- 27 active exercises and muscle relationships;
+- approved exercise-specific image/video metadata.
 
-It does not fabricate workout history, activate the demo automatically, replace historical programme versions, or call ExerciseDB at runtime.
+It does not create users, settings, programmes, workout history, or authentication sessions, and it does not call ExerciseDB at runtime. A user's settings row is created with their account after they consume their first magic link.
 
 Useful Prisma commands:
 
@@ -609,14 +622,15 @@ Always inspect ExerciseDB candidates before importing and follow the provider/pr
 
 1. Create a standard Coolify application from this repository using the included `Dockerfile`; leave Coolify's custom start command empty.
 2. Create PostgreSQL on Coolify's internal network; do not expose its port publicly.
-3. Set `DATABASE_URL`, `APP_ORIGIN`, and `APP_TIMEZONE` in the application environment.
-4. Route the public HTTPS domain through Coolify/Traefik to container port `3000`.
-5. Redirect HTTP to HTTPS.
-6. Enable Traefik HTTP Basic Authentication with a long unique password.
-7. Do not publish container port `3000` directly on the host.
-8. Set the health-check path to `/api/health`.
-9. Configure and test scheduled PostgreSQL backups.
-10. Deploy and confirm the startup logs show both migration and seed completion.
+3. Verify a sending domain or subdomain in Resend and create an API key.
+4. Set `DATABASE_URL`, `APP_ORIGIN`, `APP_TIMEZONE`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, and preferably `AUTH_ALLOWED_EMAILS` in the application environment.
+5. Ensure `APP_ORIGIN` is the exact public URL, including `https://` and without a path or trailing slash.
+6. Route the public HTTPS domain through Coolify/Traefik to container port `3000` and redirect HTTP to HTTPS.
+7. Disable the old Coolify HTTP Basic Authentication layer unless intentionally retaining two separate login gates.
+8. Do not publish container port `3000` directly on the host.
+9. Set the health-check path to `/api/health`.
+10. Configure and test scheduled PostgreSQL backups.
+11. Deploy and confirm the startup logs show both migration and catalogue-seed completion.
 
 The multi-stage image builds a standalone Next.js server. On container start, `docker-entrypoint.sh` runs:
 
@@ -629,6 +643,8 @@ standalone Next.js server
 The image declares `node .next/standalone/server.js` as its Docker command (also exposed as `npm start`). Its entrypoint runs migrations and seeding before executing that command. A post-build packaging step places `public` and `.next/static` inside the standalone bundle so the minimal server can serve PWA icons, exercise media, styles, and client JavaScript. Do not set Coolify's start command to `next start`; leave the custom command empty so it uses the image command.
 
 If migration or seeding fails, the server does not start. `/api/health` returns `200` only when the application can reach the database; database failure returns `503`.
+
+The multi-user migration deliberately removes the former single-owner personal data while retaining the shared catalogue. A normal redeployment applies it automatically. If a completely clean database is preferred, create a new empty PostgreSQL database and update `DATABASE_URL`; startup will apply all migrations and seed the catalogue. See the focused deployment guide for the destructive in-place reset commands.
 
 See [docs/coolify-deployment.md](docs/coolify-deployment.md) for the focused deployment reference.
 
@@ -653,6 +669,12 @@ npm run db:seed
 ```
 
 A movement button only appears when that exercise has a video-reference media record.
+
+### A magic-link email does not arrive
+
+Check that `APP_ORIGIN` is the exact deployed HTTPS origin, `RESEND_API_KEY` is present, and `RESEND_FROM_EMAIL` uses the verified Resend domain. If `AUTH_ALLOWED_EMAILS` is set, confirm the submitted normalized email is in the comma-separated list. The public response is deliberately generic for allowed and disallowed addresses, so use server logs and the Resend dashboard without printing tokens or API keys.
+
+Magic links expire after 15 minutes and can be consumed only once. Request a new link if the login page reports an expired link.
 
 ### “A matching Origin header is required”
 
@@ -686,7 +708,9 @@ Generate a new weekly report and copy its exact `program` and `baseVersion`. A p
 
 ## Current limitations
 
-- VicGym is a private single-owner application, not a multi-user service.
+- VicGym targets a small trusted user group; it has no roles, teams, invitations, or administrator console.
+- Accounts are created on first successful magic-link use. An optional email allowlist is the current registration control.
+- Authentication sessions expire after 30 days and are not currently listed or remotely revoked through a user-facing session-management screen.
 - There is no in-app programme/workout-day editor by design.
 - VicGym does not call ChatGPT or ExerciseDB automatically at runtime.
 - Programme JSON can only reference existing active catalogue exercises.
@@ -695,7 +719,7 @@ Generate a new weekly report and copy its exact `program` and `baseVersion`. A p
 - Sound and vibration are best-effort while the app is open; there is no guaranteed alarm from a suspended PWA.
 - Web vibration is unavailable on iPhone and iPad browsers.
 - Provider videos remain externally hosted references and depend on provider availability and terms.
-- Basic Authentication has no polished in-app logout and offline browser data has no additional in-app encryption lock.
+- Offline browser data is isolated by account but has no additional at-rest encryption beyond the browser/device profile.
 - The application records factual workout data; it does not determine whether a programme or exercise is appropriate for a person.
 
 ## Project structure

@@ -47,6 +47,21 @@ export { Prisma }
  */
 export type AppSettings = Prisma.AppSettingsModel
 /**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel
+/**
+ * Model MagicLinkToken
+ * 
+ */
+export type MagicLinkToken = Prisma.MagicLinkTokenModel
+/**
+ * Model AuthSession
+ * 
+ */
+export type AuthSession = Prisma.AuthSessionModel
+/**
  * Model Equipment
  * 
  */

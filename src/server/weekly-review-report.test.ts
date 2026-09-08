@@ -29,7 +29,7 @@ describe("weekly review coaching identifiers", () => {
     }, [
       { slug: "chest-press", name: "Chest Press", active: true, equipment: { available: true, type: "MACHINE" } },
       { slug: "push-up", name: "Push-up", active: true, equipment: null },
-    ]), "2026-08-24");
+    ]), "user-1", "2026-08-24");
 
     expect(review.programSlug).toBe("upper-lower");
     expect(review.versionNumber).toBe(4);
@@ -46,7 +46,7 @@ describe("weekly review coaching identifiers", () => {
   });
 
   it("does not fabricate import identifiers when no programme is active", async () => {
-    const review = await getWeeklyReview(prismaFor(null, [{ slug: "push-up", name: "Push-up", active: true, equipment: null }]), "2026-08-24");
+    const review = await getWeeklyReview(prismaFor(null, [{ slug: "push-up", name: "Push-up", active: true, equipment: null }]), "user-1", "2026-08-24");
 
     expect(review.programSlug).toBeNull();
     expect(review.versionNumber).toBeNull();

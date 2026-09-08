@@ -1,13 +1,13 @@
 import "server-only";
 
-import { getServerEnv } from "@/lib/env";
+import { getAuthEmailEnv } from "@/lib/env";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 }
 
 export async function sendMagicLinkEmail(input: { to: string; url: string; idempotencyKey: string }): Promise<void> {
-  const env = getServerEnv();
+  const env = getAuthEmailEnv();
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json", "Idempotency-Key": input.idempotencyKey },

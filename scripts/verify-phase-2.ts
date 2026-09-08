@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
-import { DEFAULT_TARGET_REPS, DEMO_SETS, demoProgrammeSeed, equipmentSeed, exerciseDbMediaSeed, exerciseSeed, muscleSeed } from "../src/data/phase-2-catalogue";
+import { DEFAULT_TARGET_REPS, equipmentSeed, exerciseDbMediaSeed, exerciseSeed, muscleSeed } from "../src/data/phase-2-catalogue";
 import { getPrisma } from "../src/lib/prisma";
 
 async function main() {
@@ -23,12 +23,12 @@ async function main() {
   }
 
   const prisma = getPrisma();
-  const [equipment, exercises, muscles, providerMedia, program, sessionCount] = await Promise.all([
+  const [equipment, exercises, muscles, providerMedia, programCount, sessionCount] = await Promise.all([
     prisma.equipment.findMany({ include: { media: true }, orderBy: { slug: "asc" } }),
     prisma.exercise.findMany({ include: { equipment: true }, orderBy: { slug: "asc" } }),
     prisma.muscle.findMany(),
     prisma.exerciseMedia.findMany({ where: { provider: "ascendapi-exercisedb" } }),
-    prisma.workoutProgram.findUnique({ where: { slug: demoProgrammeSeed.slug }, include: { versions: { include: { days: { include: { workoutExercises: { include: { exercise: true } } } } } } } }),
+    prisma.workoutProgram.count(),
     prisma.workoutSession.count(),
   ]);
 
@@ -43,21 +43,10 @@ async function main() {
   assert.equal(providerMedia.filter((media) => media.kind === "VIDEO").length, exerciseDbMediaSeed.filter((media) => media.videoUrl).length);
   for (const media of providerMedia.filter((item) => item.kind === "IMAGE")) await stat(path.join(projectRoot, "public", media.storagePath));
   assert.equal(muscles.length, muscleSeed.length);
-  assert(program);
-  assert.equal(program.isDemo, true);
-  assert.equal(program.status, "DEMO");
-  assert.equal(program.activeVersionId, null);
-  assert.equal(program.activatedAt, null);
-  assert.equal(program.notice, demoProgrammeSeed.notice);
-  assert.equal(program.versions.length, 1);
-  const programmeExercises = program.versions[0].days.flatMap((day) => day.workoutExercises);
-  assert.equal(programmeExercises.length, 20);
-  assert(programmeExercises.every((item) => item.sets === DEMO_SETS && item.targetReps === DEFAULT_TARGET_REPS && item.plannedWeightKg === null));
-  assert(programmeExercises.every((item) => item.loadTrackingTypeSnapshot !== null && item.loadEntryModeSnapshot !== null));
-  assert(programmeExercises.every((item) => item.exercise.active));
+  assert.equal(programCount, 0, "Catalogue seeding must not create personal programmes");
   assert.equal(sessionCount, 0);
 
-  console.log(`Verified ${equipment.length} equipment, ${expectedPhotos.length} original-photo mappings, ${exercises.length} exercises, ${muscles.length} muscles, and one inactive four-day demo programme.`);
+  console.log(`Verified ${equipment.length} shared equipment records, ${expectedPhotos.length} original-photo mappings, ${exercises.length} shared exercises, ${muscles.length} shared muscles, and no personal seed data.`);
   await prisma.$disconnect();
 }
 

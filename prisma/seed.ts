@@ -1,10 +1,8 @@
 import {
   MediaRole,
   MuscleRole,
-  ProgramStatus,
-  ProgramVersionSource,
 } from "../src/generated/prisma/enums";
-import { DEFAULT_TARGET_REPS, DEMO_SETS, demoProgrammeSeed, equipmentSeed, exerciseDbMediaSeed, exerciseSeed, localExerciseMediaSeed, localExerciseMediaStem, mediaStem, muscleSeed } from "../src/data/phase-2-catalogue";
+import { DEFAULT_TARGET_REPS, equipmentSeed, exerciseDbMediaSeed, exerciseSeed, localExerciseMediaSeed, localExerciseMediaStem, mediaStem, muscleSeed } from "../src/data/phase-2-catalogue";
 import { getPrisma } from "../src/lib/prisma";
 
 const prisma = getPrisma();
@@ -13,12 +11,6 @@ async function main() {
 const equipmentIds = new Map<string, string>();
 const muscleIds = new Map<string, string>();
 const exerciseIds = new Map<string, string>();
-
-await prisma.appSettings.upsert({
-  where: { id: 1 },
-  create: { id: 1 },
-  update: {},
-});
 
 for (const item of equipmentSeed) {
   const equipment = await prisma.equipment.upsert({
@@ -173,86 +165,8 @@ for (const media of exerciseDbMediaSeed) {
   }
 }
 
-const program = await prisma.workoutProgram.upsert({
-  where: { slug: demoProgrammeSeed.slug },
-  create: {
-    slug: demoProgrammeSeed.slug,
-    name: demoProgrammeSeed.name,
-    isDemo: true,
-    status: ProgramStatus.DEMO,
-    activeVersionId: null,
-    notice: demoProgrammeSeed.notice,
-  },
-  update: {
-    name: demoProgrammeSeed.name,
-    isDemo: true,
-    notice: demoProgrammeSeed.notice,
-  },
-});
-
-const existingVersion = await prisma.programVersion.findUnique({
-  where: {
-    programId_versionNumber: {
-      programId: program.id,
-      versionNumber: demoProgrammeSeed.version,
-    },
-  },
-  select: { id: true },
-});
-
-if (!existingVersion) {
-  const compoundExercises = new Set([
-    "chest-press",
-    "lat-pulldown",
-    "shoulder-press",
-    "machine-squat",
-    "bodyweight-squat",
-    "one-arm-dumbbell-row",
-    "standing-dumbbell-shoulder-press",
-    "push-up",
-    "goblet-squat",
-    "dumbbell-romanian-deadlift",
-    "reverse-lunge",
-    "step-up",
-  ]);
-
-  await prisma.programVersion.create({
-    data: {
-      programId: program.id,
-      versionNumber: demoProgrammeSeed.version,
-      source: ProgramVersionSource.SEED,
-      notes: "Provisional fixture data created only to test programme and later workout workflows.",
-      days: {
-        create: demoProgrammeSeed.days.map((day, dayIndex) => ({
-          slug: day.slug,
-          name: day.name,
-          rotationOrder: dayIndex + 1,
-          workoutExercises: {
-            create: day.exercises.map((exerciseSlug, exerciseIndex) => {
-              const exerciseId = exerciseIds.get(exerciseSlug);
-              if (!exerciseId) throw new Error(`Missing exercise: ${exerciseSlug}`);
-              return {
-                exerciseId,
-                position: exerciseIndex + 1,
-                sets: DEMO_SETS,
-                targetReps: DEFAULT_TARGET_REPS,
-                plannedWeightKg: null,
-                plannedLoadValue: null,
-                loadTrackingTypeSnapshot: exerciseSeed.find((item) => item.slug === exerciseSlug)?.loadTrackingType,
-                loadEntryModeSnapshot: exerciseSeed.find((item) => item.slug === exerciseSlug)?.loadEntryMode,
-                restSeconds: compoundExercises.has(exerciseSlug) ? 120 : 90,
-                autoRest: true,
-              };
-            }),
-          },
-        })),
-      },
-    },
-  });
-}
-
 console.log(
-  `Seeded ${equipmentSeed.length} equipment records, ${exerciseSeed.length} exercises, ${muscleSeed.length} muscles, and demo programme version ${demoProgrammeSeed.version}.`,
+  `Seeded ${equipmentSeed.length} shared equipment records, ${exerciseSeed.length} shared exercises, and ${muscleSeed.length} shared muscles.`,
 );
 
 }

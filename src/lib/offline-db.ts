@@ -83,10 +83,14 @@ export async function getOfflineOutbox(): Promise<OfflineMutation[]> { return (a
 export async function removeOfflineMutations(ids: string[]): Promise<void> { if (!ids.length) return; const db = await openOfflineDb(); const transaction = db.transaction(OUTBOX, "readwrite"); const store = transaction.objectStore(OUTBOX); ids.forEach((id) => store.delete(id)); await transactionDone(transaction); db.close(); window.dispatchEvent(new Event("vicgym:outbox-changed")); }
 export async function markOfflineMutationFailed(id: string, message: string): Promise<void> { const mutation = await getValue<OfflineMutation>(OUTBOX, id); if (!mutation) return; await putValue(OUTBOX, { ...mutation, attempts: mutation.attempts + 1, lastError: message }); window.dispatchEvent(new Event("vicgym:outbox-changed")); }
 
+export async function clearOfflineRuntimeCaches(): Promise<void> {
+  if ("caches" in globalThis) for (const name of await caches.keys()) if (name.startsWith("vicgym-")) await caches.delete(name);
+  navigator.serviceWorker?.controller?.postMessage({ type: "VICGYM_CLEAR_PRIVATE_CACHES" });
+}
+
 export async function clearPrivateOfflineData(): Promise<void> {
   const name = databaseName();
   await new Promise<void>((resolve, reject) => { const deletion = indexedDB.deleteDatabase(name); deletion.onsuccess = () => resolve(); deletion.onerror = () => reject(deletion.error); deletion.onblocked = () => reject(new Error("INDEXEDDB_BLOCKED")); });
-  if ("caches" in globalThis) for (const name of await caches.keys()) if (name.startsWith("vicgym-")) await caches.delete(name);
-  navigator.serviceWorker?.controller?.postMessage({ type: "VICGYM_CLEAR_PRIVATE_CACHES" });
+  await clearOfflineRuntimeCaches();
   window.dispatchEvent(new Event("vicgym:outbox-changed"));
 }

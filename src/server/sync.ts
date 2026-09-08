@@ -80,7 +80,12 @@ async function applyMutation(tx: Prisma.TransactionClient, userId: string, mutat
     if (!exercise) throw new Error("Active exercise session was not found");
     const { load, recoveredLegacyField } = validatedSyncLoad(payload, exercise);
     if (recoveredLegacyField) console.warn("Recovered legacy offline load field", { mutationId: mutation.id, mutationType: mutation.type, sequence: mutation.sequence, sessionId: mutation.sessionId, expectedLoadType: exercise.loadTrackingTypeSnapshot });
-    await tx.setLog.upsert({ where: { id: mutation.targetId }, create: { id: mutation.targetId, exerciseSessionId, setNumber, targetReps, actualReps: asNullableNumber(payload.actualReps, "actualReps"), ...load }, update: {} });
+    const existing = await tx.setLog.findUnique({ where: { id: mutation.targetId }, select: { exerciseSessionId: true } });
+    if (existing) {
+      if (existing.exerciseSessionId !== exerciseSessionId) throw new Error("Set identifier belongs to another exercise session");
+      return;
+    }
+    await tx.setLog.create({ data: { id: mutation.targetId, exerciseSessionId, setNumber, targetReps, actualReps: asNullableNumber(payload.actualReps, "actualReps"), ...load } });
     return;
   }
   if (mutation.type === "UPSERT_SET") {

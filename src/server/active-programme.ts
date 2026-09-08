@@ -39,8 +39,11 @@ export async function setActiveProgramme(db: Db, userId: string, programId: stri
     where: { userId, status: "ACTIVE", id: { not: programId }, isDemo: true },
     data: { status: "DEMO" },
   });
-  const owned = await db.workoutProgram.findFirst({ where: { id: programId, userId }, select: { id: true } });
-  if (!owned) throw new Error("PROGRAMME_NOT_FOUND");
+  const [owned, ownedVersion] = await Promise.all([
+    db.workoutProgram.findFirst({ where: { id: programId, userId }, select: { id: true } }),
+    db.programVersion.findFirst({ where: { id: versionId, programId, program: { userId } }, select: { id: true } }),
+  ]);
+  if (!owned || !ownedVersion) throw new Error("PROGRAMME_NOT_FOUND");
   const program = await db.workoutProgram.update({
     where: { id: owned.id },
     data: { activeVersionId: versionId, status: "ACTIVE", activatedAt: new Date() },

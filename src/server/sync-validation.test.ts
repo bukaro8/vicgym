@@ -53,7 +53,7 @@ describe("ad-hoc exercise replay", () => {
     const create = vi.fn().mockResolvedValue({ id: mutation.targetId });
     const transaction = { clientMutation: { findUnique: vi.fn().mockResolvedValue(null), create: vi.fn().mockResolvedValue({}) }, workoutSession: { findFirst: vi.fn().mockResolvedValue({ id: mutation.sessionId, exerciseSessions: [{ exerciseId: "existing", position: 1 }] }) }, exercise: { findFirst: vi.fn().mockResolvedValue({ id: mutation.payload.exerciseId, name: "Chest Press", loadTrackingType: "MACHINE_LEVEL", loadEntryMode: "STACK_TOTAL", loadMultiplier: 1 }) }, exerciseSession: { create } };
     const prisma = { $transaction: (callback: (tx: typeof transaction) => unknown) => callback(transaction) };
-    expect(await replayOfflineMutations(prisma as never, [mutation])).toEqual([expect.objectContaining({ status: "applied", type: "ADD_EXERCISE" })]);
+    expect(await replayOfflineMutations(prisma as never, "user-1", [mutation])).toEqual([expect.objectContaining({ status: "applied", type: "ADD_EXERCISE" })]);
     expect(create).toHaveBeenCalledWith({ data: expect.objectContaining({ isAdHoc: true, loadTrackingTypeSnapshot: "MACHINE_LEVEL", loadEntryModeSnapshot: "STACK_TOTAL", setLogs: { create: expect.arrayContaining([expect.objectContaining({ loadTrackingType: "MACHINE_LEVEL", loadValue: null, weightKg: null })]) } }) });
   });
 
@@ -61,7 +61,7 @@ describe("ad-hoc exercise replay", () => {
     const create = vi.fn();
     const transaction = { clientMutation: { findUnique: vi.fn().mockResolvedValue(null), create: vi.fn() }, workoutSession: { findFirst: vi.fn().mockResolvedValue({ id: mutation.sessionId, exerciseSessions: [{ exerciseId: mutation.payload.exerciseId, position: 1 }] }) }, exercise: { findFirst: vi.fn() }, exerciseSession: { create } };
     const prisma = { $transaction: (callback: (tx: typeof transaction) => unknown) => callback(transaction) };
-    expect(await replayOfflineMutations(prisma as never, [mutation])).toEqual([expect.objectContaining({ status: "failed", error: "Exercise is already part of this workout session" })]);
+    expect(await replayOfflineMutations(prisma as never, "user-1", [mutation])).toEqual([expect.objectContaining({ status: "failed", error: "Exercise is already part of this workout session" })]);
     expect(create).not.toHaveBeenCalled();
   });
 });

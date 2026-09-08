@@ -52,6 +52,9 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   AppSettings: 'AppSettings',
+  User: 'User',
+  MagicLinkToken: 'MagicLinkToken',
+  AuthSession: 'AuthSession',
   Equipment: 'Equipment',
   Exercise: 'Exercise',
   Muscle: 'Muscle',
@@ -85,7 +88,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 
 export const AppSettingsScalarFieldEnum = {
-  id: 'id',
+  userId: 'userId',
   activeProgramId: 'activeProgramId',
   timezone: 'timezone',
   weightUnit: 'weightUnit',
@@ -97,6 +100,39 @@ export const AppSettingsScalarFieldEnum = {
 } as const
 
 export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]
+
+
+export const UserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const MagicLinkTokenScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type MagicLinkTokenScalarFieldEnum = (typeof MagicLinkTokenScalarFieldEnum)[keyof typeof MagicLinkTokenScalarFieldEnum]
+
+
+export const AuthSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type AuthSessionScalarFieldEnum = (typeof AuthSessionScalarFieldEnum)[keyof typeof AuthSessionScalarFieldEnum]
 
 
 export const EquipmentScalarFieldEnum = {
@@ -176,6 +212,7 @@ export type ExerciseMediaScalarFieldEnum = (typeof ExerciseMediaScalarFieldEnum)
 
 export const WorkoutProgramScalarFieldEnum = {
   id: 'id',
+  userId: 'userId',
   slug: 'slug',
   name: 'name',
   isDemo: 'isDemo',
@@ -237,6 +274,7 @@ export type WorkoutExerciseScalarFieldEnum = (typeof WorkoutExerciseScalarFieldE
 
 export const WorkoutSessionScalarFieldEnum = {
   id: 'id',
+  userId: 'userId',
   programVersionId: 'programVersionId',
   workoutDayId: 'workoutDayId',
   status: 'status',
@@ -316,6 +354,7 @@ export type RestPeriodScalarFieldEnum = (typeof RestPeriodScalarFieldEnum)[keyof
 
 
 export const ClientMutationScalarFieldEnum = {
+  userId: 'userId',
   id: 'id',
   status: 'status',
   entityType: 'entityType',

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     default: "VicGym",
     template: "%s · VicGym",
   },
-  description: "A private workout log for one local gym.",
+  description: "A private workout log with personal programmes, history, and progress.",
   icons: {
     icon: [
       { url: "/icons/vicgym-192.png", sizes: "192x192", type: "image/png" },
@@ -43,7 +43,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const user = await getCurrentUser();
   return (
     <html lang="en">
-      <body className="min-h-dvh antialiased"><SerwistProvider swUrl="/serwist/sw.js"><OfflineProvider userId={user?.id ?? null}><RestTimerProvider>{children}</RestTimerProvider></OfflineProvider></SerwistProvider></body>
+      <body className="min-h-dvh antialiased">{user ? <SerwistProvider swUrl="/serwist/sw.js"><OfflineProvider userId={user.id}><RestTimerProvider>{children}</RestTimerProvider></OfflineProvider></SerwistProvider> : children}</body>
     </html>
   );
 }

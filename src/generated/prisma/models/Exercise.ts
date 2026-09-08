@@ -623,6 +623,14 @@ export type ExerciseUncheckedUpdateManyWithoutEquipmentNestedInput = {
   deleteMany?: Prisma.ExerciseScalarWhereInput | Prisma.ExerciseScalarWhereInput[]
 }
 
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type EnumRepModeFieldUpdateOperationsInput = {
   set?: $Enums.RepMode
 }

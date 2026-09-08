@@ -25,6 +25,7 @@ export type AggregateClientMutation = {
 }
 
 export type ClientMutationMinAggregateOutputType = {
+  userId: string | null
   id: string | null
   status: $Enums.ClientMutationStatus | null
   entityType: string | null
@@ -37,6 +38,7 @@ export type ClientMutationMinAggregateOutputType = {
 }
 
 export type ClientMutationMaxAggregateOutputType = {
+  userId: string | null
   id: string | null
   status: $Enums.ClientMutationStatus | null
   entityType: string | null
@@ -49,6 +51,7 @@ export type ClientMutationMaxAggregateOutputType = {
 }
 
 export type ClientMutationCountAggregateOutputType = {
+  userId: number
   id: number
   status: number
   entityType: number
@@ -63,6 +66,7 @@ export type ClientMutationCountAggregateOutputType = {
 
 
 export type ClientMutationMinAggregateInputType = {
+  userId?: true
   id?: true
   status?: true
   entityType?: true
@@ -75,6 +79,7 @@ export type ClientMutationMinAggregateInputType = {
 }
 
 export type ClientMutationMaxAggregateInputType = {
+  userId?: true
   id?: true
   status?: true
   entityType?: true
@@ -87,6 +92,7 @@ export type ClientMutationMaxAggregateInputType = {
 }
 
 export type ClientMutationCountAggregateInputType = {
+  userId?: true
   id?: true
   status?: true
   entityType?: true
@@ -172,6 +178,7 @@ export type ClientMutationGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 export type ClientMutationGroupByOutputType = {
+  userId: string
   id: string
   status: $Enums.ClientMutationStatus
   entityType: string
@@ -205,6 +212,7 @@ export type ClientMutationWhereInput = {
   AND?: Prisma.ClientMutationWhereInput | Prisma.ClientMutationWhereInput[]
   OR?: Prisma.ClientMutationWhereInput[]
   NOT?: Prisma.ClientMutationWhereInput | Prisma.ClientMutationWhereInput[]
+  userId?: Prisma.UuidFilter<"ClientMutation"> | string
   id?: Prisma.UuidFilter<"ClientMutation"> | string
   status?: Prisma.EnumClientMutationStatusFilter<"ClientMutation"> | $Enums.ClientMutationStatus
   entityType?: Prisma.StringFilter<"ClientMutation"> | string
@@ -214,9 +222,11 @@ export type ClientMutationWhereInput = {
   errorMessage?: Prisma.StringNullableFilter<"ClientMutation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ClientMutation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ClientMutation"> | Date | string
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type ClientMutationOrderByWithRelationInput = {
+  userId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
@@ -226,13 +236,16 @@ export type ClientMutationOrderByWithRelationInput = {
   errorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type ClientMutationWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  userId_id?: Prisma.ClientMutationUserIdIdCompoundUniqueInput
   AND?: Prisma.ClientMutationWhereInput | Prisma.ClientMutationWhereInput[]
   OR?: Prisma.ClientMutationWhereInput[]
   NOT?: Prisma.ClientMutationWhereInput | Prisma.ClientMutationWhereInput[]
+  userId?: Prisma.UuidFilter<"ClientMutation"> | string
+  id?: Prisma.UuidFilter<"ClientMutation"> | string
   status?: Prisma.EnumClientMutationStatusFilter<"ClientMutation"> | $Enums.ClientMutationStatus
   entityType?: Prisma.StringFilter<"ClientMutation"> | string
   entityId?: Prisma.StringNullableFilter<"ClientMutation"> | string | null
@@ -241,9 +254,11 @@ export type ClientMutationWhereUniqueInput = Prisma.AtLeast<{
   errorMessage?: Prisma.StringNullableFilter<"ClientMutation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ClientMutation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ClientMutation"> | Date | string
-}, "id">
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+}, "userId_id">
 
 export type ClientMutationOrderByWithAggregationInput = {
+  userId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
@@ -262,6 +277,7 @@ export type ClientMutationScalarWhereWithAggregatesInput = {
   AND?: Prisma.ClientMutationScalarWhereWithAggregatesInput | Prisma.ClientMutationScalarWhereWithAggregatesInput[]
   OR?: Prisma.ClientMutationScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ClientMutationScalarWhereWithAggregatesInput | Prisma.ClientMutationScalarWhereWithAggregatesInput[]
+  userId?: Prisma.UuidWithAggregatesFilter<"ClientMutation"> | string
   id?: Prisma.UuidWithAggregatesFilter<"ClientMutation"> | string
   status?: Prisma.EnumClientMutationStatusWithAggregatesFilter<"ClientMutation"> | $Enums.ClientMutationStatus
   entityType?: Prisma.StringWithAggregatesFilter<"ClientMutation"> | string
@@ -283,9 +299,11 @@ export type ClientMutationCreateInput = {
   errorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutClientMutationsInput
 }
 
 export type ClientMutationUncheckedCreateInput = {
+  userId: string
   id: string
   status?: $Enums.ClientMutationStatus
   entityType: string
@@ -307,9 +325,11 @@ export type ClientMutationUpdateInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutClientMutationsNestedInput
 }
 
 export type ClientMutationUncheckedUpdateInput = {
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumClientMutationStatusFieldUpdateOperationsInput | $Enums.ClientMutationStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
@@ -322,6 +342,7 @@ export type ClientMutationUncheckedUpdateInput = {
 }
 
 export type ClientMutationCreateManyInput = {
+  userId: string
   id: string
   status?: $Enums.ClientMutationStatus
   entityType: string
@@ -346,6 +367,7 @@ export type ClientMutationUpdateManyMutationInput = {
 }
 
 export type ClientMutationUncheckedUpdateManyInput = {
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumClientMutationStatusFieldUpdateOperationsInput | $Enums.ClientMutationStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
@@ -357,7 +379,23 @@ export type ClientMutationUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type ClientMutationListRelationFilter = {
+  every?: Prisma.ClientMutationWhereInput
+  some?: Prisma.ClientMutationWhereInput
+  none?: Prisma.ClientMutationWhereInput
+}
+
+export type ClientMutationOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type ClientMutationUserIdIdCompoundUniqueInput = {
+  userId: string
+  id: string
+}
+
 export type ClientMutationCountOrderByAggregateInput = {
+  userId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
@@ -370,6 +408,7 @@ export type ClientMutationCountOrderByAggregateInput = {
 }
 
 export type ClientMutationMaxOrderByAggregateInput = {
+  userId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
@@ -382,6 +421,7 @@ export type ClientMutationMaxOrderByAggregateInput = {
 }
 
 export type ClientMutationMinOrderByAggregateInput = {
+  userId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
@@ -393,13 +433,170 @@ export type ClientMutationMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type ClientMutationCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.ClientMutationCreateWithoutUserInput, Prisma.ClientMutationUncheckedCreateWithoutUserInput> | Prisma.ClientMutationCreateWithoutUserInput[] | Prisma.ClientMutationUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ClientMutationCreateOrConnectWithoutUserInput | Prisma.ClientMutationCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.ClientMutationCreateManyUserInputEnvelope
+  connect?: Prisma.ClientMutationWhereUniqueInput | Prisma.ClientMutationWhereUniqueInput[]
+}
+
+export type ClientMutationUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.ClientMutationCreateWithoutUserInput, Prisma.ClientMutationUncheckedCreateWithoutUserInput> | Prisma.ClientMutationCreateWithoutUserInput[] | Prisma.ClientMutationUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ClientMutationCreateOrConnectWithoutUserInput | Prisma.ClientMutationCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.ClientMutationCreateManyUserInputEnvelope
+  connect?: Prisma.ClientMutationWhereUniqueInput | Prisma.ClientMutationWhereUniqueInput[]
+}
+
+export type ClientMutationUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.ClientMutationCreateWithoutUserInput, Prisma.ClientMutationUncheckedCreateWithoutUserInput> | Prisma.ClientMutationCreateWithoutUserInput[] | Prisma.ClientMutationUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ClientMutationCreateOrConnectWithoutUserInput | Prisma.ClientMutationCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.ClientMutationUpsertWithWhereUniqueWithoutUserInput | Prisma.ClientMutationUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.ClientMutationCreateManyUserInputEnvelope
+  set?: Prisma.ClientMutationWhereUniqueInput | Prisma.ClientMutationWhereUniqueInput[]
+  disconnect?: Prisma.ClientMutationWhereUniqueInput | Prisma.ClientMutationWhereUniqueInput[]
+  delete?: Prisma.ClientMutationWhereUniqueInput | Prisma.ClientMutationWhereUniqueInput[]
+  connect?: Prisma.ClientMutationWhereUniqueInput | Prisma.ClientMutationWhereUniqueInput[]
+  update?: Prisma.ClientMutationUpdateWithWhereUniqueWithoutUserInput | Prisma.ClientMutationUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.ClientMutationUpdateManyWithWhereWithoutUserInput | Prisma.ClientMutationUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.ClientMutationScalarWhereInput | Prisma.ClientMutationScalarWhereInput[]
+}
+
+export type ClientMutationUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.ClientMutationCreateWithoutUserInput, Prisma.ClientMutationUncheckedCreateWithoutUserInput> | Prisma.ClientMutationCreateWithoutUserInput[] | Prisma.ClientMutationUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ClientMutationCreateOrConnectWithoutUserInput | Prisma.ClientMutationCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.ClientMutationUpsertWithWhereUniqueWithoutUserInput | Prisma.ClientMutationUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.ClientMutationCreateManyUserInputEnvelope
+  set?: Prisma.ClientMutationWhereUniqueInput | Prisma.ClientMutationWhereUniqueInput[]
+  disconnect?: Prisma.ClientMutationWhereUniqueInput | Prisma.ClientMutationWhereUniqueInput[]
+  delete?: Prisma.ClientMutationWhereUniqueInput | Prisma.ClientMutationWhereUniqueInput[]
+  connect?: Prisma.ClientMutationWhereUniqueInput | Prisma.ClientMutationWhereUniqueInput[]
+  update?: Prisma.ClientMutationUpdateWithWhereUniqueWithoutUserInput | Prisma.ClientMutationUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.ClientMutationUpdateManyWithWhereWithoutUserInput | Prisma.ClientMutationUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.ClientMutationScalarWhereInput | Prisma.ClientMutationScalarWhereInput[]
+}
+
 export type EnumClientMutationStatusFieldUpdateOperationsInput = {
   set?: $Enums.ClientMutationStatus
+}
+
+export type ClientMutationCreateWithoutUserInput = {
+  id: string
+  status?: $Enums.ClientMutationStatus
+  entityType: string
+  entityId?: string | null
+  payloadHash: string
+  appliedAt?: Date | string | null
+  errorMessage?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ClientMutationUncheckedCreateWithoutUserInput = {
+  id: string
+  status?: $Enums.ClientMutationStatus
+  entityType: string
+  entityId?: string | null
+  payloadHash: string
+  appliedAt?: Date | string | null
+  errorMessage?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ClientMutationCreateOrConnectWithoutUserInput = {
+  where: Prisma.ClientMutationWhereUniqueInput
+  create: Prisma.XOR<Prisma.ClientMutationCreateWithoutUserInput, Prisma.ClientMutationUncheckedCreateWithoutUserInput>
+}
+
+export type ClientMutationCreateManyUserInputEnvelope = {
+  data: Prisma.ClientMutationCreateManyUserInput | Prisma.ClientMutationCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type ClientMutationUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.ClientMutationWhereUniqueInput
+  update: Prisma.XOR<Prisma.ClientMutationUpdateWithoutUserInput, Prisma.ClientMutationUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.ClientMutationCreateWithoutUserInput, Prisma.ClientMutationUncheckedCreateWithoutUserInput>
+}
+
+export type ClientMutationUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.ClientMutationWhereUniqueInput
+  data: Prisma.XOR<Prisma.ClientMutationUpdateWithoutUserInput, Prisma.ClientMutationUncheckedUpdateWithoutUserInput>
+}
+
+export type ClientMutationUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.ClientMutationScalarWhereInput
+  data: Prisma.XOR<Prisma.ClientMutationUpdateManyMutationInput, Prisma.ClientMutationUncheckedUpdateManyWithoutUserInput>
+}
+
+export type ClientMutationScalarWhereInput = {
+  AND?: Prisma.ClientMutationScalarWhereInput | Prisma.ClientMutationScalarWhereInput[]
+  OR?: Prisma.ClientMutationScalarWhereInput[]
+  NOT?: Prisma.ClientMutationScalarWhereInput | Prisma.ClientMutationScalarWhereInput[]
+  userId?: Prisma.UuidFilter<"ClientMutation"> | string
+  id?: Prisma.UuidFilter<"ClientMutation"> | string
+  status?: Prisma.EnumClientMutationStatusFilter<"ClientMutation"> | $Enums.ClientMutationStatus
+  entityType?: Prisma.StringFilter<"ClientMutation"> | string
+  entityId?: Prisma.StringNullableFilter<"ClientMutation"> | string | null
+  payloadHash?: Prisma.StringFilter<"ClientMutation"> | string
+  appliedAt?: Prisma.DateTimeNullableFilter<"ClientMutation"> | Date | string | null
+  errorMessage?: Prisma.StringNullableFilter<"ClientMutation"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"ClientMutation"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ClientMutation"> | Date | string
+}
+
+export type ClientMutationCreateManyUserInput = {
+  id: string
+  status?: $Enums.ClientMutationStatus
+  entityType: string
+  entityId?: string | null
+  payloadHash: string
+  appliedAt?: Date | string | null
+  errorMessage?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ClientMutationUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumClientMutationStatusFieldUpdateOperationsInput | $Enums.ClientMutationStatus
+  entityType?: Prisma.StringFieldUpdateOperationsInput | string
+  entityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  payloadHash?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ClientMutationUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumClientMutationStatusFieldUpdateOperationsInput | $Enums.ClientMutationStatus
+  entityType?: Prisma.StringFieldUpdateOperationsInput | string
+  entityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  payloadHash?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ClientMutationUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumClientMutationStatusFieldUpdateOperationsInput | $Enums.ClientMutationStatus
+  entityType?: Prisma.StringFieldUpdateOperationsInput | string
+  entityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  payloadHash?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
 
 export type ClientMutationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  userId?: boolean
   id?: boolean
   status?: boolean
   entityType?: boolean
@@ -409,9 +606,11 @@ export type ClientMutationSelect<ExtArgs extends runtime.Types.Extensions.Intern
   errorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["clientMutation"]>
 
 export type ClientMutationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  userId?: boolean
   id?: boolean
   status?: boolean
   entityType?: boolean
@@ -421,9 +620,11 @@ export type ClientMutationSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   errorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["clientMutation"]>
 
 export type ClientMutationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  userId?: boolean
   id?: boolean
   status?: boolean
   entityType?: boolean
@@ -433,9 +634,11 @@ export type ClientMutationSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   errorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["clientMutation"]>
 
 export type ClientMutationSelectScalar = {
+  userId?: boolean
   id?: boolean
   status?: boolean
   entityType?: boolean
@@ -447,12 +650,24 @@ export type ClientMutationSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ClientMutationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "status" | "entityType" | "entityId" | "payloadHash" | "appliedAt" | "errorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["clientMutation"]>
+export type ClientMutationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "id" | "status" | "entityType" | "entityId" | "payloadHash" | "appliedAt" | "errorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["clientMutation"]>
+export type ClientMutationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type ClientMutationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type ClientMutationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $ClientMutationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ClientMutation"
-  objects: {}
+  objects: {
+    user: Prisma.$UserPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    userId: string
     id: string
     status: $Enums.ClientMutationStatus
     entityType: string
@@ -545,8 +760,8 @@ export interface ClientMutationDelegate<ExtArgs extends runtime.Types.Extensions
    * // Get first 10 ClientMutations
    * const clientMutations = await prisma.clientMutation.findMany({ take: 10 })
    * 
-   * // Only select the `id`
-   * const clientMutationWithIdOnly = await prisma.clientMutation.findMany({ select: { id: true } })
+   * // Only select the `userId`
+   * const clientMutationWithUserIdOnly = await prisma.clientMutation.findMany({ select: { userId: true } })
    * 
    */
   findMany<T extends ClientMutationFindManyArgs>(args?: Prisma.SelectSubset<T, ClientMutationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ClientMutationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -590,9 +805,9 @@ export interface ClientMutationDelegate<ExtArgs extends runtime.Types.Extensions
    *   ]
    * })
    * 
-   * // Create many ClientMutations and only return the `id`
-   * const clientMutationWithIdOnly = await prisma.clientMutation.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many ClientMutations and only return the `userId`
+   * const clientMutationWithUserIdOnly = await prisma.clientMutation.createManyAndReturn({
+   *   select: { userId: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -681,9 +896,9 @@ export interface ClientMutationDelegate<ExtArgs extends runtime.Types.Extensions
    *   ]
    * })
    * 
-   * // Update zero or more ClientMutations and only return the `id`
-   * const clientMutationWithIdOnly = await prisma.clientMutation.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more ClientMutations and only return the `userId`
+   * const clientMutationWithUserIdOnly = await prisma.clientMutation.updateManyAndReturn({
+   *   select: { userId: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -856,6 +1071,7 @@ readonly fields: ClientMutationFieldRefs;
  */
 export interface Prisma__ClientMutationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -885,6 +1101,7 @@ export interface Prisma__ClientMutationClient<T, Null = never, ExtArgs extends r
  * Fields of the ClientMutation model
  */
 export interface ClientMutationFieldRefs {
+  readonly userId: Prisma.FieldRef<"ClientMutation", 'String'>
   readonly id: Prisma.FieldRef<"ClientMutation", 'String'>
   readonly status: Prisma.FieldRef<"ClientMutation", 'ClientMutationStatus'>
   readonly entityType: Prisma.FieldRef<"ClientMutation", 'String'>
@@ -911,6 +1128,10 @@ export type ClientMutationFindUniqueArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.ClientMutationOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationInclude<ExtArgs> | null
+  /**
    * Filter, which ClientMutation to fetch.
    */
   where: Prisma.ClientMutationWhereUniqueInput
@@ -929,6 +1150,10 @@ export type ClientMutationFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Ex
    */
   omit?: Prisma.ClientMutationOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationInclude<ExtArgs> | null
+  /**
    * Filter, which ClientMutation to fetch.
    */
   where: Prisma.ClientMutationWhereUniqueInput
@@ -946,6 +1171,10 @@ export type ClientMutationFindFirstArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the ClientMutation
    */
   omit?: Prisma.ClientMutationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationInclude<ExtArgs> | null
   /**
    * Filter, which ClientMutation to fetch.
    */
@@ -995,6 +1224,10 @@ export type ClientMutationFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ext
    */
   omit?: Prisma.ClientMutationOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationInclude<ExtArgs> | null
+  /**
    * Filter, which ClientMutation to fetch.
    */
   where?: Prisma.ClientMutationWhereInput
@@ -1042,6 +1275,10 @@ export type ClientMutationFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the ClientMutation
    */
   omit?: Prisma.ClientMutationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationInclude<ExtArgs> | null
   /**
    * Filter, which ClientMutations to fetch.
    */
@@ -1091,6 +1328,10 @@ export type ClientMutationCreateArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.ClientMutationOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationInclude<ExtArgs> | null
+  /**
    * The data needed to create a ClientMutation.
    */
   data: Prisma.XOR<Prisma.ClientMutationCreateInput, Prisma.ClientMutationUncheckedCreateInput>
@@ -1124,6 +1365,10 @@ export type ClientMutationCreateManyAndReturnArgs<ExtArgs extends runtime.Types.
    */
   data: Prisma.ClientMutationCreateManyInput | Prisma.ClientMutationCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1138,6 +1383,10 @@ export type ClientMutationUpdateArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the ClientMutation
    */
   omit?: Prisma.ClientMutationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationInclude<ExtArgs> | null
   /**
    * The data needed to update a ClientMutation.
    */
@@ -1190,6 +1439,10 @@ export type ClientMutationUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.
    * Limit how many ClientMutations to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1204,6 +1457,10 @@ export type ClientMutationUpsertArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the ClientMutation
    */
   omit?: Prisma.ClientMutationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationInclude<ExtArgs> | null
   /**
    * The filter to search for the ClientMutation to update in case it exists.
    */
@@ -1230,6 +1487,10 @@ export type ClientMutationDeleteArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the ClientMutation
    */
   omit?: Prisma.ClientMutationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationInclude<ExtArgs> | null
   /**
    * Filter which ClientMutation to delete.
    */
@@ -1262,4 +1523,8 @@ export type ClientMutationDefaultArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the ClientMutation
    */
   omit?: Prisma.ClientMutationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClientMutationInclude<ExtArgs> | null
 }
