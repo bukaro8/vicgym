@@ -88,7 +88,7 @@ enum ClientMutationStatus {
 }
 
 model AppSettings {
-  id                  Int             @id @default(1)
+  userId              String          @id @db.Uuid
   activeProgramId     String?         @unique @db.Uuid
   timezone            String          @default("Europe/London")
   weightUnit          WeightUnit      @default(KG)
@@ -97,7 +97,44 @@ model AppSettings {
   onboardingCompleted Boolean         @default(false)
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   activeProgram       WorkoutProgram? @relation(fields: [activeProgramId], references: [id], onDelete: SetNull)
+}
+
+model User {
+  id              String           @id @default(uuid()) @db.Uuid
+  email           String           @unique
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  settings        AppSettings?
+  programs        WorkoutProgram[]
+  workoutSessions WorkoutSession[]
+  authSessions    AuthSession[]
+  clientMutations ClientMutation[]
+}
+
+model MagicLinkToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  email     String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([email, createdAt])
+  @@index([expiresAt])
+}
+
+model AuthSession {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
 }
 
 model Equipment {
@@ -184,7 +221,8 @@ model ExerciseMedia {
 
 model WorkoutProgram {
   id               String           @id @default(uuid()) @db.Uuid
-  slug             String           @unique
+  userId           String           @db.Uuid
+  slug             String
   name             String
   isDemo           Boolean          @default(false)
   status           ProgramStatus    @default(DRAFT)
@@ -193,9 +231,13 @@ model WorkoutProgram {
   activatedAt      DateTime?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   activeVersion    ProgramVersion?  @relation("ActiveProgramVersion", fields: [activeVersionId], references: [id], onDelete: SetNull)
   activeInSettings AppSettings?
   versions         ProgramVersion[] @relation("ProgramVersions")
+
+  @@unique([userId, slug])
+  @@index([userId, status])
 }
 
 model ProgramVersion {
@@ -255,6 +297,7 @@ model WorkoutExercise {
 
 model WorkoutSession {
   id                     String               @id @default(uuid()) @db.Uuid
+  userId                 String               @db.Uuid
   programVersionId       String               @db.Uuid
   workoutDayId           String               @db.Uuid
   status                 WorkoutSessionStatus @default(IN_PROGRESS)
@@ -267,11 +310,12 @@ model WorkoutSession {
   cardioDurationSeconds  Int                  @default(0)
   notes                  String?
   updatedAt              DateTime             @updatedAt
+  user                   User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   programVersion         ProgramVersion       @relation(fields: [programVersionId], references: [id], onDelete: Restrict)
   workoutDay             WorkoutDay           @relation(fields: [workoutDayId], references: [id], onDelete: Restrict)
   exerciseSessions       ExerciseSession[]
 
-  @@index([status, startedAt])
+  @@index([userId, status, startedAt])
   @@index([programVersionId])
   @@index([workoutDayId])
 }
@@ -286,6 +330,7 @@ model ExerciseSession {
   targetReps               Int               @default(12)
   restSeconds              Int
   autoRest                 Boolean
+  isAdHoc                  Boolean           @default(false)
   loadTrackingTypeSnapshot LoadTrackingType?
   loadEntryModeSnapshot    LoadEntryMode?
   loadMultiplierSnapshot   Decimal?          @db.Decimal(6, 3)
@@ -342,7 +387,8 @@ model RestPeriod {
 }
 
 model ClientMutation {
-  id           String               @id @db.Uuid
+  userId       String               @db.Uuid
+  id           String               @db.Uuid
   status       ClientMutationStatus @default(PENDING)
   entityType   String
   entityId     String?
@@ -351,6 +397,8 @@ model ClientMutation {
   errorMessage String?
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([status, createdAt])
+  @@id([userId, id])
+  @@index([userId, status, createdAt])
 }

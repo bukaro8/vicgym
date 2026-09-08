@@ -5,11 +5,13 @@ import { AppShell } from "@/components/app-shell";
 import { formatLoad, type LoadEntryModeValue, type LoadTrackingTypeValue } from "@/lib/load-tracking";
 import { getPrisma } from "@/lib/prisma";
 import { getActiveProgramme } from "@/server/active-programme";
+import { requireCurrentUser } from "@/server/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProgrammePage() {
-  const program = await getActiveProgramme(getPrisma());
+  const user = await requireCurrentUser();
+  const program = await getActiveProgramme(getPrisma(), user.id);
   const version = program?.activeVersion;
   const active = Boolean(program && version);
   const demo = Boolean(program?.isDemo);

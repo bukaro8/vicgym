@@ -61,10 +61,10 @@ function comparePerformance(current: ReportSet[], previous: ReportSet[] | undefi
 }
 
 function reportLoad(set: ReportSet): string { return formatLoad(set.loadTrackingType, set.loadEntryMode, set.loadValue, { blank: "not entered", legacyWeightKg: set.weightKg }); }
-export async function getWeeklyReview(prisma: PrismaClient, requestedWeek?: string): Promise<WeeklyReview> {
+export async function getWeeklyReview(prisma: PrismaClient, userId: string, requestedWeek?: string): Promise<WeeklyReview> {
   const range = londonWeekRange(requestedWeek);
   const sessions = await prisma.workoutSession.findMany({
-    where: { status: "COMPLETED", completedAt: { gte: range.start, lt: range.end } },
+    where: { userId, status: "COMPLETED", completedAt: { gte: range.start, lt: range.end } },
     orderBy: { completedAt: "asc" },
     include: {
       programVersion: { include: { program: true } },
@@ -72,7 +72,7 @@ export async function getWeeklyReview(prisma: PrismaClient, requestedWeek?: stri
       exerciseSessions: { orderBy: { position: "asc" }, include: { setLogs: { orderBy: { setNumber: "asc" }, include: { restPeriod: true } }, exercise: { include: { muscles: { include: { muscle: true } } } } } },
     },
   });
-  const activeProgram = await getActiveProgramme(prisma);
+  const activeProgram = await getActiveProgramme(prisma, userId);
   const availableExercises = await prisma.exercise.findMany({
     where: { active: true },
     orderBy: [{ equipment: { type: "asc" } }, { name: "asc" }],
@@ -91,7 +91,7 @@ export async function getWeeklyReview(prisma: PrismaClient, requestedWeek?: stri
   const historyCache = new Map<string, ReportSet[]>();
   const exerciseIds = [...new Set(sessions.flatMap((session) => session.exerciseSessions.map((exercise) => exercise.exerciseId)))];
   await Promise.all(exerciseIds.map(async (exerciseId) => {
-    const history = await prisma.exerciseSession.findMany({ where: { exerciseId, workoutSession: { status: "COMPLETED" } }, orderBy: { workoutSession: { completedAt: "asc" } }, include: { workoutSession: { select: { completedAt: true } }, setLogs: { where: { completedAt: { not: null } }, orderBy: { setNumber: "asc" } } } });
+    const history = await prisma.exerciseSession.findMany({ where: { exerciseId, workoutSession: { userId, status: "COMPLETED" } }, orderBy: { workoutSession: { completedAt: "asc" } }, include: { workoutSession: { select: { completedAt: true } }, setLogs: { where: { completedAt: { not: null } }, orderBy: { setNumber: "asc" } } } });
     for (let index = 0; index < history.length; index += 1) {
       const item = history[index];
       const prior = history.slice(0, index).reverse().find((candidate) => candidate.loadTrackingTypeSnapshot === item.loadTrackingTypeSnapshot && candidate.loadEntryModeSnapshot === item.loadEntryModeSnapshot);
@@ -112,7 +112,7 @@ export async function getWeeklyReview(prisma: PrismaClient, requestedWeek?: stri
       const primary = item.exercise.muscles.filter((muscle) => muscle.role === "PRIMARY").map((muscle) => muscle.muscle.name);
       const secondary = item.exercise.muscles.filter((muscle) => muscle.role === "SECONDARY").map((muscle) => muscle.muscle.name);
       const exercise: ReportExercise = { slug: item.exercise.slug, name: item.exerciseNameSnapshot, targetReps: item.targetReps, restSeconds: item.restSeconds, notes: item.notes, sets, primary, secondary, progression: comparePerformance(sets, historyCache.get(item.id)) };
-      lines.push("", `${exercise.name} [${exercise.slug}]`, `Target reps: ${exercise.targetReps}`, `Configured rest: ${exercise.restSeconds} sec`, `Primary muscle: ${primary.join(", ") || "—"}`, `Secondary muscles: ${secondary.join(", ") || "—"}`);
+      lines.push("", `${exercise.name} [${exercise.slug}]${item.isAdHoc ? " · Extra/ad-hoc exercise" : ""}`, `Target reps: ${exercise.targetReps}`, `Configured rest: ${exercise.restSeconds} sec`, `Primary muscle: ${primary.join(", ") || "—"}`, `Secondary muscles: ${secondary.join(", ") || "—"}`);
       if (sets.length) {
         for (const set of sets) {
           lines.push(`- Set ${set.setNumber}: ${reportLoad(set)} × ${set.actualReps ?? set.targetReps}${set.notes ? ` · Note: ${set.notes}` : ""}`);

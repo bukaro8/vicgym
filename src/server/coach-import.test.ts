@@ -7,6 +7,11 @@ const creation = JSON.stringify({ schemaVersion: 2, operation: "create-programme
 
 describe("coach JSON contract", () => {
   it("accepts a versioned upsert with explicit changes", () => expect(parseCoachImport(valid).program).toBe("demo-four-day"));
+  it("preserves a rest-only update exactly during parsing", () => {
+    const parsed = parseCoachImport(JSON.stringify({ schemaVersion: 1, program: "small-gym", baseVersion: 1, changes: [{ action: "upsert", day: "upper-b", exercise: "biceps-curl", restSeconds: 60 }] }));
+    expect(parsed.schemaVersion).toBe(1);
+    if (parsed.schemaVersion === 1) expect(parsed.changes[0].restSeconds).toBe(60);
+  });
   it("rejects invalid JSON", () => expect(() => parseCoachImport("{" )).toThrow("Invalid JSON"));
   it("rejects duplicate changes", () => expect(() => parseCoachImport(JSON.stringify({ schemaVersion: 1, program: "demo-four-day", baseVersion: 1, changes: [{ day: "demo-upper-a", exercise: "chest-press", sets: 3 }, { day: "demo-upper-a", exercise: "chest-press", restSeconds: 90 }] }))).toThrow("Duplicate"));
   it("rejects programme values on removes", () => expect(() => parseCoachImport(JSON.stringify({ schemaVersion: 1, program: "demo-four-day", baseVersion: 1, changes: [{ action: "remove", day: "demo-upper-a", exercise: "chest-press", sets: 3 }] }))).toThrow("cannot include"));

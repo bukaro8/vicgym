@@ -40,10 +40,12 @@ export type ExerciseDbMediaSeed = {
   externalId: string;
   sourceFilename: string;
   alt: string;
-  videoUrl: string;
+  sourceUrl?: string;
+  videoUrl?: string;
 };
 
 export const localExerciseMediaSeed: LocalExerciseMediaSeed[] = [
+  { exerciseSlug: "dumbbell-chest-press", filename: "dumbbell-chest-press.png", alt: "Person performing a dumbbell chest press" },
   { exerciseSlug: "dumbbell-biceps-curl", filename: "Dumbbell Biceps Curl.png", alt: "Person performing a standing dumbbell biceps curl" },
   { exerciseSlug: "glute-bridge", filename: "Glute Bridge.png", alt: "Person performing a floor glute bridge" },
   { exerciseSlug: "standing-dumbbell-shoulder-press", filename: "Standing Dumbbell Shoulder Press.png", alt: "Person performing a standing dumbbell shoulder press" },
@@ -54,6 +56,8 @@ export const localExerciseMediaSeed: LocalExerciseMediaSeed[] = [
 // metadata in the normal seed makes a fresh production database render the
 // approved ExerciseDB movement images without a production API request.
 export const exerciseDbMediaSeed: ExerciseDbMediaSeed[] = [
+  { exerciseSlug: "barbell-bent-over-row", externalId: "eZyBC3j", sourceFilename: "exercisedb-eZyBC3j-source", sourceUrl: "https://static.exercisedb.dev/media/eZyBC3j.gif", alt: "Barbell bent over row movement demonstration supplied by ExerciseDB" },
+  { exerciseSlug: "barbell-deadlift", externalId: "ila4NZS", sourceFilename: "exercisedb-ila4NZS-source", sourceUrl: "https://static.exercisedb.dev/media/ila4NZS.gif", alt: "Barbell deadlift movement demonstration supplied by ExerciseDB" },
   { exerciseSlug: "bodyweight-squat", externalId: "exr_41n2hmGR8WuVfe1U", sourceFilename: "exercisedb-exr_41n2hmGR8WuVfe1U-source", alt: "Squat movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/OCSQUGO/41n2hmGR8WuVfe1U__Bodyweight-Squat-(male)_Thighs-SIDE-POV_.mp4" },
   { exerciseSlug: "calf-raises", externalId: "exr_41n2hSGs9Q3NVGhs", sourceFilename: "exercisedb-exr_41n2hSGs9Q3NVGhs-source", alt: "Bodyweight Standing Calf Raise movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/rYfe7Ll/41n2hSGs9Q3NVGhs__Bodyweight-Standing-Calf-Raise_Calves.mp4" },
   { exerciseSlug: "dumbbell-lateral-raise", externalId: "exr_41n2hjuGpcex14w7", sourceFilename: "exercisedb-exr_41n2hjuGpcex14w7-source", alt: "Lateral Raise movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/j3qqj9g/41n2hjuGpcex14w7__Dumbbell-Lateral-Raise_shoulder_.mp4" },
@@ -82,8 +86,8 @@ export const equipmentSeed: EquipmentSeed[] = [
     type: "MACHINE",
     notes: "Life Fitness selectorized triceps press verified from its label and front view.",
     photos: [
-      { filename: "20260830_141811.jpg", role: "PRIMARY", alt: "Front view of the Life Fitness Triceps Press machine" },
-      { filename: "20260830_141807.jpg", role: "REFERENCE", alt: "Triceps Press machine label showing its name and movement diagram" },
+      { filename: "20260830_141807.jpg", role: "PRIMARY", alt: "Side view of the Life Fitness Triceps Press machine with its name visible" },
+      { filename: "20260830_141811.jpg", role: "REFERENCE", alt: "Front view of the Life Fitness Triceps Press machine" },
     ],
   },
   {
@@ -92,8 +96,8 @@ export const equipmentSeed: EquipmentSeed[] = [
     type: "MACHINE",
     notes: "Life Fitness selectorized chest press verified from its label and front view.",
     photos: [
-      { filename: "20260830_141819.jpg", role: "PRIMARY", alt: "Front view of the Life Fitness Chest Press machine" },
-      { filename: "20260830_141816.jpg", role: "REFERENCE", alt: "Chest Press machine label showing its name and movement diagram" },
+      { filename: "20260830_141816.jpg", role: "PRIMARY", alt: "Side view of the Life Fitness Chest Press machine with its name visible" },
+      { filename: "20260830_141819.jpg", role: "REFERENCE", alt: "Front view of the Life Fitness Chest Press machine" },
     ],
   },
   {
@@ -102,8 +106,8 @@ export const equipmentSeed: EquipmentSeed[] = [
     type: "MACHINE",
     notes: "Life Fitness selectorized shoulder press verified from its label and front view.",
     photos: [
-      { filename: "20260830_141830.jpg", role: "PRIMARY", alt: "Front view of the Life Fitness Shoulder Press machine" },
-      { filename: "20260830_141826.jpg", role: "REFERENCE", alt: "Shoulder Press machine label showing its name and movement diagram" },
+      { filename: "20260830_141826.jpg", role: "PRIMARY", alt: "Side view of the Life Fitness Shoulder Press machine with its name visible" },
+      { filename: "20260830_141830.jpg", role: "REFERENCE", alt: "Front view of the Life Fitness Shoulder Press machine" },
     ],
   },
   {
@@ -112,8 +116,8 @@ export const equipmentSeed: EquipmentSeed[] = [
     type: "MACHINE",
     notes: "Life Fitness selectorized squat machine verified from its label and platform view.",
     photos: [
-      { filename: "20260830_141840.jpg", role: "PRIMARY", alt: "Platform and handles of the Life Fitness Squat machine" },
-      { filename: "20260830_141836.jpg", role: "REFERENCE", alt: "Squat machine label showing its name and movement diagram" },
+      { filename: "20260830_141836.jpg", role: "PRIMARY", alt: "Side view of the Life Fitness Squat machine with its name visible" },
+      { filename: "20260830_141840.jpg", role: "REFERENCE", alt: "Front view of the Life Fitness Squat machine platform and handles" },
     ],
   },
   {
@@ -122,8 +126,8 @@ export const equipmentSeed: EquipmentSeed[] = [
     type: "MACHINE",
     notes: "Life Fitness selectorized leg extension verified across its label and machine views.",
     photos: [
-      { filename: "20260830_141941.jpg", role: "PRIMARY", alt: "Front view of the Life Fitness Leg Extension machine" },
-      { filename: "20260830_141936.jpg", role: "REFERENCE", alt: "Leg Extension machine label and movement diagram" },
+      { filename: "20260830_141936.jpg", role: "PRIMARY", alt: "Side view of the Life Fitness Leg Extension machine with its name visible" },
+      { filename: "20260830_141941.jpg", role: "REFERENCE", alt: "Front view of the Life Fitness Leg Extension machine" },
       { filename: "20260830_141850.jpg", role: "REFERENCE", alt: "Side view of the Leg Extension seat and shin pad" },
       { filename: "20260830_141846.jpg", role: "REFERENCE", alt: "Alternate close view of the Leg Extension label and mechanism" },
     ],
@@ -134,8 +138,8 @@ export const equipmentSeed: EquipmentSeed[] = [
     type: "MACHINE",
     notes: "Life Fitness selectorized pulldown verified from the labelled machine and wider front view.",
     photos: [
-      { filename: "20260830_141858.jpg", role: "PRIMARY", alt: "Wider front view of the Life Fitness Lat Pulldown machine" },
-      { filename: "20260830_141853.jpg", role: "REFERENCE", alt: "Lat Pulldown machine label showing its name and movement diagram" },
+      { filename: "20260830_141853.jpg", role: "PRIMARY", alt: "Side view of the Life Fitness Lat Pulldown machine with its name visible" },
+      { filename: "20260830_141858.jpg", role: "REFERENCE", alt: "Wider front view of the Life Fitness Lat Pulldown machine" },
     ],
   },
   {
@@ -144,8 +148,8 @@ export const equipmentSeed: EquipmentSeed[] = [
     type: "MACHINE",
     notes: "Life Fitness selectorized biceps curl verified from its label and front view.",
     photos: [
-      { filename: "20260830_141908.jpg", role: "PRIMARY", alt: "Front view of the Life Fitness Biceps Curl machine" },
-      { filename: "20260830_141904.jpg", role: "REFERENCE", alt: "Biceps Curl machine label showing its name and movement diagram" },
+      { filename: "20260830_141904.jpg", role: "PRIMARY", alt: "Side view of the Life Fitness Biceps Curl machine with its name visible" },
+      { filename: "20260830_141908.jpg", role: "REFERENCE", alt: "Front view of the Life Fitness Biceps Curl machine" },
     ],
   },
   {
@@ -163,8 +167,8 @@ export const equipmentSeed: EquipmentSeed[] = [
     type: "MACHINE",
     notes: "Life Fitness selectorized seated leg curl verified from its label and front view.",
     photos: [
-      { filename: "20260830_141931.jpg", role: "PRIMARY", alt: "Front view of the Life Fitness Seated Leg Curl machine" },
-      { filename: "20260830_141928.jpg", role: "REFERENCE", alt: "Seated Leg Curl machine label showing its name and movement diagram" },
+      { filename: "20260830_141928.jpg", role: "PRIMARY", alt: "Side view of the Life Fitness Seated Leg Curl machine with its name visible" },
+      { filename: "20260830_141931.jpg", role: "REFERENCE", alt: "Front view of the Life Fitness Seated Leg Curl machine" },
     ],
   },
   {
@@ -266,10 +270,12 @@ export const exerciseSeed: ExerciseSeed[] = [
   { slug: "standing-dumbbell-shoulder-press", name: "Standing Dumbbell Shoulder Press", equipmentSlug: "dumbbells", primaryMuscle: "anterior-deltoids", secondaryMuscles: ["lateral-deltoids", "triceps"], repMode: "TOTAL", loadEntryMode: "PER_DUMBBELL", loadTrackingType: kilogram },
   { slug: "dumbbell-biceps-curl", name: "Dumbbell Biceps Curl", equipmentSlug: "dumbbells", primaryMuscle: "biceps", secondaryMuscles: ["forearms"], repMode: "TOTAL", loadEntryMode: "PER_DUMBBELL", loadTrackingType: kilogram },
   { slug: "dumbbell-lateral-raise", name: "Dumbbell Lateral Raise", equipmentSlug: "dumbbells", primaryMuscle: "lateral-deltoids", secondaryMuscles: ["anterior-deltoids"], repMode: "TOTAL", loadEntryMode: "PER_DUMBBELL", loadTrackingType: kilogram },
+  { slug: "barbell-bent-over-row", name: "Barbell Bent Over Row", equipmentSlug: "studio-accessories", primaryMuscle: "upper-back", secondaryMuscles: ["lats", "biceps", "forearms", "lower-back"], repMode: "TOTAL", loadEntryMode: "TOTAL_LOAD", loadTrackingType: kilogram },
+  { slug: "barbell-deadlift", name: "Barbell Deadlift", equipmentSlug: "studio-accessories", primaryMuscle: "glutes", secondaryMuscles: ["hamstrings", "lower-back", "quadriceps", "forearms"], repMode: "TOTAL", loadEntryMode: "TOTAL_LOAD", loadTrackingType: kilogram },
   { slug: "push-up", name: "Push-up", equipmentSlug: null, primaryMuscle: "chest", secondaryMuscles: ["triceps", "anterior-deltoids"], repMode: "TOTAL", loadEntryMode: "BODYWEIGHT", loadTrackingType: bodyweight },
   { slug: "bodyweight-squat", name: "Bodyweight Squat", equipmentSlug: null, primaryMuscle: "quadriceps", secondaryMuscles: ["glutes", "hamstrings"], repMode: "TOTAL", loadEntryMode: "BODYWEIGHT", loadTrackingType: bodyweight },
   { slug: "reverse-lunge", name: "Reverse Lunge", equipmentSlug: null, primaryMuscle: "quadriceps", secondaryMuscles: ["glutes", "hamstrings"], repMode: "PER_SIDE", loadEntryMode: "BODYWEIGHT", loadTrackingType: bodyweight },
-  { slug: "glute-bridge", name: "Glute Bridge", equipmentSlug: null, primaryMuscle: "glutes", secondaryMuscles: ["hamstrings"], repMode: "TOTAL", loadEntryMode: "BODYWEIGHT", loadTrackingType: bodyweight },
+  { slug: "glute-bridge", name: "Glute Bridge", equipmentSlug: "dumbbells", primaryMuscle: "glutes", secondaryMuscles: ["hamstrings"], repMode: "TOTAL", loadEntryMode: "TOTAL_LOAD", loadTrackingType: kilogram },
   { slug: "step-up", name: "Step-up", equipmentSlug: "studio-accessories", primaryMuscle: "quadriceps", secondaryMuscles: ["glutes", "hamstrings"], repMode: "PER_SIDE", loadEntryMode: "NONE", loadTrackingType: repsOnly },
   { slug: "hip-raises", name: "Hip Raises", equipmentSlug: "dumbbells", primaryMuscle: "glutes", secondaryMuscles: ["hamstrings", "lower-back"], repMode: "TOTAL", loadEntryMode: "TOTAL_LOAD", loadTrackingType: kilogram },
   { slug: "calf-raises", name: "Calf Raises", equipmentSlug: "dumbbells", primaryMuscle: "calves", secondaryMuscles: [], repMode: "TOTAL", loadEntryMode: "TOTAL_LOAD", loadTrackingType: kilogram },

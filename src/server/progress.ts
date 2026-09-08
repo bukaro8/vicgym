@@ -18,11 +18,11 @@ function totalVolume(session: CompletedExerciseSession): number | null {
 }
 
 function toCompletedExerciseSession(item: {
-  exerciseId: string; exerciseNameSnapshot: string; loadTrackingTypeSnapshot: string | null; loadEntryModeSnapshot: string | null; loadMultiplierSnapshot: { toString(): string } | null; workoutSession: { completedAt: Date | null; startedAt: Date }; setLogs: Array<{ weightKg: { toString(): string } | null; loadValue: { toString(): string } | null; actualReps: number | null; completedAt: Date | null }>; exercise: { slug: string; muscles: Array<{ role: string; muscle: { name: string } }> };
+  exerciseId: string; exerciseNameSnapshot: string; isAdHoc: boolean; loadTrackingTypeSnapshot: string | null; loadEntryModeSnapshot: string | null; loadMultiplierSnapshot: { toString(): string } | null; workoutSession: { completedAt: Date | null; startedAt: Date }; setLogs: Array<{ weightKg: { toString(): string } | null; loadValue: { toString(): string } | null; actualReps: number | null; completedAt: Date | null }>; exercise: { slug: string; muscles: Array<{ role: string; muscle: { name: string } }> };
 }): CompletedExerciseSession | null {
   if (!item.workoutSession.completedAt) return null;
   return {
-    exerciseId: item.exerciseId, exerciseSlug: item.exercise.slug, exerciseName: item.exerciseNameSnapshot,
+    exerciseId: item.exerciseId, exerciseSlug: item.exercise.slug, exerciseName: item.exerciseNameSnapshot, isAdHoc: item.isAdHoc,
     completedAt: item.workoutSession.completedAt, startedAt: item.workoutSession.startedAt,
     loadTrackingType: item.loadTrackingTypeSnapshot as CompletedExerciseSession["loadTrackingType"], loadEntryMode: item.loadEntryModeSnapshot as CompletedExerciseSession["loadEntryMode"], loadMultiplier: item.loadMultiplierSnapshot === null ? 1 : Number(item.loadMultiplierSnapshot),
     primaryMuscles: item.exercise.muscles.filter((relation) => relation.role === "PRIMARY").map((relation) => relation.muscle.name),
@@ -31,10 +31,10 @@ function toCompletedExerciseSession(item: {
   };
 }
 
-export async function getProgressOverview(prisma: PrismaClient, period: ProgressPeriod = "8"): Promise<ProgressOverview> {
+export async function getProgressOverview(prisma: PrismaClient, userId: string, period: ProgressPeriod = "8"): Promise<ProgressOverview> {
   const start = periodStart(period);
   const sessions = await prisma.workoutSession.findMany({
-    where: { status: "COMPLETED", completedAt: { not: null, ...(start ? { gte: start } : {}) } },
+    where: { userId, status: "COMPLETED", completedAt: { not: null, ...(start ? { gte: start } : {}) } },
     orderBy: { completedAt: "asc" },
     include: { exerciseSessions: { include: { setLogs: { where: { completedAt: { not: null } } }, exercise: { include: { muscles: { include: { muscle: true } } } } } } },
   });
@@ -53,10 +53,10 @@ export async function getProgressOverview(prisma: PrismaClient, period: Progress
   return { period, totals, weekly, primaryMuscles: [...primary.entries()].map(([name, sets]) => ({ name, sets })).sort((a, b) => b.sets - a.sets), secondaryMuscles: [...secondary.entries()].map(([name, sets]) => ({ name, sets })).sort((a, b) => b.sets - a.sets), highlights, hasActivity: sessions.length > 0 };
 }
 
-export async function getExerciseHistory(prisma: PrismaClient, slug: string) {
+export async function getExerciseHistory(prisma: PrismaClient, userId: string, slug: string) {
   const exercise = await prisma.exercise.findUnique({ where: { slug, active: true }, include: { media: { orderBy: { sortOrder: "asc" } }, equipment: { include: { media: { orderBy: { sortOrder: "asc" } } } }, muscles: { include: { muscle: true } } } });
   if (!exercise) return null;
-  const entries = await prisma.exerciseSession.findMany({ where: { exerciseId: exercise.id, workoutSession: { status: "COMPLETED", completedAt: { not: null } } }, orderBy: { workoutSession: { completedAt: "desc" } }, include: { workoutSession: { select: { completedAt: true, startedAt: true } }, setLogs: { where: { completedAt: { not: null } }, orderBy: { setNumber: "asc" } } } });
+  const entries = await prisma.exerciseSession.findMany({ where: { exerciseId: exercise.id, workoutSession: { userId, status: "COMPLETED", completedAt: { not: null } } }, orderBy: { workoutSession: { completedAt: "desc" } }, include: { workoutSession: { select: { completedAt: true, startedAt: true } }, setLogs: { where: { completedAt: { not: null } }, orderBy: { setNumber: "asc" } } } });
   const history = entries.map((entry) => toCompletedExerciseSession({ ...entry, exercise: { slug: exercise.slug, muscles: exercise.muscles } })).filter((item): item is CompletedExerciseSession => item !== null);
   const performances = history.map(performanceFromSession);
   const comparable = performances.filter((performance) => performance.loadTrackingType === exercise.loadTrackingType && performance.loadEntryMode === exercise.loadEntryMode);

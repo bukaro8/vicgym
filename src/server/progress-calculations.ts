@@ -9,6 +9,7 @@ export type CompletedExerciseSession = {
   exerciseId: string;
   exerciseSlug: string;
   exerciseName: string;
+  isAdHoc: boolean;
   completedAt: Date;
   startedAt: Date;
   loadTrackingType: LoadTrackingTypeValue | null;
@@ -22,6 +23,7 @@ export type CompletedExerciseSession = {
 export type ExercisePerformance = {
   date: string;
   dateLabel: string;
+  isAdHoc: boolean;
   completedSets: number;
   reps: number[];
   loadTrackingType: LoadTrackingTypeValue | null;
@@ -81,6 +83,7 @@ export function performanceFromSession(session: CompletedExerciseSession): Exerc
   return {
     date: londonDate(session.completedAt),
     dateLabel: londonDateLabel(session.completedAt),
+    isAdHoc: session.isAdHoc,
     completedSets: sets.length,
     reps: sets.map((set) => set.actualReps!),
     loadTrackingType: session.loadTrackingType,

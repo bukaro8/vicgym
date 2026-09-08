@@ -3,10 +3,12 @@ import { Dumbbell } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { ExerciseCard } from "@/components/exercise-card";
 import { getPrisma } from "@/lib/prisma";
+import { requireCurrentUser } from "@/server/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function ExercisesPage() {
+  await requireCurrentUser();
   const prisma = getPrisma();
   const [exercises, equipmentCount] = await Promise.all([
     prisma.exercise.findMany({

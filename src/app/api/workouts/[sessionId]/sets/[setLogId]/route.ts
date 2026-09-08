@@ -4,6 +4,8 @@ import { z } from "zod";
 import { assertSameOriginJson, RequestPolicyError } from "@/lib/http/same-origin";
 import { getPrisma } from "@/lib/prisma";
 import { startRestForSet } from "@/server/rest-timers";
+import { authenticationErrorResponse } from "@/lib/http/auth-response";
+import { requireApiUser } from "@/server/auth";
 
 export const runtime = "nodejs";
 const schema = z.object({ actualReps: z.number().int().min(0).max(999), loadValue: z.number().min(0).max(9999).nullable().optional(), weightKg: z.number().min(0).max(9999).nullable().optional(), completed: z.boolean() }).strict().superRefine((value, context) => {
@@ -13,10 +15,11 @@ const schema = z.object({ actualReps: z.number().int().min(0).max(999), loadValu
 export async function PATCH(request: Request, { params }: { params: Promise<{ sessionId: string; setLogId: string }> }) {
   try {
     assertSameOriginJson(request);
+    const user = await requireApiUser();
     const input = schema.parse(await request.json());
     const { sessionId, setLogId } = await params;
     const result = await getPrisma().$transaction(async (tx) => {
-      const existing = await tx.setLog.findFirst({ where: { id: setLogId, exerciseSession: { workoutSessionId: sessionId, workoutSession: { status: "IN_PROGRESS" } } }, include: { exerciseSession: true } });
+      const existing = await tx.setLog.findFirst({ where: { id: setLogId, exerciseSession: { workoutSessionId: sessionId, workoutSession: { userId: user.id, status: "IN_PROGRESS" } } }, include: { exerciseSession: true } });
       if (!existing) throw new Error("SET_NOT_FOUND");
       const trackingType = existing.exerciseSession.loadTrackingTypeSnapshot;
       if (trackingType === null) {
@@ -28,11 +31,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
       }
       const newlyCompleted = input.completed && !existing.completedAt;
       const set = await tx.setLog.update({ where: { id: setLogId }, data: { actualReps: input.actualReps, weightKg: trackingType === null ? (input.weightKg ?? null) : null, loadValue: trackingType === null ? null : (input.loadValue ?? null), loadTrackingType: trackingType, completedAt: input.completed ? (existing.completedAt ?? new Date()) : null } });
-      const timer = newlyCompleted ? await startRestForSet(tx, setLogId) : null;
+      const timer = newlyCompleted ? await startRestForSet(tx, user.id, setLogId) : null;
       return { set, timer };
     });
     return NextResponse.json({ set: { ...result.set, weightKg: result.set.weightKg === null ? null : Number(result.set.weightKg), loadValue: result.set.loadValue === null ? null : Number(result.set.loadValue) }, timer: result.timer });
   } catch (error) {
+    const authResponse = authenticationErrorResponse(error); if (authResponse) return authResponse;
     if (error instanceof RequestPolicyError) return NextResponse.json({ error: error.message }, { status: error.status });
     if (error instanceof z.ZodError) return NextResponse.json({ error: "Invalid set values" }, { status: 400 });
     if (error instanceof Error && error.message === "SET_NOT_FOUND") return NextResponse.json({ error: "Set not found in active workout" }, { status: 404 });

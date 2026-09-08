@@ -43,18 +43,18 @@ function timerDto(timer: Awaited<ReturnType<typeof findActiveRestTimer>>): RestT
   };
 }
 
-export async function findActiveRestTimer(db: Db) {
-  return db.restPeriod.findFirst({ where: { status: { in: ["RUNNING", "PAUSED"] } }, orderBy: { createdAt: "desc" }, include: activeTimerInclude });
+export async function findActiveRestTimer(db: Db, userId: string) {
+  return db.restPeriod.findFirst({ where: { status: { in: ["RUNNING", "PAUSED"] }, setLog: { exerciseSession: { workoutSession: { userId } } } }, orderBy: { createdAt: "desc" }, include: activeTimerInclude });
 }
 
-export async function getActiveRestTimer(db: Db): Promise<RestTimerDto | null> {
-  return timerDto(await findActiveRestTimer(db));
+export async function getActiveRestTimer(db: Db, userId: string): Promise<RestTimerDto | null> {
+  return timerDto(await findActiveRestTimer(db, userId));
 }
 
-export async function startRestForSet(db: Db, setLogId: string, now = new Date()): Promise<RestTimerDto | null> {
-  const set = await db.setLog.findUnique({ where: { id: setLogId }, include: { exerciseSession: true } });
+export async function startRestForSet(db: Db, userId: string, setLogId: string, now = new Date()): Promise<RestTimerDto | null> {
+  const set = await db.setLog.findFirst({ where: { id: setLogId, exerciseSession: { workoutSession: { userId } } }, include: { exerciseSession: true } });
   if (!set?.exerciseSession.autoRest || set.exerciseSession.restSeconds <= 0) return null;
-  await db.restPeriod.updateMany({ where: { status: { in: ["RUNNING", "PAUSED"] } }, data: { status: "SKIPPED", skippedAt: now, endsAt: null, pausedRemainingMs: null, pausedRemainingSeconds: null } });
+  await db.restPeriod.updateMany({ where: { status: { in: ["RUNNING", "PAUSED"] }, setLog: { exerciseSession: { workoutSession: { userId } } } }, data: { status: "SKIPPED", skippedAt: now, endsAt: null, pausedRemainingMs: null, pausedRemainingSeconds: null } });
   const timer = await db.restPeriod.upsert({
     where: { setLogId },
     create: { setLogId, status: "RUNNING", configuredSeconds: set.exerciseSession.restSeconds, startedAt: now, endsAt: new Date(now.getTime() + set.exerciseSession.restSeconds * 1000) },
@@ -66,8 +66,8 @@ export async function startRestForSet(db: Db, setLogId: string, now = new Date()
 
 export type TimerAction = "ADD_15" | "SUBTRACT_15" | "PAUSE" | "RESUME" | "SKIP" | "COMPLETE";
 
-export async function applyTimerAction(db: Db, id: string, action: TimerAction, now = new Date()): Promise<RestTimerDto | null> {
-  const timer = await db.restPeriod.findUnique({ where: { id }, include: activeTimerInclude });
+export async function applyTimerAction(db: Db, userId: string, id: string, action: TimerAction, now = new Date()): Promise<RestTimerDto | null> {
+  const timer = await db.restPeriod.findFirst({ where: { id, setLog: { exerciseSession: { workoutSession: { userId } } } }, include: activeTimerInclude });
   if (!timer || (timer.status !== "RUNNING" && timer.status !== "PAUSED")) return null;
   const currentMs = timer.status === "PAUSED"
     ? (timer.pausedRemainingMs ?? (timer.pausedRemainingSeconds ?? 0) * 1000)

@@ -3,6 +3,7 @@ import { SerwistProvider } from "@serwist/turbopack/react";
 
 import { OfflineProvider } from "@/components/offline-provider";
 import { RestTimerProvider } from "@/components/rest-timer-provider";
+import { getCurrentUser } from "@/server/auth";
 
 import "./globals.css";
 
@@ -38,10 +39,11 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const user = await getCurrentUser();
   return (
     <html lang="en">
-      <body className="min-h-dvh antialiased"><SerwistProvider swUrl="/serwist/sw.js"><OfflineProvider><RestTimerProvider>{children}</RestTimerProvider></OfflineProvider></SerwistProvider></body>
+      <body className="min-h-dvh antialiased"><SerwistProvider swUrl="/serwist/sw.js"><OfflineProvider userId={user?.id ?? null}><RestTimerProvider>{children}</RestTimerProvider></OfflineProvider></SerwistProvider></body>
     </html>
   );
 }

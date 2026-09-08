@@ -158,17 +158,19 @@ for (const media of exerciseDbMediaSeed) {
   const exerciseId = exerciseIds.get(media.exerciseSlug);
   if (!exerciseId) throw new Error(`Missing exercise for ExerciseDB media: ${media.exerciseSlug}`);
   const storagePath = `/media/exercises/${media.exerciseSlug}/${media.sourceFilename.replace(/-source$/, "")}-1280.webp`;
-  const attribution = "ExerciseDB media via AscendAPI/RapidAPI. Provider licence and plan terms apply; Basic-plan media may be watermarked.";
+  const attribution = "ExerciseDB media via AscendAPI. Provider licence and plan terms apply; plan media may be watermarked.";
   await prisma.exerciseMedia.upsert({
     where: { exerciseId_provider_externalId_kind: { exerciseId, provider: "ascendapi-exercisedb", externalId: media.externalId, kind: "IMAGE" } },
-    create: { exerciseId, role: MediaRole.PRIMARY, kind: "IMAGE", storagePath, sourceFilename: media.sourceFilename, altText: media.alt, provider: "ascendapi-exercisedb", externalId: media.externalId, attribution, sortOrder: 0 },
-    update: { role: MediaRole.PRIMARY, storagePath, sourceFilename: media.sourceFilename, altText: media.alt, attribution, sortOrder: 0 },
+    create: { exerciseId, role: MediaRole.PRIMARY, kind: "IMAGE", storagePath, sourceFilename: media.sourceFilename, altText: media.alt, provider: "ascendapi-exercisedb", externalId: media.externalId, sourceUrl: media.sourceUrl, attribution, sortOrder: 0 },
+    update: { role: MediaRole.PRIMARY, storagePath, sourceFilename: media.sourceFilename, altText: media.alt, sourceUrl: media.sourceUrl, attribution, sortOrder: 0 },
   });
-  await prisma.exerciseMedia.upsert({
-    where: { exerciseId_provider_externalId_kind: { exerciseId, provider: "ascendapi-exercisedb", externalId: media.externalId, kind: "VIDEO" } },
-    create: { exerciseId, role: MediaRole.REFERENCE, kind: "VIDEO", storagePath: media.videoUrl, sourceFilename: `${media.externalId}-video`, altText: `${media.alt.replace(" movement demonstration supplied by ExerciseDB", "")} movement video`, provider: "ascendapi-exercisedb", externalId: media.externalId, sourceUrl: media.videoUrl, attribution, sortOrder: 0 },
-    update: { role: MediaRole.REFERENCE, storagePath: media.videoUrl, sourceFilename: `${media.externalId}-video`, altText: `${media.alt.replace(" movement demonstration supplied by ExerciseDB", "")} movement video`, sourceUrl: media.videoUrl, attribution, sortOrder: 0 },
-  });
+  if (media.videoUrl) {
+    await prisma.exerciseMedia.upsert({
+      where: { exerciseId_provider_externalId_kind: { exerciseId, provider: "ascendapi-exercisedb", externalId: media.externalId, kind: "VIDEO" } },
+      create: { exerciseId, role: MediaRole.REFERENCE, kind: "VIDEO", storagePath: media.videoUrl, sourceFilename: `${media.externalId}-video`, altText: `${media.alt.replace(" movement demonstration supplied by ExerciseDB", "")} movement video`, provider: "ascendapi-exercisedb", externalId: media.externalId, sourceUrl: media.videoUrl, attribution, sortOrder: 0 },
+      update: { role: MediaRole.REFERENCE, storagePath: media.videoUrl, sourceFilename: `${media.externalId}-video`, altText: `${media.alt.replace(" movement demonstration supplied by ExerciseDB", "")} movement video`, sourceUrl: media.videoUrl, attribution, sortOrder: 0 },
+    });
+  }
 }
 
 const program = await prisma.workoutProgram.upsert({

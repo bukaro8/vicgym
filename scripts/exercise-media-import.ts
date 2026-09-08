@@ -5,11 +5,12 @@ import path from "node:path";
 
 import sharp from "sharp";
 
-import { getExerciseDbExercise, preferredExerciseDbImage, EXERCISEDB_PROVIDER } from "../src/lib/exercisedb-core";
+import { getExerciseDbExercise, getPublicExerciseDbExercise, preferredExerciseDbImage, EXERCISEDB_PROVIDER } from "../src/lib/exercisedb-core";
 import { getPrisma } from "../src/lib/prisma";
 
 const importableExerciseSlugs = new Set([
   "bodyweight-squat", "dumbbell-biceps-curl", "dumbbell-lateral-raise", "dumbbell-romanian-deadlift", "glute-bridge", "goblet-squat", "one-arm-dumbbell-row", "push-up", "reverse-lunge", "standing-dumbbell-shoulder-press", "step-up", "hip-raises", "calf-raises", "plank", "lying-leg-raises",
+  "barbell-bent-over-row", "barbell-deadlift",
 ]);
 const projectRoot = path.resolve(import.meta.dirname, "..");
 
@@ -37,21 +38,30 @@ async function writeDerivatives(exerciseSlug: string, externalExerciseId: string
 }
 
 async function main() {
-  const [exerciseSlug, externalExerciseId] = process.argv.slice(2);
-  if (!exerciseSlug || !externalExerciseId) throw new Error("Usage: npm run exercise-media:import -- <vicgym-exercise-slug> <exercisedb-exercise-id>");
+  const args = process.argv.slice(2);
+  const assetsOnly = args.includes("--assets-only");
+  const [exerciseSlug, externalExerciseId] = args.filter((argument) => argument !== "--assets-only");
+  if (!exerciseSlug || !externalExerciseId) throw new Error("Usage: npm run exercise-media:import -- <vicgym-exercise-slug> <exercisedb-exercise-id> [--assets-only]");
   if (!importableExerciseSlugs.has(exerciseSlug)) throw new Error("This import is limited to the current placeholder exercise list.");
 
-  const prisma = getPrisma();
-  const exercise = await prisma.exercise.findUnique({ where: { slug: exerciseSlug }, include: { equipment: true } });
-  if (!exercise || !exercise.active) throw new Error("VicGym exercise was not found or is unavailable.");
-  if (exercise.equipment?.type === "MACHINE") throw new Error("Machine photographs are verified VicGym media and are not replaced by this importer.");
+  const prisma = assetsOnly ? null : getPrisma();
+  const exercise = prisma ? await prisma.exercise.findUnique({ where: { slug: exerciseSlug }, include: { equipment: true } }) : null;
+  if (prisma && (!exercise || !exercise.active)) throw new Error("VicGym exercise was not found or is unavailable.");
+  if (exercise?.equipment?.type === "MACHINE") throw new Error("Machine photographs are verified VicGym media and are not replaced by this importer.");
 
-  const external = await getExerciseDbExercise(externalExerciseId);
+  const external = externalExerciseId.startsWith("exr_")
+    ? await getExerciseDbExercise(externalExerciseId)
+    : await getPublicExerciseDbExercise(externalExerciseId);
   const imageUrl = preferredExerciseDbImage(external);
   if (!imageUrl) throw new Error("The selected ExerciseDB record has no importable image.");
-  const stored = await writeDerivatives(exercise.slug, external.exerciseId, await downloadImage(imageUrl));
+  const stored = await writeDerivatives(exerciseSlug, external.exerciseId, await downloadImage(imageUrl));
   const altText = `${external.name} movement demonstration supplied by ExerciseDB`;
-  const attribution = "ExerciseDB media via AscendAPI/RapidAPI. Provider licence and plan terms apply; Basic-plan media may be watermarked.";
+  const attribution = "ExerciseDB media via AscendAPI. Provider licence and plan terms apply; plan media may be watermarked.";
+
+  if (!prisma || !exercise) {
+    console.log(`Generated ExerciseDB image assets for ${exerciseSlug} from ${external.exerciseId}; database metadata will be installed by the catalogue seed.`);
+    return;
+  }
 
   await prisma.$transaction(async (transaction) => {
     await transaction.exerciseMedia.upsert({

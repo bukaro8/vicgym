@@ -1,0 +1,2 @@
+ALTER TABLE "ExerciseSession"
+ADD COLUMN "isAdHoc" BOOLEAN NOT NULL DEFAULT false;

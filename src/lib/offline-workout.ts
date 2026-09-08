@@ -1,15 +1,15 @@
 import { adjustedRemainingMilliseconds, remainingMilliseconds } from "@/lib/rest-timer";
 import { clearOfflineTimer, findOfflineWorkoutSessionForSet, getOfflineTimer, putOfflineTimer, queueOfflineMutation, updateOfflineWorkout } from "@/lib/offline-db";
 import { cardioDurationSeconds } from "@/lib/cardio";
-import type { OfflineSet, OfflineTimer } from "@/lib/offline-types";
+import type { OfflineCatalogueExercise, OfflineExercise, OfflineSet, OfflineTimer } from "@/lib/offline-types";
 import type { RestTimerDto, TimerAction } from "@/server/rest-timers";
 
 export function offlineTimerDto(timer: OfflineTimer): RestTimerDto { return { id: timer.id, sessionId: timer.sessionId ?? null, setLogId: timer.setLogId, status: timer.status, configuredSeconds: timer.configuredSeconds, startedAt: timer.startedAt, endsAt: timer.endsAt, pausedAt: timer.pausedAt, pausedRemainingMs: timer.pausedRemainingMs, updatedAt: timer.updatedAt, exerciseName: timer.exerciseName, completedSetNumber: timer.completedSetNumber, nextSetId: timer.nextSetId }; }
 
-export async function saveSetLocally(input: { sessionId: string; exerciseSessionId: string; setId: string; actualReps: number; loadValue: number | null; completed: boolean }): Promise<{ set: OfflineSet; timer: RestTimerDto | null }> {
+export async function saveSetLocally(input: { sessionId: string; exerciseSessionId: string; setId: string; actualReps: number; loadValue: number | null; completed: boolean; notes?: string | null }): Promise<{ set: OfflineSet; timer: RestTimerDto | null }> {
   const now = new Date().toISOString(); const workout = await updateOfflineWorkout(input.sessionId, (current) => current); const exercise = workout?.exercises.find((item) => item.id === input.exerciseSessionId); const old = exercise?.sets.find((set) => set.id === input.setId);
   if (!exercise || !old) throw new Error("LOCAL_SET_NOT_FOUND");
-  const newlyCompleted = input.completed && !old.completedAt; const saved: OfflineSet = { ...old, actualReps: input.actualReps, loadValue: exercise.loadTrackingType == null ? null : input.loadValue, weightKg: exercise.loadTrackingType == null ? input.loadValue : null, loadTrackingType: exercise.loadTrackingType ?? null, completedAt: input.completed ? (old.completedAt ?? now) : null };
+  const newlyCompleted = input.completed && !old.completedAt; const saved: OfflineSet = { ...old, actualReps: input.actualReps, loadValue: exercise.loadTrackingType == null ? null : input.loadValue, weightKg: exercise.loadTrackingType == null ? input.loadValue : null, loadTrackingType: exercise.loadTrackingType ?? null, completedAt: input.completed ? (old.completedAt ?? now) : null, notes: input.notes?.trim() || null };
   await updateOfflineWorkout(input.sessionId, (current) => ({ ...current, updatedAt: now, exercises: current.exercises.map((item) => item.id === input.exerciseSessionId ? { ...item, sets: item.sets.map((set) => set.id === input.setId ? saved : set) } : item) }));
   const timer: OfflineTimer | null = newlyCompleted && exercise.autoRest && exercise.restSeconds > 0 ? { id: crypto.randomUUID(), sessionId: input.sessionId, setLogId: input.setId, status: "RUNNING", configuredSeconds: exercise.restSeconds, startedAt: now, endsAt: new Date(Date.now() + exercise.restSeconds * 1000).toISOString(), pausedAt: null, pausedRemainingMs: null, exerciseName: exercise.name, completedSetNumber: saved.setNumber, nextSetId: exercise.sets.find((set) => set.setNumber > saved.setNumber && !set.completedAt)?.id ?? null, updatedAt: now } : null;
   await queueOfflineMutation({ type: "UPSERT_SET", sessionId: input.sessionId, targetId: input.setId, payload: { actualReps: saved.actualReps, loadValue: saved.loadValue, weightKg: saved.weightKg, loadTrackingType: saved.loadTrackingType, completedAt: saved.completedAt, notes: saved.notes ?? null } });
@@ -23,6 +23,41 @@ export async function addSetLocally(sessionId: string, exerciseSessionId: string
   const created: OfflineSet = { id, setNumber: Math.max(0, ...exercise.sets.map((item) => item.setNumber)) + 1, targetReps: exercise.targetReps, actualReps: exercise.targetReps, weightKg: null, loadValue: null, loadTrackingType: exercise.loadTrackingType, loadEntryMode: exercise.loadEntryMode, completedAt: null };
   await updateOfflineWorkout(sessionId, (current) => ({ ...current, updatedAt: now, exercises: current.exercises.map((item) => item.id === exerciseSessionId ? { ...item, sets: [...item.sets, created] } : item) }));
   await queueOfflineMutation({ type: "ADD_SET", sessionId, targetId: id, payload: { exerciseSessionId, setNumber: created.setNumber, targetReps: created.targetReps, actualReps: created.actualReps, weightKg: null, loadValue: null, loadTrackingType: created.loadTrackingType } }); return created;
+}
+
+export const AD_HOC_DEFAULT_SETS = 3;
+export const AD_HOC_DEFAULT_REST_SECONDS = 90;
+
+export async function addExerciseLocally(sessionId: string, catalogueExercise: OfflineCatalogueExercise): Promise<OfflineExercise> {
+  const now = new Date().toISOString();
+  const workout = await updateOfflineWorkout(sessionId, (current) => current);
+  if (!workout || workout.status !== "IN_PROGRESS") throw new Error("LOCAL_ACTIVE_WORKOUT_NOT_FOUND");
+  if (workout.exercises.some((item) => item.exerciseId === catalogueExercise.exerciseId)) throw new Error("This exercise is already in the workout.");
+  const id = crypto.randomUUID();
+  const position = Math.max(0, ...workout.exercises.map((item) => item.position)) + 1;
+  const sets = Array.from({ length: AD_HOC_DEFAULT_SETS }, (_, index): OfflineSet => ({
+    id: crypto.randomUUID(), setNumber: index + 1, targetReps: catalogueExercise.defaultTargetReps,
+    actualReps: catalogueExercise.defaultTargetReps, weightKg: null, loadValue: null,
+    loadTrackingType: catalogueExercise.loadTrackingType, loadEntryMode: catalogueExercise.loadEntryMode,
+    completedAt: null, notes: null,
+  }));
+  const created: OfflineExercise = {
+    id, exerciseId: catalogueExercise.exerciseId, slug: catalogueExercise.slug, name: catalogueExercise.name,
+    position, plannedSets: AD_HOC_DEFAULT_SETS, targetReps: catalogueExercise.defaultTargetReps,
+    restSeconds: AD_HOC_DEFAULT_REST_SECONDS, autoRest: true, isAdHoc: true,
+    loadTrackingType: catalogueExercise.loadTrackingType, loadEntryMode: catalogueExercise.loadEntryMode,
+    equipmentName: catalogueExercise.equipmentName, imagePath: catalogueExercise.imagePath, sets,
+  };
+  await updateOfflineWorkout(sessionId, (current) => ({ ...current, currentExerciseId: id, updatedAt: now, exercises: [...current.exercises, created] }));
+  await queueOfflineMutation({
+    type: "ADD_EXERCISE", sessionId, targetId: id,
+    payload: {
+      exerciseId: catalogueExercise.exerciseId, position, plannedSets: created.plannedSets,
+      targetReps: created.targetReps, restSeconds: created.restSeconds, autoRest: created.autoRest,
+      sets: sets.map((set) => ({ id: set.id, setNumber: set.setNumber, targetReps: set.targetReps, actualReps: set.actualReps })),
+    },
+  });
+  return created;
 }
 
 export async function startCardioLocally(sessionId: string, now = new Date()): Promise<string> {

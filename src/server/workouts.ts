@@ -14,20 +14,20 @@ export function prefillLoads(setCount: number, previousSets: PreviousTypedSet[])
   return Array.from({ length: setCount }, (_, index) => previousSets.find((set) => set.setNumber === index + 1)?.loadValue ?? latestLoad);
 }
 
-export async function startWorkout(prisma: PrismaClient, workoutDayId: string, cardioPlanned = false) {
-  const existing = await prisma.workoutSession.findFirst({ where: { status: "IN_PROGRESS" }, select: { id: true, exerciseSessions: { orderBy: { position: "asc" }, take: 1, select: { id: true } } } });
+export async function startWorkout(prisma: PrismaClient, userId: string, workoutDayId: string, cardioPlanned = false) {
+  const existing = await prisma.workoutSession.findFirst({ where: { userId, status: "IN_PROGRESS" }, select: { id: true, exerciseSessions: { orderBy: { position: "asc" }, take: 1, select: { id: true } } } });
   if (existing) return { ...existing, resumed: true };
 
   try {
     return await prisma.$transaction(async (tx) => {
-      const day = await tx.workoutDay.findUnique({
-        where: { id: workoutDayId },
+      const day = await tx.workoutDay.findFirst({
+        where: { id: workoutDayId, programVersion: { program: { userId } } },
         include: {
           programVersion: { include: { program: true } },
           workoutExercises: { orderBy: { position: "asc" }, include: { exercise: true } },
         },
       });
-      const settings = await tx.appSettings.findUnique({ where: { id: 1 }, select: { activeProgramId: true } });
+      const settings = await tx.appSettings.findUnique({ where: { userId }, select: { activeProgramId: true } });
       if (!day || settings?.activeProgramId !== day.programVersion.programId || day.programVersion.program.activeVersionId !== day.programVersionId || day.programVersion.program.status !== "ACTIVE") throw new Error("WORKOUT_DAY_NOT_ACTIVE");
 
       const previousByExercise = new Map<string, PreviousTypedSet[]>();
@@ -38,7 +38,7 @@ export async function startWorkout(prisma: PrismaClient, workoutDayId: string, c
         const previous = await tx.exerciseSession.findFirst({
           where: {
             exerciseId: planned.exerciseId,
-            workoutSession: { status: "COMPLETED" },
+            workoutSession: { userId, status: "COMPLETED" },
             loadTrackingTypeSnapshot: trackingType,
             loadEntryModeSnapshot: entryMode,
           },
@@ -50,6 +50,7 @@ export async function startWorkout(prisma: PrismaClient, workoutDayId: string, c
 
       return tx.workoutSession.create({
         data: {
+          userId,
           programVersionId: day.programVersionId,
           workoutDayId: day.id,
           workoutDayNameSnapshot: day.name,
@@ -90,7 +91,7 @@ export async function startWorkout(prisma: PrismaClient, workoutDayId: string, c
     }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
   } catch (error) {
     if (typeof error === "object" && error && "code" in error && error.code === "P2002") {
-      const winner = await prisma.workoutSession.findFirst({ where: { status: "IN_PROGRESS" }, select: { id: true, exerciseSessions: { orderBy: { position: "asc" }, take: 1, select: { id: true } } } });
+      const winner = await prisma.workoutSession.findFirst({ where: { userId, status: "IN_PROGRESS" }, select: { id: true, exerciseSessions: { orderBy: { position: "asc" }, take: 1, select: { id: true } } } });
       if (winner) return { ...winner, resumed: true };
     }
     throw error;

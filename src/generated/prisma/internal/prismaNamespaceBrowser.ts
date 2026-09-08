@@ -264,6 +264,7 @@ export const ExerciseSessionScalarFieldEnum = {
   targetReps: 'targetReps',
   restSeconds: 'restSeconds',
   autoRest: 'autoRest',
+  isAdHoc: 'isAdHoc',
   loadTrackingTypeSnapshot: 'loadTrackingTypeSnapshot',
   loadEntryModeSnapshot: 'loadEntryModeSnapshot',
   loadMultiplierSnapshot: 'loadMultiplierSnapshot',

@@ -4,7 +4,7 @@ import { performanceFromSession, periodStart, progressChange, setVolume, weeklyB
 
 const completedAt = new Date("2026-08-30T10:00:00.000Z");
 function session(overrides: Partial<CompletedExerciseSession> = {}): CompletedExerciseSession {
-  return { exerciseId: "row", exerciseSlug: "one-arm-dumbbell-row", exerciseName: "One-arm Dumbbell Row", completedAt, startedAt: new Date("2026-08-30T09:00:00.000Z"), loadTrackingType: "KILOGRAM", loadEntryMode: "PER_DUMBBELL", loadMultiplier: 2, primaryMuscles: ["Lats"], secondaryMuscles: ["Biceps"], sets: [{ weightKg: null, loadValue: 10, actualReps: 12 }, { weightKg: null, loadValue: 10, actualReps: 11 }], ...overrides };
+  return { exerciseId: "row", exerciseSlug: "one-arm-dumbbell-row", exerciseName: "One-arm Dumbbell Row", isAdHoc: false, completedAt, startedAt: new Date("2026-08-30T09:00:00.000Z"), loadTrackingType: "KILOGRAM", loadEntryMode: "PER_DUMBBELL", loadMultiplier: 2, primaryMuscles: ["Lats"], secondaryMuscles: ["Biceps"], sets: [{ weightKg: null, loadValue: 10, actualReps: 12 }, { weightKg: null, loadValue: 10, actualReps: 11 }], ...overrides };
 }
 
 describe("progress calculations", () => {

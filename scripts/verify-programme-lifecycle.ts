@@ -74,10 +74,11 @@ async function main() {
   await prisma.workoutSession.update({ where: { id: session.id }, data: { status: "COMPLETED", completedAt } });
   const historicalBefore = await prisma.workoutSession.findUniqueOrThrow({ where: { id: session.id }, include: { exerciseSessions: { orderBy: { position: "asc" }, include: { setLogs: { orderBy: { setNumber: "asc" } } } } } });
 
-  const patch = JSON.stringify({ schemaVersion: 1, program: slug, baseVersion: 1, changes: [{ action: "upsert", day: "upper-a", exercise: "chest-press", load: { type: "machineLevel", value: 9 } }] });
+  const patch = JSON.stringify({ schemaVersion: 1, program: slug, baseVersion: 1, changes: [{ action: "upsert", day: "upper-a", exercise: "chest-press", load: { type: "machineLevel", value: 9 }, restSeconds: 60 }] });
   const patchPreview = await previewCoachImport(prisma, patch);
   assert.equal(patchPreview.kind, "patch");
   assert.equal(patchPreview.nextVersion, 2);
+  assert(patchPreview.changed.some((item) => item.details.includes("Rest: 120 sec → 60 sec")), "Preview must show the rest-time change");
   const patched = await applyCoachImport(prisma, patch);
   assert.equal(patched.kind, "patch");
   assert.equal(patched.versionNumber, 2);
@@ -85,20 +86,29 @@ async function main() {
   const after = await prisma.workoutProgram.findUniqueOrThrow({ where: { slug }, include: { versions: { orderBy: { versionNumber: "asc" }, include: { days: { where: { slug: "upper-a" }, include: { workoutExercises: { include: { exercise: true } } } } } } } });
   assert.equal(after.versions.length, 2);
   assert.equal(after.activeVersionId, after.versions[1].id);
-  assert.equal(Number(after.versions[1].days[0].workoutExercises.find((item) => item.exercise.slug === "chest-press")?.plannedLoadValue), 9);
-  assert.equal(Number(after.versions[0].days[0].workoutExercises.find((item) => item.exercise.slug === "chest-press")?.plannedLoadValue), 8);
+  const version2Exercise = after.versions[1].days[0].workoutExercises.find((item) => item.exercise.slug === "chest-press");
+  const version1Exercise = after.versions[0].days[0].workoutExercises.find((item) => item.exercise.slug === "chest-press");
+  assert.equal(Number(version2Exercise?.plannedLoadValue), 9);
+  assert.equal(version2Exercise?.restSeconds, 60, "Version 2 must store the patched rest time");
+  assert.equal(Number(version1Exercise?.plannedLoadValue), 8);
+  assert.equal(version1Exercise?.restSeconds, 120, "Version 1 must remain immutable");
   const historicalAfter = await prisma.workoutSession.findUniqueOrThrow({ where: { id: session.id }, include: { exerciseSessions: { orderBy: { position: "asc" }, include: { setLogs: { orderBy: { setNumber: "asc" } } } } } });
   assert.deepEqual(historicalAfter, historicalBefore);
   assert.equal(historicalAfter.programVersionId, version1.id);
+  assert.equal(historicalAfter.exerciseSessions[0].restSeconds, 120, "Existing session snapshot must remain unchanged");
   assert.equal((await getActiveProgramme(prisma))?.activeVersion?.versionNumber, 2);
   await assert.rejects(() => startWorkout(prisma, version1.days[0].id), /WORKOUT_DAY_NOT_ACTIVE/);
+  const nextSession = await startWorkout(prisma, after.versions[1].days[0].id);
+  const nextSessionSnapshot = await prisma.workoutSession.findUniqueOrThrow({ where: { id: nextSession.id }, include: { exerciseSessions: true } });
+  assert.equal(nextSessionSnapshot.programVersionId, after.versions[1].id);
+  assert.equal(nextSessionSnapshot.exerciseSessions[0].restSeconds, 60, "A new session must use the active version's patched rest time");
 
   await prisma.workoutSession.deleteMany({ where: { programVersion: { programId: program.id } } });
   await prisma.appSettings.update({ where: { id: 1 }, data: { activeProgramId: null } });
   await prisma.workoutProgram.delete({ where: { id: program.id } });
   await prisma.workoutProgram.update({ where: { id: demo.id }, data: { status: "DEMO" } });
   await setActiveProgramme(prisma, demo.id, demo.versions[0].id);
-  console.log("Verified schemaVersion 2 preview/create/activation, active resolver, workout completion on version 1, schemaVersion 1 patch to version 2 of the same programme, immutable prior versions, and unchanged historical session data.");
+  console.log("Verified schemaVersion 2 preview/create/activation, active resolver, workout completion on version 1, schemaVersion 1 rest/load patch to version 2, immutable session snapshots, and new-session selection of the active version.");
   await prisma.$disconnect();
 }
 

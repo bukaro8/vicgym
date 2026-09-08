@@ -21,11 +21,23 @@ export type OfflineExercise = {
   targetReps: number;
   restSeconds: number;
   autoRest: boolean;
+  isAdHoc?: boolean;
   loadTrackingType?: "KILOGRAM" | "MACHINE_LEVEL" | "BODYWEIGHT" | "REPS_ONLY" | null;
   loadEntryMode?: "STACK_TOTAL" | "TOTAL_LOAD" | "PER_DUMBBELL" | "BODYWEIGHT" | "NONE" | null;
   equipmentName: string | null;
   imagePath: string | null;
   sets: OfflineSet[];
+};
+
+export type OfflineCatalogueExercise = {
+  exerciseId: string;
+  slug: string;
+  name: string;
+  defaultTargetReps: number;
+  loadTrackingType: "KILOGRAM" | "MACHINE_LEVEL" | "BODYWEIGHT" | "REPS_ONLY";
+  loadEntryMode: "STACK_TOTAL" | "TOTAL_LOAD" | "PER_DUMBBELL" | "BODYWEIGHT" | "NONE";
+  equipmentName: string | null;
+  imagePath: string | null;
 };
 
 export type OfflineWorkout = {
@@ -48,6 +60,7 @@ export type OfflineWorkout = {
   cardioDurationSeconds?: number;
   currentExerciseId: string | null;
   exercises: OfflineExercise[];
+  catalogue?: OfflineCatalogueExercise[];
   updatedAt: string;
 };
 
@@ -68,7 +81,7 @@ export type OfflineTimer = {
   updatedAt: string;
 };
 
-export type OfflineMutationType = "ADD_SET" | "UPSERT_SET" | "UPSERT_TIMER" | "UPDATE_CARDIO" | "FINISH_WORKOUT";
+export type OfflineMutationType = "ADD_EXERCISE" | "ADD_SET" | "UPSERT_SET" | "UPSERT_TIMER" | "UPDATE_CARDIO" | "FINISH_WORKOUT";
 export type OfflineMutation = {
   id: string;
   sequence: number;

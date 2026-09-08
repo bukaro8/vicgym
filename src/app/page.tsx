@@ -5,6 +5,7 @@ import { AppShell } from "@/components/app-shell";
 import { greetingFor } from "@/lib/display";
 import { getPrisma } from "@/lib/prisma";
 import { getActiveProgramme } from "@/server/active-programme";
+import { requireCurrentUser } from "@/server/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -18,14 +19,15 @@ function startOfLondonWeek(now: Date): Date {
 }
 
 export default async function Home() {
+  const user = await requireCurrentUser();
   const prisma = getPrisma();
   const now = new Date();
   const [settings, program, weeklySessions, lastWorkout, activeSession] = await Promise.all([
-    prisma.appSettings.findUnique({ where: { id: 1 } }),
-    getActiveProgramme(prisma),
-    prisma.workoutSession.count({ where: { status: "COMPLETED", completedAt: { gte: startOfLondonWeek(now) } } }),
-    prisma.workoutSession.findFirst({ where: { status: "COMPLETED" }, orderBy: { completedAt: "desc" }, select: { workoutDayNameSnapshot: true, completedAt: true } }),
-    prisma.workoutSession.findFirst({ where: { status: "IN_PROGRESS" }, include: { exerciseSessions: { orderBy: { position: "asc" }, take: 1 } } }),
+    prisma.appSettings.findUnique({ where: { userId: user.id } }),
+    getActiveProgramme(prisma, user.id),
+    prisma.workoutSession.count({ where: { userId: user.id, status: "COMPLETED", completedAt: { gte: startOfLondonWeek(now) } } }),
+    prisma.workoutSession.findFirst({ where: { userId: user.id, status: "COMPLETED" }, orderBy: { completedAt: "desc" }, select: { workoutDayNameSnapshot: true, completedAt: true } }),
+    prisma.workoutSession.findFirst({ where: { userId: user.id, status: "IN_PROGRESS" }, include: { programVersion: { select: { versionNumber: true, program: { select: { activeVersionId: true } } } }, exerciseSessions: { orderBy: { position: "asc" }, take: 1 } } }),
   ]);
   const version = program?.activeVersion;
   const active = Boolean(program && version);
@@ -38,7 +40,7 @@ export default async function Home() {
 
         <section className="mt-7 overflow-hidden rounded-3xl border bg-card shadow-sm" aria-labelledby="programme-card-title">
           <div className="border-b bg-accent/70 p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2">{demo && <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-semibold text-accent-foreground"><FlaskConical className="size-3.5" aria-hidden="true" />Demo/test data</span>}<span className="rounded-full border border-primary/20 bg-white/60 px-3 py-1 text-xs font-medium text-muted-foreground">{active ? "Active" : "No active programme"}</span></div><h2 id="programme-card-title" className="mt-4 text-2xl font-semibold tracking-tight">{program?.name ?? "No active programme"}</h2><p className="mt-2 text-sm font-medium text-accent-foreground">{program?.notice ?? (program ? `Programme version ${version?.versionNumber}` : "Create your initial programme through validated Coach Changes JSON.")}</p></div>
-          <div className="p-5 sm:p-7">{activeSession ? <Link href={`/workouts/${activeSession.id}/exercises/${activeSession.exerciseSessions[0]?.id}`} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-semibold text-primary-foreground sm:w-auto"><RotateCcw className="size-4"/>Resume {activeSession.workoutDayNameSnapshot}</Link> : active ? <Link href="/workouts" className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-semibold text-primary-foreground sm:w-auto"><Dumbbell className="size-4"/>Start workout</Link> : <button type="button" disabled className="inline-flex min-h-12 w-full cursor-not-allowed items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-semibold text-primary-foreground opacity-50 sm:w-auto"><Dumbbell className="size-4"/>Start workout</button>}<p className="mt-3 text-xs text-muted-foreground">{activeSession ? "An in-progress session is saved and ready to continue." : active ? "Choose a workout day to create a session snapshot." : "Create and explicitly activate a programme before starting a workout."}</p><Link href={program ? "/programme" : "/more/review"} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary">{program ? "Review programme" : "Import programme JSON"}<ArrowRight className="size-4" aria-hidden="true" /></Link></div>
+          <div className="p-5 sm:p-7">{activeSession ? <Link href={`/workouts/${activeSession.id}/exercises/${activeSession.exerciseSessions[0]?.id}`} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-semibold text-primary-foreground sm:w-auto"><RotateCcw className="size-4"/>Resume {activeSession.workoutDayNameSnapshot}</Link> : active ? <Link href="/workouts" className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-semibold text-primary-foreground sm:w-auto"><Dumbbell className="size-4"/>Start workout</Link> : <button type="button" disabled className="inline-flex min-h-12 w-full cursor-not-allowed items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-semibold text-primary-foreground opacity-50 sm:w-auto"><Dumbbell className="size-4"/>Start workout</button>}<p className="mt-3 text-xs text-muted-foreground">{activeSession ? `This in-progress session uses programme version ${activeSession.programVersion.versionNumber}.${activeSession.programVersion.program.activeVersionId !== activeSession.programVersionId ? " A newer version applies after this session is finished." : ""}` : active ? "Choose a workout day to create a session snapshot." : "Create and explicitly activate a programme before starting a workout."}</p><Link href={program ? "/programme" : "/more/review"} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary">{program ? "Review programme" : "Import programme JSON"}<ArrowRight className="size-4" aria-hidden="true" /></Link></div>
         </section>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">

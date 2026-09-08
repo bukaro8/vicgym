@@ -18,9 +18,9 @@ export const activeProgrammeInclude = {
   },
 } satisfies Prisma.WorkoutProgramInclude;
 
-export async function getActiveProgramme(db: Db) {
+export async function getActiveProgramme(db: Db, userId: string) {
   const settings = await db.appSettings.findUnique({
-    where: { id: 1 },
+    where: { userId },
     select: {
       activeProgram: { include: activeProgrammeInclude },
     },
@@ -30,22 +30,24 @@ export async function getActiveProgramme(db: Db) {
   return program;
 }
 
-export async function setActiveProgramme(db: Db, programId: string, versionId: string) {
+export async function setActiveProgramme(db: Db, userId: string, programId: string, versionId: string) {
   await db.workoutProgram.updateMany({
-    where: { status: "ACTIVE", id: { not: programId }, isDemo: false },
+    where: { userId, status: "ACTIVE", id: { not: programId }, isDemo: false },
     data: { status: "DRAFT" },
   });
   await db.workoutProgram.updateMany({
-    where: { status: "ACTIVE", id: { not: programId }, isDemo: true },
+    where: { userId, status: "ACTIVE", id: { not: programId }, isDemo: true },
     data: { status: "DEMO" },
   });
+  const owned = await db.workoutProgram.findFirst({ where: { id: programId, userId }, select: { id: true } });
+  if (!owned) throw new Error("PROGRAMME_NOT_FOUND");
   const program = await db.workoutProgram.update({
-    where: { id: programId },
+    where: { id: owned.id },
     data: { activeVersionId: versionId, status: "ACTIVE", activatedAt: new Date() },
   });
   await db.appSettings.upsert({
-    where: { id: 1 },
-    create: { id: 1, activeProgramId: programId },
+    where: { userId },
+    create: { userId, activeProgramId: programId },
     update: { activeProgramId: programId },
   });
   return program;

@@ -163,11 +163,11 @@ function plannedLoadText(exercise: PlannedExercise): string {
   return formatLoad(exercise.loadTrackingType, exercise.loadEntryMode, exercise.loadValue, { blank: "load blank", legacyWeightKg: exercise.legacyWeightKg });
 }
 
-async function resolveCreation(db: Db, input: CoachCreationImport): Promise<ResolvedCreation> {
-  if (await db.workoutProgram.findUnique({ where: { slug: input.program.slug }, select: { id: true } })) error(`Programme ${input.program.slug} already exists.`);
-  const existingReal = await db.workoutProgram.findFirst({ where: { isDemo: false }, select: { slug: true } });
+async function resolveCreation(db: Db, userId: string, input: CoachCreationImport): Promise<ResolvedCreation> {
+  if (await db.workoutProgram.findFirst({ where: { userId, slug: input.program.slug }, select: { id: true } })) error(`Programme ${input.program.slug} already exists.`);
+  const existingReal = await db.workoutProgram.findFirst({ where: { userId, isDemo: false }, select: { slug: true } });
   if (existingReal) error(`A real programme already exists: ${existingReal.slug}. Initial programme creation is only available once.`);
-  const active = await getActiveProgramme(db);
+  const active = await getActiveProgramme(db, userId);
   if (active && !active.isDemo) error(`A real programme is already active: ${active.slug}. Initial programme creation is only available once.`);
   const exercises = await catalogueBySlug(db, input.days.flatMap((day) => day.exercises.map((exercise) => exercise.exercise)));
   const days: PlannedDay[] = input.days.map((day) => ({
@@ -183,10 +183,10 @@ async function resolveCreation(db: Db, input: CoachCreationImport): Promise<Reso
   return { kind: "create", input, days, preview: buildPreview(input.program.slug, input.program.name, "create", null, 1, days, items) };
 }
 
-async function resolvePatch(db: Db, input: CoachPatchImport): Promise<ResolvedPatch> {
-  const program = await db.workoutProgram.findUnique({ where: { slug: input.program }, include: { activeVersion: { include: { days: { orderBy: { rotationOrder: "asc" }, include: { workoutExercises: { orderBy: { position: "asc" }, include: { exercise: true } } } } } } } });
+async function resolvePatch(db: Db, userId: string, input: CoachPatchImport): Promise<ResolvedPatch> {
+  const program = await db.workoutProgram.findFirst({ where: { userId, slug: input.program }, include: { activeVersion: { include: { days: { orderBy: { rotationOrder: "asc" }, include: { workoutExercises: { orderBy: { position: "asc" }, include: { exercise: true } } } } } } } });
   if (!program) error(`Unknown programme: ${input.program}.`);
-  const active = await getActiveProgramme(db);
+  const active = await getActiveProgramme(db, userId);
   if (!active || active.id !== program.id || !program.activeVersion || program.status !== "ACTIVE") error("Coach patches may only update the currently active programme.");
   if (program.activeVersion.versionNumber !== input.baseVersion) error(`This coach response is based on version ${input.baseVersion}, but the current programme is version ${program.activeVersion.versionNumber}. Generate a new report before applying changes.`);
   const days = new Map<string, PlannedDay>(program.activeVersion.days.map((day) => [day.slug, { slug: day.slug, name: day.name, rotationOrder: day.rotationOrder, exercises: day.workoutExercises.map((item) => {
@@ -263,23 +263,23 @@ async function resolvePatch(db: Db, input: CoachPatchImport): Promise<ResolvedPa
   return { kind: "patch", programId: program.id, baseVersion: program.activeVersion.versionNumber, days: plannedDays, preview: buildPreview(program.slug, program.name, "patch", input.baseVersion, input.baseVersion + 1, plannedDays, items) };
 }
 
-async function resolveImport(db: Db, input: CoachImport) { return input.schemaVersion === 2 ? resolveCreation(db, input) : resolvePatch(db, input); }
+async function resolveImport(db: Db, userId: string, input: CoachImport) { return input.schemaVersion === 2 ? resolveCreation(db, userId, input) : resolvePatch(db, userId, input); }
 function versionData(days: PlannedDay[]) { return { days: { create: days.map((day) => ({ slug: day.slug, name: day.name, rotationOrder: day.rotationOrder, workoutExercises: { create: day.exercises.map((exercise) => ({ exerciseId: exercise.exerciseId, position: exercise.position, sets: exercise.sets, targetReps: exercise.targetReps, plannedWeightKg: exercise.legacyWeightKg, plannedLoadValue: exercise.loadValue, loadTrackingTypeSnapshot: exercise.loadTrackingType, loadEntryModeSnapshot: exercise.loadEntryMode, restSeconds: exercise.restSeconds, autoRest: exercise.autoRest })) } })) } }; }
 
-export async function previewCoachImport(db: Db, raw: string): Promise<ImportPreview> { return (await resolveImport(db, parseCoachImport(raw))).preview; }
+export async function previewCoachImport(db: Db, userId: string, raw: string): Promise<ImportPreview> { return (await resolveImport(db, userId, parseCoachImport(raw))).preview; }
 
-export async function applyCoachImport(prisma: PrismaClient, raw: string) {
+export async function applyCoachImport(prisma: PrismaClient, userId: string, raw: string) {
   const input = parseCoachImport(raw);
   return prisma.$transaction(async (tx) => {
-    const resolved = await resolveImport(tx, input);
+    const resolved = await resolveImport(tx, userId, input);
     if (resolved.kind === "create") {
-      const program = await tx.workoutProgram.create({ data: { slug: resolved.input.program.slug, name: resolved.input.program.name, status: "DRAFT", isDemo: false } });
+      const program = await tx.workoutProgram.create({ data: { userId, slug: resolved.input.program.slug, name: resolved.input.program.name, status: "DRAFT", isDemo: false } });
       const version = await tx.programVersion.create({ data: { programId: program.id, versionNumber: 1, source: ProgramVersionSource.IMPORT, notes: "Initial programme created from validated JSON after explicit preview confirmation.", ...versionData(resolved.days) } });
-      await setActiveProgramme(tx, program.id, version.id);
+      await setActiveProgramme(tx, userId, program.id, version.id);
       return { kind: "create" as const, program: program.slug, versionNumber: 1, preview: resolved.preview };
     }
     const version = await tx.programVersion.create({ data: { programId: resolved.programId, versionNumber: resolved.baseVersion + 1, source: ProgramVersionSource.IMPORT, notes: "Validated coach JSON applied after explicit preview confirmation.", ...versionData(resolved.days) } });
-    await setActiveProgramme(tx, resolved.programId, version.id);
+    await setActiveProgramme(tx, userId, resolved.programId, version.id);
     return { kind: "patch" as const, program: resolved.preview.program, versionNumber: version.versionNumber, preview: resolved.preview };
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 }

@@ -1,6 +1,6 @@
 import type { OfflineMutation, OfflineTimer, OfflineWorkout } from "@/lib/offline-types";
 
-const DB_NAME = "vicgym-offline";
+const DB_PREFIX = "vicgym-offline";
 const DB_VERSION = 1;
 const WORKOUTS = "workouts";
 const OUTBOX = "outbox";
@@ -8,6 +8,10 @@ const TIMERS = "timers";
 const META = "metadata";
 
 type StoreName = typeof WORKOUTS | typeof OUTBOX | typeof TIMERS | typeof META;
+let ownerKey: string | null = process.env.NODE_ENV === "test" ? "test-user" : null;
+
+export function configureOfflineOwner(userId: string | null): void { ownerKey = userId; }
+function databaseName(): string { if (!ownerKey) throw new Error("OFFLINE_OWNER_REQUIRED"); return `${DB_PREFIX}-${ownerKey}`; }
 
 function request<T>(value: IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => { value.onsuccess = () => resolve(value.result); value.onerror = () => reject(value.error); });
@@ -20,7 +24,7 @@ function transactionDone(transaction: IDBTransaction): Promise<void> {
 export function openOfflineDb(): Promise<IDBDatabase> {
   if (!("indexedDB" in globalThis)) return Promise.reject(new Error("INDEXEDDB_UNAVAILABLE"));
   return new Promise((resolve, reject) => {
-    const open = indexedDB.open(DB_NAME, DB_VERSION);
+    const open = indexedDB.open(databaseName(), DB_VERSION);
     open.onupgradeneeded = () => {
       const db = open.result;
       if (!db.objectStoreNames.contains(WORKOUTS)) db.createObjectStore(WORKOUTS, { keyPath: "id" });
@@ -80,7 +84,8 @@ export async function removeOfflineMutations(ids: string[]): Promise<void> { if 
 export async function markOfflineMutationFailed(id: string, message: string): Promise<void> { const mutation = await getValue<OfflineMutation>(OUTBOX, id); if (!mutation) return; await putValue(OUTBOX, { ...mutation, attempts: mutation.attempts + 1, lastError: message }); window.dispatchEvent(new Event("vicgym:outbox-changed")); }
 
 export async function clearPrivateOfflineData(): Promise<void> {
-  await new Promise<void>((resolve, reject) => { const deletion = indexedDB.deleteDatabase(DB_NAME); deletion.onsuccess = () => resolve(); deletion.onerror = () => reject(deletion.error); deletion.onblocked = () => reject(new Error("INDEXEDDB_BLOCKED")); });
+  const name = databaseName();
+  await new Promise<void>((resolve, reject) => { const deletion = indexedDB.deleteDatabase(name); deletion.onsuccess = () => resolve(); deletion.onerror = () => reject(deletion.error); deletion.onblocked = () => reject(new Error("INDEXEDDB_BLOCKED")); });
   if ("caches" in globalThis) for (const name of await caches.keys()) if (name.startsWith("vicgym-")) await caches.delete(name);
   navigator.serviceWorker?.controller?.postMessage({ type: "VICGYM_CLEAR_PRIVATE_CACHES" });
   window.dispatchEvent(new Event("vicgym:outbox-changed"));

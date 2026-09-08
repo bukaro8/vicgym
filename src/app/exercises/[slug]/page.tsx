@@ -8,10 +8,12 @@ import { equipmentTypeLabel } from "@/lib/display";
 import { getExercisePrimaryMedia, getExerciseReferenceMedia, getExerciseVideoMedia } from "@/lib/exercise-media";
 import { loadInputLabel } from "@/lib/load-tracking";
 import { getPrisma } from "@/lib/prisma";
+import { requireCurrentUser } from "@/server/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function ExerciseDetailPage({ params }: PageProps<"/exercises/[slug]">) {
+  await requireCurrentUser();
   const { slug } = await params;
   const exercise = await getPrisma().exercise.findUnique({
     where: { slug, active: true },

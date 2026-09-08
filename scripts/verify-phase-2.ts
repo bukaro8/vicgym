@@ -40,7 +40,7 @@ async function main() {
   assert(exercises.filter((exercise) => exercise.loadEntryMode === "STACK_TOTAL").every((exercise) => exercise.loadTrackingType === "MACHINE_LEVEL"));
   assert(exercises.filter((exercise) => exercise.loadEntryMode === "PER_DUMBBELL" || exercise.loadEntryMode === "TOTAL_LOAD").every((exercise) => exercise.loadTrackingType === "KILOGRAM"));
   assert.equal(providerMedia.filter((media) => media.kind === "IMAGE").length, exerciseDbMediaSeed.length);
-  assert.equal(providerMedia.filter((media) => media.kind === "VIDEO").length, exerciseDbMediaSeed.length);
+  assert.equal(providerMedia.filter((media) => media.kind === "VIDEO").length, exerciseDbMediaSeed.filter((media) => media.videoUrl).length);
   for (const media of providerMedia.filter((item) => item.kind === "IMAGE")) await stat(path.join(projectRoot, "public", media.storagePath));
   assert.equal(muscles.length, muscleSeed.length);
   assert(program);

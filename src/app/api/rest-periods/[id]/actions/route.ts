@@ -4,6 +4,8 @@ import { z } from "zod";
 import { assertSameOriginJson, RequestPolicyError } from "@/lib/http/same-origin";
 import { getPrisma } from "@/lib/prisma";
 import { applyTimerAction } from "@/server/rest-timers";
+import { authenticationErrorResponse } from "@/lib/http/auth-response";
+import { requireApiUser } from "@/server/auth";
 
 export const runtime = "nodejs";
 const schema = z.object({ action: z.enum(["ADD_15", "SUBTRACT_15", "PAUSE", "RESUME", "SKIP", "COMPLETE"]) });
@@ -11,10 +13,12 @@ const schema = z.object({ action: z.enum(["ADD_15", "SUBTRACT_15", "PAUSE", "RES
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     assertSameOriginJson(request);
+    const user = await requireApiUser();
     const { action } = schema.parse(await request.json());
     const { id } = await params;
-    return NextResponse.json({ timer: await applyTimerAction(getPrisma(), id, action) });
+    return NextResponse.json({ timer: await applyTimerAction(getPrisma(), user.id, id, action) });
   } catch (error) {
+    const authResponse = authenticationErrorResponse(error); if (authResponse) return authResponse;
     if (error instanceof RequestPolicyError) return NextResponse.json({ error: error.message }, { status: error.status });
     if (error instanceof z.ZodError) return NextResponse.json({ error: "Invalid timer action" }, { status: 400 });
     console.error("Timer action failed", error instanceof Error ? error.name : "UnknownError");

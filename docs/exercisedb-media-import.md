@@ -15,7 +15,7 @@ Search candidates explicitly before selecting one:
 npm run exercise-media:search -- "goblet squat"
 ```
 
-The command uses AscendAPI's filtered `GET /api/v1/exercises?name=...&limit=10` endpoint and then retrieves each candidate detail record. It prints the provider exercise ID, name, body parts, target muscles, equipment, images, and optional video reference. Use `--after <exerciseId>` to continue cursor pagination.
+The command uses AscendAPI's fuzzy `GET /api/v1/exercises/search?search=...&limit=10` endpoint and then retrieves each candidate detail record. It prints the provider exercise ID, name, body parts, target muscles, equipment, images, and optional video reference. Use `--after <exerciseId>` to continue cursor pagination.
 
 Import only after reviewing the displayed candidate:
 
@@ -23,7 +23,7 @@ Import only after reviewing the displayed candidate:
 npm run exercise-media:import -- goblet-squat exr_selected_id
 ```
 
-The importer is intentionally restricted to the current eleven placeholder exercises. It refuses unknown, unavailable, and machine exercises, so verified VicGym machine photographs remain unchanged. It writes 640/1280 WebP and AVIF derivatives to `public/media/exercises/<vicgym-slug>/`, upserts the local image row by provider/external ID, and stores an optional provider-hosted video reference without downloading it.
+The importer is intentionally restricted to VicGym's approved non-machine exercise slugs. It refuses other slugs and machine exercises, so verified VicGym machine photographs remain unchanged. It writes 640/1280 WebP and AVIF derivatives to `public/media/exercises/<vicgym-slug>/`, upserts the local image row by provider/external ID, and stores an optional provider-hosted video reference without downloading it. Pass `--assets-only` when preparing bundled derivatives for catalogue-seed metadata without changing the current database.
 
 The ExerciseMedia record retains provider, external ID, source URL, kind, and attribution. Re-running the same mapping updates the existing record rather than adding a duplicate.
 
