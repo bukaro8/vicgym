@@ -92,7 +92,7 @@ export type ImportPreview = {
   programName: string;
   baseVersion: number | null;
   nextVersion: number;
-  days: Array<{ slug: string; name: string; rotationOrder: number; exerciseCount: number }>;
+  days: Array<{ slug: string; name: string; rotationOrder: number; exerciseCount: number; exercises: Array<{ slug: string; name: string; position: number; sets: number; targetReps: number; plannedLoad: string; restSeconds: number; autoRest: boolean }> }>;
   changes: PreviewItem[];
   changed: PreviewItem[];
   added: PreviewItem[];
@@ -109,7 +109,7 @@ type ImportOptions = { personalisedRequestId?: string };
 function error(message: string): never { throw new Error(message); }
 function hasConfiguration(change: CoachPatchImport["changes"][number]) { return change.sets !== undefined || change.targetReps !== undefined || change.load !== undefined || change.weightKg !== undefined || change.restSeconds !== undefined || change.autoRest !== undefined || change.position !== undefined; }
 function buildPreview(program: string, programName: string, kind: "patch" | "create", baseVersion: number | null, nextVersion: number, days: PlannedDay[], items: PreviewItem[]): ImportPreview {
-  return { kind, program, programName, baseVersion, nextVersion, days: days.map((day) => ({ slug: day.slug, name: day.name, rotationOrder: day.rotationOrder, exerciseCount: day.exercises.length })), changes: items, changed: items.filter((item) => item.kind === "changed"), added: items.filter((item) => item.kind === "added"), removed: items.filter((item) => item.kind === "removed"), reordered: items.filter((item) => item.kind === "reordered") };
+  return { kind, program, programName, baseVersion, nextVersion, days: days.map((day) => ({ slug: day.slug, name: day.name, rotationOrder: day.rotationOrder, exerciseCount: day.exercises.length, exercises: day.exercises.map((exercise) => ({ slug: exercise.slug, name: exercise.name, position: exercise.position, sets: exercise.sets, targetReps: exercise.targetReps, plannedLoad: plannedLoadText(exercise), restSeconds: exercise.restSeconds, autoRest: exercise.autoRest })) })), changes: items, changed: items.filter((item) => item.kind === "changed"), added: items.filter((item) => item.kind === "added"), removed: items.filter((item) => item.kind === "removed"), reordered: items.filter((item) => item.kind === "reordered") };
 }
 
 export function parseCoachImport(raw: string): CoachImport {

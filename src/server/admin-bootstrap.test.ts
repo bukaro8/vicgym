@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { bootstrapAdministrator } from "@/server/admin-bootstrap";
+import { bootstrapAdministrator } from "../../prisma/admin-bootstrap";
 
 describe("administrator bootstrap", () => {
   it("does nothing when ADMIN_EMAIL is not configured", async () => {

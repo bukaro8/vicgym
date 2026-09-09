@@ -5,7 +5,7 @@ import {
 import { DEFAULT_TARGET_REPS, equipmentSeed, exerciseDbMediaSeed, exerciseSeed, localExerciseMediaSeed, localExerciseMediaStem, mediaStem, muscleSeed } from "../src/data/phase-2-catalogue";
 import { getPrisma } from "../src/lib/prisma";
 import { getServerEnv } from "../src/lib/env";
-import { bootstrapAdministrator } from "../src/server/admin-bootstrap";
+import { bootstrapAdministrator } from "./admin-bootstrap";
 
 const prisma = getPrisma();
 
