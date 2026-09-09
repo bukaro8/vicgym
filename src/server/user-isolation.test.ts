@@ -31,6 +31,7 @@ describe("personal data isolation", () => {
   it("scopes initial programme duplicate checks and active programme lookup to one user", async () => {
     const workoutProgramFindFirst = vi.fn().mockResolvedValue(null);
     const prisma = {
+      programmeRequest: { findFirst: vi.fn().mockResolvedValue(null) },
       workoutProgram: { findFirst: workoutProgramFindFirst },
       appSettings: { findUnique: vi.fn().mockResolvedValue(null) },
       exercise: { findMany: vi.fn().mockResolvedValue([{ id: "exercise-1", slug: "push-up", name: "Push-up", equipmentId: null, equipment: null, loadTrackingType: "BODYWEIGHT", loadEntryMode: "BODYWEIGHT" }]) },

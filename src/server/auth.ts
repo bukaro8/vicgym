@@ -5,7 +5,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import type { PrismaClient } from "@/generated/prisma/client";
+import type { PrismaClient, UserRole } from "@/generated/prisma/client";
 import { AUTH_COOKIE_NAME } from "@/lib/auth-constants";
 import { getPrisma } from "@/lib/prisma";
 
@@ -14,8 +14,9 @@ export const MAGIC_LINK_TTL_MS = 15 * 60 * 1000;
 export const MAGIC_LINK_REQUEST_COOLDOWN_MS = 60 * 1000;
 export const AUTH_SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
-export type AuthenticatedUser = { id: string; email: string };
+export type AuthenticatedUser = { id: string; email: string; role: UserRole };
 export class AuthenticationRequiredError extends Error {}
+export class AdminRequiredError extends Error {}
 export class MagicLinkRateLimitError extends Error {}
 
 export function normalizeEmail(email: string): string {
@@ -55,7 +56,7 @@ export async function consumeMagicLinkToken(prisma: PrismaClient, token: string,
     if (!link || link.usedAt || magicLinkExpired(link.expiresAt, now)) return null;
     const consumed = await tx.magicLinkToken.updateMany({ where: { id: link.id, usedAt: null, expiresAt: { gt: now } }, data: { usedAt: now } });
     if (consumed.count !== 1) return null;
-    const user = await tx.user.upsert({ where: { email: link.email }, create: { email: link.email, settings: { create: {} } }, update: {}, select: { id: true, email: true } });
+    const user = await tx.user.upsert({ where: { email: link.email }, create: { email: link.email, settings: { create: {} } }, update: {}, select: { id: true, email: true, role: true } });
     const sessionToken = createOpaqueToken();
     const expiresAt = new Date(now.getTime() + AUTH_SESSION_TTL_MS);
     await tx.authSession.create({ data: { userId: user.id, tokenHash: hashOpaqueToken(sessionToken), expiresAt } });
@@ -65,7 +66,7 @@ export async function consumeMagicLinkToken(prisma: PrismaClient, token: string,
 
 export async function findAuthenticatedUser(prisma: PrismaClient, token: string | undefined, now = new Date()): Promise<AuthenticatedUser | null> {
   if (!token) return null;
-  const session = await prisma.authSession.findUnique({ where: { tokenHash: hashOpaqueToken(token) }, select: { expiresAt: true, user: { select: { id: true, email: true } } } });
+  const session = await prisma.authSession.findUnique({ where: { tokenHash: hashOpaqueToken(token) }, select: { expiresAt: true, user: { select: { id: true, email: true, role: true } } } });
   if (!session || session.expiresAt <= now) return null;
   return session.user;
 }
@@ -84,6 +85,15 @@ export async function requireApiUser(): Promise<AuthenticatedUser> {
   const user = await getCurrentUser();
   if (!user) throw new AuthenticationRequiredError("Authentication required");
   return user;
+}
+
+export function assertAdminUser(user: AuthenticatedUser): AuthenticatedUser {
+  if (user.role !== "ADMIN") throw new AdminRequiredError("Administrator access required");
+  return user;
+}
+
+export async function requireAdminUser(): Promise<AuthenticatedUser> {
+  return assertAdminUser(await requireApiUser());
 }
 
 export async function deleteCurrentAuthSession(prisma = getPrisma()): Promise<void> {

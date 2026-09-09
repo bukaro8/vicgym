@@ -599,14 +599,6 @@ export type SetLogUncheckedUpdateManyWithoutExerciseSessionNestedInput = {
   deleteMany?: Prisma.SetLogScalarWhereInput | Prisma.SetLogScalarWhereInput[]
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type SetLogCreateNestedOneWithoutRestPeriodInput = {
   create?: Prisma.XOR<Prisma.SetLogCreateWithoutRestPeriodInput, Prisma.SetLogUncheckedCreateWithoutRestPeriodInput>
   connectOrCreate?: Prisma.SetLogCreateOrConnectWithoutRestPeriodInput

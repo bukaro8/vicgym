@@ -21,4 +21,10 @@ describe("parseServerEnv", () => {
     expect(emailIsAllowed("unknown@example.com", "victor@example.com")).toBe(false);
     expect(emailIsAllowed("anyone@example.com", "")).toBe(true);
   });
+
+  it("accepts an optional administrator bootstrap email and rejects malformed values", () => {
+    expect(parseServerEnv({ ...required, ADMIN_EMAIL: "admin@example.com" }).ADMIN_EMAIL).toBe("admin@example.com");
+    expect(parseServerEnv({ ...required, ADMIN_EMAIL: "" }).ADMIN_EMAIL).toBe("");
+    expect(() => parseServerEnv({ ...required, ADMIN_EMAIL: "not-an-email" })).toThrow("ADMIN_EMAIL");
+  });
 });

@@ -16,6 +16,69 @@ export const WeightUnit = {
 export type WeightUnit = (typeof WeightUnit)[keyof typeof WeightUnit]
 
 
+export const UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
+export const OnboardingPath = {
+  SEMI_PERSONALISED: 'SEMI_PERSONALISED',
+  FULLY_PERSONALISED: 'FULLY_PERSONALISED'
+} as const
+
+export type OnboardingPath = (typeof OnboardingPath)[keyof typeof OnboardingPath]
+
+
+export const TrainingGoal = {
+  LOSE_FAT: 'LOSE_FAT',
+  BUILD_MUSCLE: 'BUILD_MUSCLE',
+  GENERAL_FITNESS: 'GENERAL_FITNESS'
+} as const
+
+export type TrainingGoal = (typeof TrainingGoal)[keyof typeof TrainingGoal]
+
+
+export const TrainingExperience = {
+  BEGINNER: 'BEGINNER',
+  SOME_EXPERIENCE: 'SOME_EXPERIENCE',
+  EXPERIENCED: 'EXPERIENCED'
+} as const
+
+export type TrainingExperience = (typeof TrainingExperience)[keyof typeof TrainingExperience]
+
+
+export const CardioPreference = {
+  MINIMAL: 'MINIMAL',
+  SOME: 'SOME',
+  ENJOYS_CARDIO: 'ENJOYS_CARDIO'
+} as const
+
+export type CardioPreference = (typeof CardioPreference)[keyof typeof CardioPreference]
+
+
+export const LimitationArea = {
+  UPPER_BODY: 'UPPER_BODY',
+  LOWER_BODY: 'LOWER_BODY',
+  BACK: 'BACK',
+  CORE: 'CORE',
+  OTHER: 'OTHER'
+} as const
+
+export type LimitationArea = (typeof LimitationArea)[keyof typeof LimitationArea]
+
+
+export const ProgrammeRequestStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ProgrammeRequestStatus = (typeof ProgrammeRequestStatus)[keyof typeof ProgrammeRequestStatus]
+
+
 export const EquipmentType = {
   MACHINE: 'MACHINE',
   DUMBBELL: 'DUMBBELL',
@@ -94,7 +157,8 @@ export type ProgramStatus = (typeof ProgramStatus)[keyof typeof ProgramStatus]
 export const ProgramVersionSource = {
   SEED: 'SEED',
   MANUAL: 'MANUAL',
-  IMPORT: 'IMPORT'
+  IMPORT: 'IMPORT',
+  GENERATED: 'GENERATED'
 } as const
 
 export type ProgramVersionSource = (typeof ProgramVersionSource)[keyof typeof ProgramVersionSource]

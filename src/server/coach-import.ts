@@ -104,6 +104,7 @@ type PlannedExercise = { exerciseId: string; slug: string; name: string; sets: n
 type PlannedDay = { slug: string; name: string; rotationOrder: number; exercises: PlannedExercise[] };
 type ResolvedPatch = { kind: "patch"; programId: string; baseVersion: number; days: PlannedDay[]; preview: ImportPreview };
 type ResolvedCreation = { kind: "create"; input: CoachCreationImport; days: PlannedDay[]; preview: ImportPreview };
+type ImportOptions = { personalisedRequestId?: string };
 
 function error(message: string): never { throw new Error(message); }
 function hasConfiguration(change: CoachPatchImport["changes"][number]) { return change.sets !== undefined || change.targetReps !== undefined || change.load !== undefined || change.weightKg !== undefined || change.restSeconds !== undefined || change.autoRest !== undefined || change.position !== undefined; }
@@ -163,7 +164,9 @@ function plannedLoadText(exercise: PlannedExercise): string {
   return formatLoad(exercise.loadTrackingType, exercise.loadEntryMode, exercise.loadValue, { blank: "load blank", legacyWeightKg: exercise.legacyWeightKg });
 }
 
-async function resolveCreation(db: Db, userId: string, input: CoachCreationImport): Promise<ResolvedCreation> {
+async function resolveCreation(db: Db, userId: string, input: CoachCreationImport, options: ImportOptions = {}): Promise<ResolvedCreation> {
+  const pendingRequest = await db.programmeRequest.findFirst({ where: { userId, status: "PENDING" }, select: { id: true } });
+  if (pendingRequest && pendingRequest.id !== options.personalisedRequestId) error("This account has a pending personalised programme request. Its initial programme must be applied through administrator review.");
   if (await db.workoutProgram.findFirst({ where: { userId, slug: input.program.slug }, select: { id: true } })) error(`Programme ${input.program.slug} already exists.`);
   const existingReal = await db.workoutProgram.findFirst({ where: { userId, isDemo: false }, select: { slug: true } });
   if (existingReal) error(`A real programme already exists: ${existingReal.slug}. Initial programme creation is only available once.`);
@@ -263,15 +266,14 @@ async function resolvePatch(db: Db, userId: string, input: CoachPatchImport): Pr
   return { kind: "patch", programId: program.id, baseVersion: program.activeVersion.versionNumber, days: plannedDays, preview: buildPreview(program.slug, program.name, "patch", input.baseVersion, input.baseVersion + 1, plannedDays, items) };
 }
 
-async function resolveImport(db: Db, userId: string, input: CoachImport) { return input.schemaVersion === 2 ? resolveCreation(db, userId, input) : resolvePatch(db, userId, input); }
+async function resolveImport(db: Db, userId: string, input: CoachImport, options: ImportOptions = {}) { return input.schemaVersion === 2 ? resolveCreation(db, userId, input, options) : resolvePatch(db, userId, input); }
 function versionData(days: PlannedDay[]) { return { days: { create: days.map((day) => ({ slug: day.slug, name: day.name, rotationOrder: day.rotationOrder, workoutExercises: { create: day.exercises.map((exercise) => ({ exerciseId: exercise.exerciseId, position: exercise.position, sets: exercise.sets, targetReps: exercise.targetReps, plannedWeightKg: exercise.legacyWeightKg, plannedLoadValue: exercise.loadValue, loadTrackingTypeSnapshot: exercise.loadTrackingType, loadEntryModeSnapshot: exercise.loadEntryMode, restSeconds: exercise.restSeconds, autoRest: exercise.autoRest })) } })) } }; }
 
-export async function previewCoachImport(db: Db, userId: string, raw: string): Promise<ImportPreview> { return (await resolveImport(db, userId, parseCoachImport(raw))).preview; }
+export async function previewCoachImport(db: Db, userId: string, raw: string, options: ImportOptions = {}): Promise<ImportPreview> { return (await resolveImport(db, userId, parseCoachImport(raw), options)).preview; }
 
-export async function applyCoachImport(prisma: PrismaClient, userId: string, raw: string) {
+export async function applyCoachImportInTransaction(tx: Prisma.TransactionClient, userId: string, raw: string, options: ImportOptions = {}) {
   const input = parseCoachImport(raw);
-  return prisma.$transaction(async (tx) => {
-    const resolved = await resolveImport(tx, userId, input);
+  const resolved = await resolveImport(tx, userId, input, options);
     if (resolved.kind === "create") {
       const program = await tx.workoutProgram.create({ data: { userId, slug: resolved.input.program.slug, name: resolved.input.program.name, status: "DRAFT", isDemo: false } });
       const version = await tx.programVersion.create({ data: { programId: program.id, versionNumber: 1, source: ProgramVersionSource.IMPORT, notes: "Initial programme created from validated JSON after explicit preview confirmation.", ...versionData(resolved.days) } });
@@ -281,5 +283,8 @@ export async function applyCoachImport(prisma: PrismaClient, userId: string, raw
     const version = await tx.programVersion.create({ data: { programId: resolved.programId, versionNumber: resolved.baseVersion + 1, source: ProgramVersionSource.IMPORT, notes: "Validated coach JSON applied after explicit preview confirmation.", ...versionData(resolved.days) } });
     await setActiveProgramme(tx, userId, resolved.programId, version.id);
     return { kind: "patch" as const, program: resolved.preview.program, versionNumber: version.versionNumber, preview: resolved.preview };
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+}
+
+export async function applyCoachImport(prisma: PrismaClient, userId: string, raw: string) {
+  return prisma.$transaction((tx) => applyCoachImportInTransaction(tx, userId, raw), { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
 }

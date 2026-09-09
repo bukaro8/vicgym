@@ -11,7 +11,7 @@ VicGym weekly report → paste into ChatGPT → receive VicGym JSON
 
 There is no manual programme editor. The exercise catalogue is authoritative, programme versions are immutable, and imported JSON can only reference active exercises that already exist in VicGym.
 
-The shared seed creates only the verified exercise/equipment catalogue. Each new account starts without a programme and can create its own initial programme through the validated Coach Changes JSON workflow. VicGym does not make assumptions about health, injuries, ability, experience, or programme suitability.
+The shared seed creates only the verified exercise/equipment catalogue. Each new account chooses an immediate deterministic starter programme or a pending fully personalised coach request. Coach Changes JSON remains available for controlled programme creation and later immutable updates. VicGym does not make assumptions about health, injuries, ability, experience, or programme suitability.
 
 ## Contents
 
@@ -37,6 +37,10 @@ The shared seed creates only the verified exercise/equipment catalogue. Each new
 
 ### Programme management
 
+- First-login onboarding with instant semi-personalised and detailed coach-reviewed paths.
+- An ADMIN-only pending-request list, coach brief, ChatGPT export, schema-version-2 preview, explicit apply, and cancellation workflow.
+- Deterministic 2/3/4/5-day starter programmes generated only from the active shared catalogue.
+- User roles (`USER` by default and explicitly assigned `ADMIN`) enforced on the server.
 - One authoritative active programme per user, selected by that user's `AppSettings.activeProgramId`.
 - Initial programme creation from validated `schemaVersion: 2` JSON.
 - Weekly patch updates through backwards-compatible `schemaVersion: 1` JSON.
@@ -106,6 +110,7 @@ The shared seed creates only the verified exercise/equipment catalogue. Each new
 ### Security and deployment
 
 - Passwordless email magic-link authentication through Resend.
+- Best-effort Resend notifications to `ADMIN_EMAIL` when a personalised request is submitted and to the requesting user when their programme becomes active.
 - Fifteen-minute, single-use login tokens; only SHA-256 token hashes are stored, with a one-minute per-email request cooldown.
 - Secure, HTTP-only, same-site application sessions with a 30-day expiry.
 - Personal programmes, settings, sessions, history, reports, and synchronization records are scoped to the authenticated user.
@@ -133,9 +138,9 @@ Raw `SetLog` and `RestPeriod` records are the source of truth. Progress, previou
 ### Normal lifecycle
 
 1. Run migrations and seed the verified catalogue.
-2. Paste an initial `schemaVersion: 2` programme into **More → Coach review**.
-3. Validate it and inspect the creation preview.
-4. Explicitly confirm and apply it. The server creates programme version 1 and activates it atomically.
+2. Sign in and choose **Create my programme now** or **Build a fully personalised programme**.
+3. The instant path answers a short questionnaire and atomically creates and activates immutable programme version 1. The fully personalised path creates a pending coach-review request and no generic programme.
+4. Alternatively, a validated `schemaVersion: 2` import can create an initial programme through **More → Coach review**.
 5. Start a workout from **Home** or **Workouts**.
 6. Log sets, use the rest timer, and explicitly finish the workout.
 7. Review factual history under **Progress**.
@@ -447,6 +452,8 @@ Server components handle normal dashboard, catalogue, programme, history, and re
 ### Core relational model
 
 - `User`: one account per normalized email address.
+- `OnboardingProfile`: user-owned path, starter answers, training preferences, priorities, additional notes, cardio recommendation, and limitation-review flag.
+- `ProgrammeRequest`: user-owned pending/completed/cancelled request for future administrator review.
 - `MagicLinkToken`: hashed, expiring, single-use email login challenges.
 - `AuthSession`: hashed server-side session tokens and expiry dates.
 - `AppSettings`: per-user timezone, active-programme pointer, units, alerts, and onboarding state.
@@ -478,6 +485,8 @@ Production requirements:
 - tested database backups.
 
 Mutation routes accept same-origin JSON only. Route handlers always revalidate the server-side session even though the Next.js proxy performs an early cookie-presence check. Browser-cached offline data is protected by the phone/browser profile and account namespace, not by an additional encryption key. Signing out preserves that account's unsynchronized local queue so it can recover after the same user signs in again; another account receives a distinct local database.
+
+Personalised-programme notification delivery happens only after the corresponding database transaction commits. Provider failures are logged and never roll back request submission or programme activation. Successful delivery timestamps are stored on `ProgrammeRequest`, and stable Resend idempotency keys prevent duplicate messages during retries.
 
 ## Application routes
 
@@ -543,8 +552,9 @@ npm run db:seed
 | `APP_ORIGIN` | Login/runtime | Exact public origin used in magic links and same-origin validation, such as `https://gym.example.com`; no path or trailing slash |
 | `APP_TIMEZONE` | No | Application/reporting timezone; defaults to `Europe/London` |
 | `RESEND_API_KEY` | Login/runtime | Server-only Resend API key used to send magic links |
-| `RESEND_FROM_EMAIL` | Login/runtime | Sender on a verified Resend domain, such as `VicGym <login@auth.example.com>` |
+| `RESEND_FROM_EMAIL` | Login/runtime | Sender on a verified Resend domain for magic links and personalised-programme notifications, such as `VicGym <login@auth.example.com>` |
 | `AUTH_ALLOWED_EMAILS` | Recommended | Optional comma-separated list of email addresses allowed to create/sign into accounts; empty means open registration |
+| `ADMIN_EMAIL` | Recommended | Existing administrator account promoted during seeding and notified when personalised programme requests are submitted |
 | `RAPIDAPI_KEY` | Developer media import only | Server-only ExerciseDB credential; never expose as `NEXT_PUBLIC_*` |
 | `RAPIDAPI_HOST` | Developer media import only | ExerciseDB provider host; a default is supplied |
 | `NODE_ENV` | Runtime-managed | `development`, `test`, or `production` |
@@ -623,7 +633,7 @@ Always inspect ExerciseDB candidates before importing and follow the provider/pr
 1. Create a standard Coolify application from this repository using the included `Dockerfile`; leave Coolify's custom start command empty.
 2. Create PostgreSQL on Coolify's internal network; do not expose its port publicly.
 3. Verify a sending domain or subdomain in Resend and create an API key.
-4. Set `DATABASE_URL`, `APP_ORIGIN`, `APP_TIMEZONE`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, and preferably `AUTH_ALLOWED_EMAILS` in the application environment.
+4. Set `DATABASE_URL`, `APP_ORIGIN`, `APP_TIMEZONE`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `ADMIN_EMAIL`, and preferably `AUTH_ALLOWED_EMAILS` in the application environment. For example: `ADMIN_EMAIL=admin@example.com`.
 5. Ensure `APP_ORIGIN` is the exact public URL, including `https://` and without a path or trailing slash.
 6. Route the public HTTPS domain through Coolify/Traefik to container port `3000` and redirect HTTP to HTTPS.
 7. Disable the old Coolify HTTP Basic Authentication layer unless intentionally retaining two separate login gates.
@@ -708,7 +718,8 @@ Generate a new weekly report and copy its exact `program` and `baseVersion`. A p
 
 ## Current limitations
 
-- VicGym targets a small trusted user group; it has no roles, teams, invitations, or administrator console.
+- VicGym targets a small trusted user group. Roles exist, but there is not yet an administrator console, team model, or invitation UI.
+- Fully personalised onboarding uses a detailed V1 questionnaire, manual administrator review, and best-effort email notifications; OpenAI automation is not included.
 - Accounts are created on first successful magic-link use. An optional email allowlist is the current registration control.
 - Authentication sessions expire after 30 days and are not currently listed or remotely revoked through a user-facing session-management screen.
 - There is no in-app programme/workout-day editor by design.

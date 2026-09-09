@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { parseCoachImport, validateImportedLoad } from "@/server/coach-import";
+import { applyCoachImportInTransaction, parseCoachImport, validateImportedLoad } from "@/server/coach-import";
 
 const valid = JSON.stringify({ schemaVersion: 1, program: "demo-four-day", baseVersion: 1, changes: [{ day: "demo-upper-a", exercise: "chest-press", sets: 3 }] });
 const creation = JSON.stringify({ schemaVersion: 2, operation: "create-programme", program: { slug: "small-gym", name: "Small Gym Programme" }, days: [{ slug: "upper-a", name: "Upper A", rotationOrder: 1, exercises: [{ exercise: "chest-press", sets: 3, targetReps: 12, load: { type: "machineLevel", value: 8 }, restSeconds: 120, autoRest: true, position: 1 }] }] });
@@ -39,4 +39,18 @@ describe("coach JSON contract", () => {
   it("rejects duplicate creation day slugs", () => expect(() => parseCoachImport(JSON.stringify({ schemaVersion: 2, operation: "create-programme", program: { slug: "small-gym", name: "Small Gym" }, days: [{ slug: "upper-a", name: "Upper A", rotationOrder: 1, exercises: [{ exercise: "push-up", sets: 3, targetReps: 12, weightKg: null, restSeconds: 90, autoRest: true, position: 1 }] }, { slug: "upper-a", name: "Again", rotationOrder: 2, exercises: [] }] }))).toThrow("Duplicate workout day"));
   it("rejects duplicate exercise positions in a creation day", () => expect(() => parseCoachImport(JSON.stringify({ schemaVersion: 2, operation: "create-programme", program: { slug: "small-gym", name: "Small Gym" }, days: [{ slug: "upper-a", name: "Upper A", rotationOrder: 1, exercises: [{ exercise: "push-up", sets: 3, targetReps: 12, weightKg: null, restSeconds: 90, autoRest: true, position: 1 }, { exercise: "chest-press", sets: 3, targetReps: 12, weightKg: null, restSeconds: 90, autoRest: true, position: 1 }] }] }))).toThrow("Duplicate position"));
   it("rejects a creation document with no exercises", () => expect(() => parseCoachImport(JSON.stringify({ schemaVersion: 2, operation: "create-programme", program: { slug: "small-gym", name: "Small Gym" }, days: [{ slug: "upper-a", name: "Upper A", rotationOrder: 1, exercises: [] }] }))).toThrow("at least one exercise"));
+  it("creates and activates schemaVersion 2 for the supplied owner", async () => {
+    const programFindFirst = vi.fn().mockResolvedValueOnce(null).mockResolvedValueOnce(null).mockResolvedValueOnce({ id: "program-1" });
+    const programUpdate = vi.fn().mockResolvedValue({ id: "program-1" });
+    const tx = { programmeRequest: { findFirst: vi.fn().mockResolvedValue(null) }, workoutProgram: { findFirst: programFindFirst, create: vi.fn().mockResolvedValue({ id: "program-1", slug: "small-gym" }), updateMany: vi.fn(), update: programUpdate }, programVersion: { create: vi.fn().mockResolvedValue({ id: "version-1", versionNumber: 1 }), findFirst: vi.fn().mockResolvedValue({ id: "version-1" }) }, appSettings: { findUnique: vi.fn().mockResolvedValue({ activeProgram: null }), upsert: vi.fn() }, exercise: { findMany: vi.fn().mockResolvedValue([{ id: "exercise-1", slug: "chest-press", name: "Chest Press", active: true, equipmentId: "equipment-1", equipment: { available: true }, loadTrackingType: "MACHINE_LEVEL", loadEntryMode: "STACK_TOTAL" }]) } };
+    const result = await applyCoachImportInTransaction(tx as never, "owner-1", creation);
+    expect(tx.workoutProgram.create).toHaveBeenCalledWith({ data: expect.objectContaining({ userId: "owner-1" }) });
+    expect(programUpdate).toHaveBeenCalledWith(expect.objectContaining({ where: { id: "program-1" }, data: expect.objectContaining({ activeVersionId: "version-1", status: "ACTIVE" }) }));
+    expect(tx.appSettings.upsert).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: "owner-1" }, update: { activeProgramId: "program-1" } }));
+    expect(result.versionNumber).toBe(1);
+  });
+  it("requires a pending personalised request to be processed through its admin workflow", async () => {
+    const tx = { programmeRequest: { findFirst: vi.fn().mockResolvedValue({ id: "request-1" }) } };
+    await expect(applyCoachImportInTransaction(tx as never, "owner-1", creation)).rejects.toThrow("administrator review");
+  });
 });

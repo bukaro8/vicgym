@@ -6,6 +6,8 @@ import { greetingFor } from "@/lib/display";
 import { getPrisma } from "@/lib/prisma";
 import { getActiveProgramme } from "@/server/active-programme";
 import { requireCurrentUser } from "@/server/auth";
+import { getOnboardingState } from "@/server/onboarding";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +23,7 @@ function startOfLondonWeek(now: Date): Date {
 export default async function Home() {
   const user = await requireCurrentUser();
   const prisma = getPrisma();
+  if (user.role !== "ADMIN" && (await getOnboardingState(prisma, user.id)).mode !== "READY") redirect("/onboarding");
   const now = new Date();
   const [settings, program, weeklySessions, lastWorkout, activeSession] = await Promise.all([
     prisma.appSettings.findUnique({ where: { userId: user.id } }),

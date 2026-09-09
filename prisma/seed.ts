@@ -4,6 +4,8 @@ import {
 } from "../src/generated/prisma/enums";
 import { DEFAULT_TARGET_REPS, equipmentSeed, exerciseDbMediaSeed, exerciseSeed, localExerciseMediaSeed, localExerciseMediaStem, mediaStem, muscleSeed } from "../src/data/phase-2-catalogue";
 import { getPrisma } from "../src/lib/prisma";
+import { getServerEnv } from "../src/lib/env";
+import { bootstrapAdministrator } from "../src/server/admin-bootstrap";
 
 const prisma = getPrisma();
 
@@ -168,6 +170,8 @@ for (const media of exerciseDbMediaSeed) {
 console.log(
   `Seeded ${equipmentSeed.length} shared equipment records, ${exerciseSeed.length} shared exercises, and ${muscleSeed.length} shared muscles.`,
 );
+
+await bootstrapAdministrator(prisma, getServerEnv().ADMIN_EMAIL);
 
 }
 

@@ -10,6 +10,7 @@ export const serverEnvSchema = z.object({
   RESEND_API_KEY: z.string().min(1).optional(),
   RESEND_FROM_EMAIL: z.string().min(3).optional(),
   AUTH_ALLOWED_EMAILS: z.string().optional(),
+  ADMIN_EMAIL: z.union([z.string().trim().email("ADMIN_EMAIL must be a valid email address"), z.literal("")]).optional(),
   RAPIDAPI_KEY: z.string().min(1).optional(),
   RAPIDAPI_HOST: z.string().regex(/^[a-z0-9.-]+$/i, "RAPIDAPI_HOST is invalid").default("edb-with-videos-and-images-by-ascendapi.p.rapidapi.com"),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

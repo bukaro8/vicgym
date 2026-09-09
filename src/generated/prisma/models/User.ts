@@ -27,6 +27,7 @@ export type AggregateUser = {
 export type UserMinAggregateOutputType = {
   id: string | null
   email: string | null
+  role: $Enums.UserRole | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -34,6 +35,7 @@ export type UserMinAggregateOutputType = {
 export type UserMaxAggregateOutputType = {
   id: string | null
   email: string | null
+  role: $Enums.UserRole | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -41,6 +43,7 @@ export type UserMaxAggregateOutputType = {
 export type UserCountAggregateOutputType = {
   id: number
   email: number
+  role: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -50,6 +53,7 @@ export type UserCountAggregateOutputType = {
 export type UserMinAggregateInputType = {
   id?: true
   email?: true
+  role?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -57,6 +61,7 @@ export type UserMinAggregateInputType = {
 export type UserMaxAggregateInputType = {
   id?: true
   email?: true
+  role?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -64,6 +69,7 @@ export type UserMaxAggregateInputType = {
 export type UserCountAggregateInputType = {
   id?: true
   email?: true
+  role?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -144,6 +150,7 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type UserGroupByOutputType = {
   id: string
   email: string
+  role: $Enums.UserRole
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -172,9 +179,12 @@ export type UserWhereInput = {
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   id?: Prisma.UuidFilter<"User"> | string
   email?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   settings?: Prisma.XOR<Prisma.AppSettingsNullableScalarRelationFilter, Prisma.AppSettingsWhereInput> | null
+  onboardingProfile?: Prisma.XOR<Prisma.OnboardingProfileNullableScalarRelationFilter, Prisma.OnboardingProfileWhereInput> | null
+  programmeRequests?: Prisma.ProgrammeRequestListRelationFilter
   programs?: Prisma.WorkoutProgramListRelationFilter
   workoutSessions?: Prisma.WorkoutSessionListRelationFilter
   authSessions?: Prisma.AuthSessionListRelationFilter
@@ -184,9 +194,12 @@ export type UserWhereInput = {
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   settings?: Prisma.AppSettingsOrderByWithRelationInput
+  onboardingProfile?: Prisma.OnboardingProfileOrderByWithRelationInput
+  programmeRequests?: Prisma.ProgrammeRequestOrderByRelationAggregateInput
   programs?: Prisma.WorkoutProgramOrderByRelationAggregateInput
   workoutSessions?: Prisma.WorkoutSessionOrderByRelationAggregateInput
   authSessions?: Prisma.AuthSessionOrderByRelationAggregateInput
@@ -199,9 +212,12 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   settings?: Prisma.XOR<Prisma.AppSettingsNullableScalarRelationFilter, Prisma.AppSettingsWhereInput> | null
+  onboardingProfile?: Prisma.XOR<Prisma.OnboardingProfileNullableScalarRelationFilter, Prisma.OnboardingProfileWhereInput> | null
+  programmeRequests?: Prisma.ProgrammeRequestListRelationFilter
   programs?: Prisma.WorkoutProgramListRelationFilter
   workoutSessions?: Prisma.WorkoutSessionListRelationFilter
   authSessions?: Prisma.AuthSessionListRelationFilter
@@ -211,6 +227,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -224,6 +241,7 @@ export type UserScalarWhereWithAggregatesInput = {
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"User"> | string
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
+  role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -231,9 +249,12 @@ export type UserScalarWhereWithAggregatesInput = {
 export type UserCreateInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
   settings?: Prisma.AppSettingsCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestCreateNestedManyWithoutUserInput
   programs?: Prisma.WorkoutProgramCreateNestedManyWithoutUserInput
   workoutSessions?: Prisma.WorkoutSessionCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -243,9 +264,12 @@ export type UserCreateInput = {
 export type UserUncheckedCreateInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
   settings?: Prisma.AppSettingsUncheckedCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedCreateNestedManyWithoutUserInput
   programs?: Prisma.WorkoutProgramUncheckedCreateNestedManyWithoutUserInput
   workoutSessions?: Prisma.WorkoutSessionUncheckedCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -255,9 +279,12 @@ export type UserUncheckedCreateInput = {
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   settings?: Prisma.AppSettingsUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUpdateManyWithoutUserNestedInput
   programs?: Prisma.WorkoutProgramUpdateManyWithoutUserNestedInput
   workoutSessions?: Prisma.WorkoutSessionUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -267,9 +294,12 @@ export type UserUpdateInput = {
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   settings?: Prisma.AppSettingsUncheckedUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedUpdateManyWithoutUserNestedInput
   programs?: Prisma.WorkoutProgramUncheckedUpdateManyWithoutUserNestedInput
   workoutSessions?: Prisma.WorkoutSessionUncheckedUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -279,6 +309,7 @@ export type UserUncheckedUpdateInput = {
 export type UserCreateManyInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -286,6 +317,7 @@ export type UserCreateManyInput = {
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -293,6 +325,7 @@ export type UserUpdateManyMutationInput = {
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -305,6 +338,7 @@ export type UserScalarRelationFilter = {
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -312,6 +346,7 @@ export type UserCountOrderByAggregateInput = {
 export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -319,6 +354,7 @@ export type UserMaxOrderByAggregateInput = {
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -335,6 +371,38 @@ export type UserUpdateOneRequiredWithoutSettingsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutSettingsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSettingsInput, Prisma.UserUpdateWithoutSettingsInput>, Prisma.UserUncheckedUpdateWithoutSettingsInput>
+}
+
+export type EnumUserRoleFieldUpdateOperationsInput = {
+  set?: $Enums.UserRole
+}
+
+export type UserCreateNestedOneWithoutOnboardingProfileInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOnboardingProfileInput, Prisma.UserUncheckedCreateWithoutOnboardingProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOnboardingProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutOnboardingProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOnboardingProfileInput, Prisma.UserUncheckedCreateWithoutOnboardingProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOnboardingProfileInput
+  upsert?: Prisma.UserUpsertWithoutOnboardingProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOnboardingProfileInput, Prisma.UserUpdateWithoutOnboardingProfileInput>, Prisma.UserUncheckedUpdateWithoutOnboardingProfileInput>
+}
+
+export type UserCreateNestedOneWithoutProgrammeRequestsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProgrammeRequestsInput, Prisma.UserUncheckedCreateWithoutProgrammeRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProgrammeRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutProgrammeRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProgrammeRequestsInput, Prisma.UserUncheckedCreateWithoutProgrammeRequestsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProgrammeRequestsInput
+  upsert?: Prisma.UserUpsertWithoutProgrammeRequestsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProgrammeRequestsInput, Prisma.UserUpdateWithoutProgrammeRequestsInput>, Prisma.UserUncheckedUpdateWithoutProgrammeRequestsInput>
 }
 
 export type UserCreateNestedOneWithoutAuthSessionsInput = {
@@ -396,8 +464,11 @@ export type UserUpdateOneRequiredWithoutClientMutationsNestedInput = {
 export type UserCreateWithoutSettingsInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
+  onboardingProfile?: Prisma.OnboardingProfileCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestCreateNestedManyWithoutUserInput
   programs?: Prisma.WorkoutProgramCreateNestedManyWithoutUserInput
   workoutSessions?: Prisma.WorkoutSessionCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -407,8 +478,11 @@ export type UserCreateWithoutSettingsInput = {
 export type UserUncheckedCreateWithoutSettingsInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedCreateNestedManyWithoutUserInput
   programs?: Prisma.WorkoutProgramUncheckedCreateNestedManyWithoutUserInput
   workoutSessions?: Prisma.WorkoutSessionUncheckedCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -434,8 +508,11 @@ export type UserUpdateToOneWithWhereWithoutSettingsInput = {
 export type UserUpdateWithoutSettingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  onboardingProfile?: Prisma.OnboardingProfileUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUpdateManyWithoutUserNestedInput
   programs?: Prisma.WorkoutProgramUpdateManyWithoutUserNestedInput
   workoutSessions?: Prisma.WorkoutSessionUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -445,8 +522,155 @@ export type UserUpdateWithoutSettingsInput = {
 export type UserUncheckedUpdateWithoutSettingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedUpdateManyWithoutUserNestedInput
+  programs?: Prisma.WorkoutProgramUncheckedUpdateManyWithoutUserNestedInput
+  workoutSessions?: Prisma.WorkoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  clientMutations?: Prisma.ClientMutationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutOnboardingProfileInput = {
+  id?: string
+  email: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.AppSettingsCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestCreateNestedManyWithoutUserInput
+  programs?: Prisma.WorkoutProgramCreateNestedManyWithoutUserInput
+  workoutSessions?: Prisma.WorkoutSessionCreateNestedManyWithoutUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  clientMutations?: Prisma.ClientMutationCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutOnboardingProfileInput = {
+  id?: string
+  email: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.AppSettingsUncheckedCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedCreateNestedManyWithoutUserInput
+  programs?: Prisma.WorkoutProgramUncheckedCreateNestedManyWithoutUserInput
+  workoutSessions?: Prisma.WorkoutSessionUncheckedCreateNestedManyWithoutUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  clientMutations?: Prisma.ClientMutationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutOnboardingProfileInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOnboardingProfileInput, Prisma.UserUncheckedCreateWithoutOnboardingProfileInput>
+}
+
+export type UserUpsertWithoutOnboardingProfileInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOnboardingProfileInput, Prisma.UserUncheckedUpdateWithoutOnboardingProfileInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOnboardingProfileInput, Prisma.UserUncheckedCreateWithoutOnboardingProfileInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOnboardingProfileInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOnboardingProfileInput, Prisma.UserUncheckedUpdateWithoutOnboardingProfileInput>
+}
+
+export type UserUpdateWithoutOnboardingProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.AppSettingsUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUpdateManyWithoutUserNestedInput
+  programs?: Prisma.WorkoutProgramUpdateManyWithoutUserNestedInput
+  workoutSessions?: Prisma.WorkoutSessionUpdateManyWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  clientMutations?: Prisma.ClientMutationUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOnboardingProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.AppSettingsUncheckedUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedUpdateManyWithoutUserNestedInput
+  programs?: Prisma.WorkoutProgramUncheckedUpdateManyWithoutUserNestedInput
+  workoutSessions?: Prisma.WorkoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  clientMutations?: Prisma.ClientMutationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutProgrammeRequestsInput = {
+  id?: string
+  email: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.AppSettingsCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileCreateNestedOneWithoutUserInput
+  programs?: Prisma.WorkoutProgramCreateNestedManyWithoutUserInput
+  workoutSessions?: Prisma.WorkoutSessionCreateNestedManyWithoutUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  clientMutations?: Prisma.ClientMutationCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutProgrammeRequestsInput = {
+  id?: string
+  email: string
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  settings?: Prisma.AppSettingsUncheckedCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedCreateNestedOneWithoutUserInput
+  programs?: Prisma.WorkoutProgramUncheckedCreateNestedManyWithoutUserInput
+  workoutSessions?: Prisma.WorkoutSessionUncheckedCreateNestedManyWithoutUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  clientMutations?: Prisma.ClientMutationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutProgrammeRequestsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProgrammeRequestsInput, Prisma.UserUncheckedCreateWithoutProgrammeRequestsInput>
+}
+
+export type UserUpsertWithoutProgrammeRequestsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProgrammeRequestsInput, Prisma.UserUncheckedUpdateWithoutProgrammeRequestsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProgrammeRequestsInput, Prisma.UserUncheckedCreateWithoutProgrammeRequestsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProgrammeRequestsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProgrammeRequestsInput, Prisma.UserUncheckedUpdateWithoutProgrammeRequestsInput>
+}
+
+export type UserUpdateWithoutProgrammeRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.AppSettingsUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUpdateOneWithoutUserNestedInput
+  programs?: Prisma.WorkoutProgramUpdateManyWithoutUserNestedInput
+  workoutSessions?: Prisma.WorkoutSessionUpdateManyWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  clientMutations?: Prisma.ClientMutationUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProgrammeRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.AppSettingsUncheckedUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedUpdateOneWithoutUserNestedInput
   programs?: Prisma.WorkoutProgramUncheckedUpdateManyWithoutUserNestedInput
   workoutSessions?: Prisma.WorkoutSessionUncheckedUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -456,9 +680,12 @@ export type UserUncheckedUpdateWithoutSettingsInput = {
 export type UserCreateWithoutAuthSessionsInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
   settings?: Prisma.AppSettingsCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestCreateNestedManyWithoutUserInput
   programs?: Prisma.WorkoutProgramCreateNestedManyWithoutUserInput
   workoutSessions?: Prisma.WorkoutSessionCreateNestedManyWithoutUserInput
   clientMutations?: Prisma.ClientMutationCreateNestedManyWithoutUserInput
@@ -467,9 +694,12 @@ export type UserCreateWithoutAuthSessionsInput = {
 export type UserUncheckedCreateWithoutAuthSessionsInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
   settings?: Prisma.AppSettingsUncheckedCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedCreateNestedManyWithoutUserInput
   programs?: Prisma.WorkoutProgramUncheckedCreateNestedManyWithoutUserInput
   workoutSessions?: Prisma.WorkoutSessionUncheckedCreateNestedManyWithoutUserInput
   clientMutations?: Prisma.ClientMutationUncheckedCreateNestedManyWithoutUserInput
@@ -494,9 +724,12 @@ export type UserUpdateToOneWithWhereWithoutAuthSessionsInput = {
 export type UserUpdateWithoutAuthSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   settings?: Prisma.AppSettingsUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUpdateManyWithoutUserNestedInput
   programs?: Prisma.WorkoutProgramUpdateManyWithoutUserNestedInput
   workoutSessions?: Prisma.WorkoutSessionUpdateManyWithoutUserNestedInput
   clientMutations?: Prisma.ClientMutationUpdateManyWithoutUserNestedInput
@@ -505,9 +738,12 @@ export type UserUpdateWithoutAuthSessionsInput = {
 export type UserUncheckedUpdateWithoutAuthSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   settings?: Prisma.AppSettingsUncheckedUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedUpdateManyWithoutUserNestedInput
   programs?: Prisma.WorkoutProgramUncheckedUpdateManyWithoutUserNestedInput
   workoutSessions?: Prisma.WorkoutSessionUncheckedUpdateManyWithoutUserNestedInput
   clientMutations?: Prisma.ClientMutationUncheckedUpdateManyWithoutUserNestedInput
@@ -516,9 +752,12 @@ export type UserUncheckedUpdateWithoutAuthSessionsInput = {
 export type UserCreateWithoutProgramsInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
   settings?: Prisma.AppSettingsCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestCreateNestedManyWithoutUserInput
   workoutSessions?: Prisma.WorkoutSessionCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
   clientMutations?: Prisma.ClientMutationCreateNestedManyWithoutUserInput
@@ -527,9 +766,12 @@ export type UserCreateWithoutProgramsInput = {
 export type UserUncheckedCreateWithoutProgramsInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
   settings?: Prisma.AppSettingsUncheckedCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedCreateNestedManyWithoutUserInput
   workoutSessions?: Prisma.WorkoutSessionUncheckedCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
   clientMutations?: Prisma.ClientMutationUncheckedCreateNestedManyWithoutUserInput
@@ -554,9 +796,12 @@ export type UserUpdateToOneWithWhereWithoutProgramsInput = {
 export type UserUpdateWithoutProgramsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   settings?: Prisma.AppSettingsUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUpdateManyWithoutUserNestedInput
   workoutSessions?: Prisma.WorkoutSessionUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
   clientMutations?: Prisma.ClientMutationUpdateManyWithoutUserNestedInput
@@ -565,9 +810,12 @@ export type UserUpdateWithoutProgramsInput = {
 export type UserUncheckedUpdateWithoutProgramsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   settings?: Prisma.AppSettingsUncheckedUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedUpdateManyWithoutUserNestedInput
   workoutSessions?: Prisma.WorkoutSessionUncheckedUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
   clientMutations?: Prisma.ClientMutationUncheckedUpdateManyWithoutUserNestedInput
@@ -576,9 +824,12 @@ export type UserUncheckedUpdateWithoutProgramsInput = {
 export type UserCreateWithoutWorkoutSessionsInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
   settings?: Prisma.AppSettingsCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestCreateNestedManyWithoutUserInput
   programs?: Prisma.WorkoutProgramCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
   clientMutations?: Prisma.ClientMutationCreateNestedManyWithoutUserInput
@@ -587,9 +838,12 @@ export type UserCreateWithoutWorkoutSessionsInput = {
 export type UserUncheckedCreateWithoutWorkoutSessionsInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
   settings?: Prisma.AppSettingsUncheckedCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedCreateNestedManyWithoutUserInput
   programs?: Prisma.WorkoutProgramUncheckedCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
   clientMutations?: Prisma.ClientMutationUncheckedCreateNestedManyWithoutUserInput
@@ -614,9 +868,12 @@ export type UserUpdateToOneWithWhereWithoutWorkoutSessionsInput = {
 export type UserUpdateWithoutWorkoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   settings?: Prisma.AppSettingsUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUpdateManyWithoutUserNestedInput
   programs?: Prisma.WorkoutProgramUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
   clientMutations?: Prisma.ClientMutationUpdateManyWithoutUserNestedInput
@@ -625,9 +882,12 @@ export type UserUpdateWithoutWorkoutSessionsInput = {
 export type UserUncheckedUpdateWithoutWorkoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   settings?: Prisma.AppSettingsUncheckedUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedUpdateManyWithoutUserNestedInput
   programs?: Prisma.WorkoutProgramUncheckedUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
   clientMutations?: Prisma.ClientMutationUncheckedUpdateManyWithoutUserNestedInput
@@ -636,9 +896,12 @@ export type UserUncheckedUpdateWithoutWorkoutSessionsInput = {
 export type UserCreateWithoutClientMutationsInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
   settings?: Prisma.AppSettingsCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestCreateNestedManyWithoutUserInput
   programs?: Prisma.WorkoutProgramCreateNestedManyWithoutUserInput
   workoutSessions?: Prisma.WorkoutSessionCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -647,9 +910,12 @@ export type UserCreateWithoutClientMutationsInput = {
 export type UserUncheckedCreateWithoutClientMutationsInput = {
   id?: string
   email: string
+  role?: $Enums.UserRole
   createdAt?: Date | string
   updatedAt?: Date | string
   settings?: Prisma.AppSettingsUncheckedCreateNestedOneWithoutUserInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedCreateNestedOneWithoutUserInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedCreateNestedManyWithoutUserInput
   programs?: Prisma.WorkoutProgramUncheckedCreateNestedManyWithoutUserInput
   workoutSessions?: Prisma.WorkoutSessionUncheckedCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -674,9 +940,12 @@ export type UserUpdateToOneWithWhereWithoutClientMutationsInput = {
 export type UserUpdateWithoutClientMutationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   settings?: Prisma.AppSettingsUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUpdateManyWithoutUserNestedInput
   programs?: Prisma.WorkoutProgramUpdateManyWithoutUserNestedInput
   workoutSessions?: Prisma.WorkoutSessionUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -685,9 +954,12 @@ export type UserUpdateWithoutClientMutationsInput = {
 export type UserUncheckedUpdateWithoutClientMutationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   settings?: Prisma.AppSettingsUncheckedUpdateOneWithoutUserNestedInput
+  onboardingProfile?: Prisma.OnboardingProfileUncheckedUpdateOneWithoutUserNestedInput
+  programmeRequests?: Prisma.ProgrammeRequestUncheckedUpdateManyWithoutUserNestedInput
   programs?: Prisma.WorkoutProgramUncheckedUpdateManyWithoutUserNestedInput
   workoutSessions?: Prisma.WorkoutSessionUncheckedUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -699,6 +971,7 @@ export type UserUncheckedUpdateWithoutClientMutationsInput = {
  */
 
 export type UserCountOutputType = {
+  programmeRequests: number
   programs: number
   workoutSessions: number
   authSessions: number
@@ -706,6 +979,7 @@ export type UserCountOutputType = {
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  programmeRequests?: boolean | UserCountOutputTypeCountProgrammeRequestsArgs
   programs?: boolean | UserCountOutputTypeCountProgramsArgs
   workoutSessions?: boolean | UserCountOutputTypeCountWorkoutSessionsArgs
   authSessions?: boolean | UserCountOutputTypeCountAuthSessionsArgs
@@ -720,6 +994,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountProgrammeRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProgrammeRequestWhereInput
 }
 
 /**
@@ -754,9 +1035,12 @@ export type UserCountOutputTypeCountClientMutationsArgs<ExtArgs extends runtime.
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   settings?: boolean | Prisma.User$settingsArgs<ExtArgs>
+  onboardingProfile?: boolean | Prisma.User$onboardingProfileArgs<ExtArgs>
+  programmeRequests?: boolean | Prisma.User$programmeRequestsArgs<ExtArgs>
   programs?: boolean | Prisma.User$programsArgs<ExtArgs>
   workoutSessions?: boolean | Prisma.User$workoutSessionsArgs<ExtArgs>
   authSessions?: boolean | Prisma.User$authSessionsArgs<ExtArgs>
@@ -767,6 +1051,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -774,6 +1059,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -781,13 +1067,16 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type UserSelectScalar = {
   id?: boolean
   email?: boolean
+  role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   settings?: boolean | Prisma.User$settingsArgs<ExtArgs>
+  onboardingProfile?: boolean | Prisma.User$onboardingProfileArgs<ExtArgs>
+  programmeRequests?: boolean | Prisma.User$programmeRequestsArgs<ExtArgs>
   programs?: boolean | Prisma.User$programsArgs<ExtArgs>
   workoutSessions?: boolean | Prisma.User$workoutSessionsArgs<ExtArgs>
   authSessions?: boolean | Prisma.User$authSessionsArgs<ExtArgs>
@@ -801,6 +1090,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     settings: Prisma.$AppSettingsPayload<ExtArgs> | null
+    onboardingProfile: Prisma.$OnboardingProfilePayload<ExtArgs> | null
+    programmeRequests: Prisma.$ProgrammeRequestPayload<ExtArgs>[]
     programs: Prisma.$WorkoutProgramPayload<ExtArgs>[]
     workoutSessions: Prisma.$WorkoutSessionPayload<ExtArgs>[]
     authSessions: Prisma.$AuthSessionPayload<ExtArgs>[]
@@ -809,6 +1100,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     email: string
+    role: $Enums.UserRole
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1206,6 +1498,8 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   settings<T extends Prisma.User$settingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$settingsArgs<ExtArgs>>): Prisma.Prisma__AppSettingsClient<runtime.Types.Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  onboardingProfile<T extends Prisma.User$onboardingProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$onboardingProfileArgs<ExtArgs>>): Prisma.Prisma__OnboardingProfileClient<runtime.Types.Result.GetResult<Prisma.$OnboardingProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  programmeRequests<T extends Prisma.User$programmeRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$programmeRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProgrammeRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   programs<T extends Prisma.User$programsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$programsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkoutProgramPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workoutSessions<T extends Prisma.User$workoutSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workoutSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkoutSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   authSessions<T extends Prisma.User$authSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$authSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuthSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1241,6 +1535,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
+  readonly role: Prisma.FieldRef<"User", 'UserRole'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -1652,6 +1947,49 @@ export type User$settingsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.AppSettingsInclude<ExtArgs> | null
   where?: Prisma.AppSettingsWhereInput
+}
+
+/**
+ * User.onboardingProfile
+ */
+export type User$onboardingProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OnboardingProfile
+   */
+  select?: Prisma.OnboardingProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OnboardingProfile
+   */
+  omit?: Prisma.OnboardingProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OnboardingProfileInclude<ExtArgs> | null
+  where?: Prisma.OnboardingProfileWhereInput
+}
+
+/**
+ * User.programmeRequests
+ */
+export type User$programmeRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProgrammeRequest
+   */
+  select?: Prisma.ProgrammeRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProgrammeRequest
+   */
+  omit?: Prisma.ProgrammeRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProgrammeRequestInclude<ExtArgs> | null
+  where?: Prisma.ProgrammeRequestWhereInput
+  orderBy?: Prisma.ProgrammeRequestOrderByWithRelationInput | Prisma.ProgrammeRequestOrderByWithRelationInput[]
+  cursor?: Prisma.ProgrammeRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProgrammeRequestScalarFieldEnum | Prisma.ProgrammeRequestScalarFieldEnum[]
 }
 
 /**

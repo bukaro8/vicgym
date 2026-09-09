@@ -10,6 +10,8 @@
  */
 export type * from './models/AppSettings'
 export type * from './models/User'
+export type * from './models/OnboardingProfile'
+export type * from './models/ProgrammeRequest'
 export type * from './models/MagicLinkToken'
 export type * from './models/AuthSession'
 export type * from './models/Equipment'

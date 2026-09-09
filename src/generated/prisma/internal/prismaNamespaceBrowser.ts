@@ -53,6 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   AppSettings: 'AppSettings',
   User: 'User',
+  OnboardingProfile: 'OnboardingProfile',
+  ProgrammeRequest: 'ProgrammeRequest',
   MagicLinkToken: 'MagicLinkToken',
   AuthSession: 'AuthSession',
   Equipment: 'Equipment',
@@ -105,11 +107,52 @@ export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[key
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const OnboardingProfileScalarFieldEnum = {
+  userId: 'userId',
+  path: 'path',
+  goal: 'goal',
+  trainingDaysPerWeek: 'trainingDaysPerWeek',
+  experience: 'experience',
+  sessionLengthMinutes: 'sessionLengthMinutes',
+  cardioPreference: 'cardioPreference',
+  hasLimitations: 'hasLimitations',
+  limitationAreas: 'limitationAreas',
+  limitationsText: 'limitationsText',
+  trainingPreferences: 'trainingPreferences',
+  personalPriorities: 'personalPriorities',
+  additionalNotes: 'additionalNotes',
+  limitationReviewRequired: 'limitationReviewRequired',
+  recommendedCardioMinutes: 'recommendedCardioMinutes',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OnboardingProfileScalarFieldEnum = (typeof OnboardingProfileScalarFieldEnum)[keyof typeof OnboardingProfileScalarFieldEnum]
+
+
+export const ProgrammeRequestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  status: 'status',
+  adminNotes: 'adminNotes',
+  completedAt: 'completedAt',
+  cancelledAt: 'cancelledAt',
+  submittedNotificationSentAt: 'submittedNotificationSentAt',
+  completedNotificationSentAt: 'completedNotificationSentAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProgrammeRequestScalarFieldEnum = (typeof ProgrammeRequestScalarFieldEnum)[keyof typeof ProgrammeRequestScalarFieldEnum]
 
 
 export const MagicLinkTokenScalarFieldEnum = {

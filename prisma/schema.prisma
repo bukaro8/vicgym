@@ -11,6 +11,48 @@ enum WeightUnit {
   KG
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum OnboardingPath {
+  SEMI_PERSONALISED
+  FULLY_PERSONALISED
+}
+
+enum TrainingGoal {
+  LOSE_FAT
+  BUILD_MUSCLE
+  GENERAL_FITNESS
+}
+
+enum TrainingExperience {
+  BEGINNER
+  SOME_EXPERIENCE
+  EXPERIENCED
+}
+
+enum CardioPreference {
+  MINIMAL
+  SOME
+  ENJOYS_CARDIO
+}
+
+enum LimitationArea {
+  UPPER_BODY
+  LOWER_BODY
+  BACK
+  CORE
+  OTHER
+}
+
+enum ProgrammeRequestStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
 enum EquipmentType {
   MACHINE
   DUMBBELL
@@ -66,6 +108,7 @@ enum ProgramVersionSource {
   SEED
   MANUAL
   IMPORT
+  GENERATED
 }
 
 enum WorkoutSessionStatus {
@@ -102,15 +145,56 @@ model AppSettings {
 }
 
 model User {
-  id              String           @id @default(uuid()) @db.Uuid
-  email           String           @unique
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  settings        AppSettings?
-  programs        WorkoutProgram[]
-  workoutSessions WorkoutSession[]
-  authSessions    AuthSession[]
-  clientMutations ClientMutation[]
+  id                String             @id @default(uuid()) @db.Uuid
+  email             String             @unique
+  role              UserRole           @default(USER)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  settings          AppSettings?
+  onboardingProfile OnboardingProfile?
+  programmeRequests ProgrammeRequest[]
+  programs          WorkoutProgram[]
+  workoutSessions   WorkoutSession[]
+  authSessions      AuthSession[]
+  clientMutations   ClientMutation[]
+}
+
+model OnboardingProfile {
+  userId                   String              @id @db.Uuid
+  path                     OnboardingPath
+  goal                     TrainingGoal?
+  trainingDaysPerWeek      Int?
+  experience               TrainingExperience?
+  sessionLengthMinutes     Int?
+  cardioPreference         CardioPreference?
+  hasLimitations           Boolean             @default(false)
+  limitationAreas          LimitationArea[]
+  limitationsText          String?
+  trainingPreferences      String?
+  personalPriorities       String?
+  additionalNotes          String?
+  limitationReviewRequired Boolean             @default(false)
+  recommendedCardioMinutes Int?
+  completedAt              DateTime?
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
+  user                     User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ProgrammeRequest {
+  id                          String                 @id @default(uuid()) @db.Uuid
+  userId                      String                 @db.Uuid
+  status                      ProgrammeRequestStatus @default(PENDING)
+  adminNotes                  String?
+  completedAt                 DateTime?
+  cancelledAt                 DateTime?
+  submittedNotificationSentAt DateTime?
+  completedNotificationSentAt DateTime?
+  createdAt                   DateTime               @default(now())
+  updatedAt                   DateTime               @updatedAt
+  user                        User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, createdAt])
 }
 
 model MagicLinkToken {

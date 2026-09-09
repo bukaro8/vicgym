@@ -52,6 +52,16 @@ export type AppSettings = Prisma.AppSettingsModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model OnboardingProfile
+ * 
+ */
+export type OnboardingProfile = Prisma.OnboardingProfileModel
+/**
+ * Model ProgrammeRequest
+ * 
+ */
+export type ProgrammeRequest = Prisma.ProgrammeRequestModel
+/**
  * Model MagicLinkToken
  * 
  */

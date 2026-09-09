@@ -399,6 +399,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   AppSettings: 'AppSettings',
   User: 'User',
+  OnboardingProfile: 'OnboardingProfile',
+  ProgrammeRequest: 'ProgrammeRequest',
   MagicLinkToken: 'MagicLinkToken',
   AuthSession: 'AuthSession',
   Equipment: 'Equipment',
@@ -430,7 +432,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "appSettings" | "user" | "magicLinkToken" | "authSession" | "equipment" | "exercise" | "muscle" | "exerciseMuscle" | "exerciseMedia" | "workoutProgram" | "programVersion" | "workoutDay" | "workoutExercise" | "workoutSession" | "exerciseSession" | "setLog" | "restPeriod" | "clientMutation"
+    modelProps: "appSettings" | "user" | "onboardingProfile" | "programmeRequest" | "magicLinkToken" | "authSession" | "equipment" | "exercise" | "muscle" | "exerciseMuscle" | "exerciseMedia" | "workoutProgram" | "programVersion" | "workoutDay" | "workoutExercise" | "workoutSession" | "exerciseSession" | "setLog" | "restPeriod" | "clientMutation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -579,6 +581,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    OnboardingProfile: {
+      payload: Prisma.$OnboardingProfilePayload<ExtArgs>
+      fields: Prisma.OnboardingProfileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OnboardingProfileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OnboardingProfileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload>
+        }
+        findFirst: {
+          args: Prisma.OnboardingProfileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OnboardingProfileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload>
+        }
+        findMany: {
+          args: Prisma.OnboardingProfileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload>[]
+        }
+        create: {
+          args: Prisma.OnboardingProfileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload>
+        }
+        createMany: {
+          args: Prisma.OnboardingProfileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OnboardingProfileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload>[]
+        }
+        delete: {
+          args: Prisma.OnboardingProfileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload>
+        }
+        update: {
+          args: Prisma.OnboardingProfileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload>
+        }
+        deleteMany: {
+          args: Prisma.OnboardingProfileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OnboardingProfileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OnboardingProfileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload>[]
+        }
+        upsert: {
+          args: Prisma.OnboardingProfileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OnboardingProfilePayload>
+        }
+        aggregate: {
+          args: Prisma.OnboardingProfileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOnboardingProfile>
+        }
+        groupBy: {
+          args: Prisma.OnboardingProfileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OnboardingProfileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OnboardingProfileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OnboardingProfileCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProgrammeRequest: {
+      payload: Prisma.$ProgrammeRequestPayload<ExtArgs>
+      fields: Prisma.ProgrammeRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProgrammeRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProgrammeRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.ProgrammeRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProgrammeRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload>
+        }
+        findMany: {
+          args: Prisma.ProgrammeRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload>[]
+        }
+        create: {
+          args: Prisma.ProgrammeRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload>
+        }
+        createMany: {
+          args: Prisma.ProgrammeRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProgrammeRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.ProgrammeRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload>
+        }
+        update: {
+          args: Prisma.ProgrammeRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProgrammeRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProgrammeRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProgrammeRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProgrammeRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProgrammeRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.ProgrammeRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProgrammeRequest>
+        }
+        groupBy: {
+          args: Prisma.ProgrammeRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProgrammeRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProgrammeRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProgrammeRequestCountAggregateOutputType> | number
         }
       }
     }
@@ -1823,11 +1973,52 @@ export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[key
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const OnboardingProfileScalarFieldEnum = {
+  userId: 'userId',
+  path: 'path',
+  goal: 'goal',
+  trainingDaysPerWeek: 'trainingDaysPerWeek',
+  experience: 'experience',
+  sessionLengthMinutes: 'sessionLengthMinutes',
+  cardioPreference: 'cardioPreference',
+  hasLimitations: 'hasLimitations',
+  limitationAreas: 'limitationAreas',
+  limitationsText: 'limitationsText',
+  trainingPreferences: 'trainingPreferences',
+  personalPriorities: 'personalPriorities',
+  additionalNotes: 'additionalNotes',
+  limitationReviewRequired: 'limitationReviewRequired',
+  recommendedCardioMinutes: 'recommendedCardioMinutes',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OnboardingProfileScalarFieldEnum = (typeof OnboardingProfileScalarFieldEnum)[keyof typeof OnboardingProfileScalarFieldEnum]
+
+
+export const ProgrammeRequestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  status: 'status',
+  adminNotes: 'adminNotes',
+  completedAt: 'completedAt',
+  cancelledAt: 'cancelledAt',
+  submittedNotificationSentAt: 'submittedNotificationSentAt',
+  completedNotificationSentAt: 'completedNotificationSentAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProgrammeRequestScalarFieldEnum = (typeof ProgrammeRequestScalarFieldEnum)[keyof typeof ProgrammeRequestScalarFieldEnum]
 
 
 export const MagicLinkTokenScalarFieldEnum = {
@@ -2184,16 +2375,44 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
- * Reference to a field of type 'EquipmentType'
+ * Reference to a field of type 'UserRole'
  */
-export type EnumEquipmentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EquipmentType'>
+export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
     
 
 
 /**
- * Reference to a field of type 'EquipmentType[]'
+ * Reference to a field of type 'UserRole[]'
  */
-export type ListEnumEquipmentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EquipmentType[]'>
+export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
+    
+
+
+/**
+ * Reference to a field of type 'OnboardingPath'
+ */
+export type EnumOnboardingPathFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingPath'>
+    
+
+
+/**
+ * Reference to a field of type 'OnboardingPath[]'
+ */
+export type ListEnumOnboardingPathFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingPath[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TrainingGoal'
+ */
+export type EnumTrainingGoalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingGoal'>
+    
+
+
+/**
+ * Reference to a field of type 'TrainingGoal[]'
+ */
+export type ListEnumTrainingGoalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingGoal[]'>
     
 
 
@@ -2208,6 +2427,76 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TrainingExperience'
+ */
+export type EnumTrainingExperienceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingExperience'>
+    
+
+
+/**
+ * Reference to a field of type 'TrainingExperience[]'
+ */
+export type ListEnumTrainingExperienceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingExperience[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CardioPreference'
+ */
+export type EnumCardioPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CardioPreference'>
+    
+
+
+/**
+ * Reference to a field of type 'CardioPreference[]'
+ */
+export type ListEnumCardioPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CardioPreference[]'>
+    
+
+
+/**
+ * Reference to a field of type 'LimitationArea[]'
+ */
+export type ListEnumLimitationAreaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LimitationArea[]'>
+    
+
+
+/**
+ * Reference to a field of type 'LimitationArea'
+ */
+export type EnumLimitationAreaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LimitationArea'>
+    
+
+
+/**
+ * Reference to a field of type 'ProgrammeRequestStatus'
+ */
+export type EnumProgrammeRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProgrammeRequestStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ProgrammeRequestStatus[]'
+ */
+export type ListEnumProgrammeRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProgrammeRequestStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EquipmentType'
+ */
+export type EnumEquipmentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EquipmentType'>
+    
+
+
+/**
+ * Reference to a field of type 'EquipmentType[]'
+ */
+export type ListEnumEquipmentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EquipmentType[]'>
     
 
 
@@ -2559,6 +2848,8 @@ export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaC
 export type GlobalOmitConfig = {
   appSettings?: Prisma.AppSettingsOmit
   user?: Prisma.UserOmit
+  onboardingProfile?: Prisma.OnboardingProfileOmit
+  programmeRequest?: Prisma.ProgrammeRequestOmit
   magicLinkToken?: Prisma.MagicLinkTokenOmit
   authSession?: Prisma.AuthSessionOmit
   equipment?: Prisma.EquipmentOmit
