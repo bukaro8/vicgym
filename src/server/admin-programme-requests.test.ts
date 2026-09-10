@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const { apply, preview } = vi.hoisted(() => ({ apply: vi.fn(), preview: vi.fn() }));
 vi.mock("@/server/coach-import", () => ({ parseCoachImport: vi.fn(() => ({ schemaVersion: 2 })), previewCoachImport: preview, applyCoachImportInTransaction: apply }));
 
-import { applyRequestProgramme, buildCoachBrief, listProgrammeRequests, normalizeRequestFilter, previewRequestProgramme, questionnaireLabel } from "@/server/admin-programme-requests";
+import { applyRequestProgramme, buildCoachBrief, formatStoredCoachBrief, listProgrammeRequests, normalizeRequestFilter, previewRequestProgramme, questionnaireLabel } from "@/server/admin-programme-requests";
 
 describe("administrator programme request processing", () => {
   beforeEach(() => { vi.clearAllMocks(); preview.mockResolvedValue({ kind: "create" }); apply.mockResolvedValue({ kind: "create", program: "owner-program", versionNumber: 1 }); });
@@ -37,10 +37,43 @@ describe("administrator programme request processing", () => {
     expect(result.map((request) => request.id)).toEqual(["pending", "completed", "cancelled"]);
   });
   it("exports a compact human-readable Coach Brief with catalogue load rules", async () => {
-    const request = { id: "request-1", status: "PENDING", createdAt: new Date(), user: { id: "owner-1", email: "private@example.com", settings: null, onboardingProfile: { goal: "GENERAL_FITNESS", trainingDaysPerWeek: 3, sessionLengthMinutes: 60, experience: "SOME_EXPERIENCE", cardioPreference: "ENJOYS_CARDIO", trainingPreferences: "Machines", hasLimitations: false, limitationsText: null, personalPriorities: "Consistency", additionalNotes: null } } };
+    const profile = { goal: "GENERAL_FITNESS", trainingDaysPerWeek: 3, sessionLengthMinutes: 60, experience: "SOME_EXPERIENCE", cardioPreference: "ENJOYS_CARDIO", trainingPreferences: "Machines", hasLimitations: false, limitationsText: null, personalPriorities: "Consistency", additionalNotes: null };
+    const request = { id: "request-1", status: "PENDING", createdAt: new Date(), user: { id: "owner-1", email: "private@example.com", settings: null, onboardingProfile: profile } };
     const prisma = { programmeRequest: { findUnique: vi.fn().mockResolvedValue(request) }, exercise: { findMany: vi.fn().mockResolvedValue([{ name: "Chest Press", slug: "chest-press", equipment: { name: "Chest Press" }, loadTrackingType: "MACHINE_LEVEL", loadEntryMode: "STACK_TOTAL" }]) } };
     const result = await buildCoachBrief(prisma as never, "request-1");
-    expect(result.markdown).toContain("Goal: Maintain / general fitness"); expect(result.markdown).toContain("Cardio preference: I enjoy cardio"); expect(result.markdown).toContain("Chest Press [chest-press]"); expect(result.markdown).toContain("tracking: Machine level"); expect(result.markdown).toContain('"type":"machineLevel"'); expect(result.markdown).not.toContain("private@example.com");
+    expect(result.markdown).toContain("Goal: Maintain / general fitness"); expect(result.markdown).toContain("Cardio preference: I enjoy cardio"); expect(result.markdown).toContain("Chest Press [chest-press]"); expect(result.markdown).toContain("tracking: Machine level"); expect(result.aiPrompt).toContain('"type": "machineLevel"'); expect(result.markdown).not.toContain("private@example.com");
+    expect(result.aiPrompt).toContain(formatStoredCoachBrief(profile));
     expect(questionnaireLabel("SOME_EXPERIENCE")).toBe("Some experience");
+  });
+
+  it("exports a self-contained strict AI programme prompt without rewriting stored answers", async () => {
+    const profile = { goal: "BUILD_MUSCLE", trainingDaysPerWeek: 4, sessionLengthMinutes: 60, experience: "BEGINNER", cardioPreference: "SOME", trainingPreferences: "nope", hasLimitations: true, limitationsText: "none", personalPriorities: "Get stronger steadily", additionalNotes: "no" };
+    const exercises = [
+      { name: "Chest Press", slug: "chest-press", equipment: { name: "Chest Press" }, loadTrackingType: "MACHINE_LEVEL", loadEntryMode: "STACK_TOTAL" },
+      { name: "One-arm Dumbbell Row", slug: "one-arm-dumbbell-row", equipment: { name: "Dumbbells" }, loadTrackingType: "KILOGRAM", loadEntryMode: "PER_DUMBBELL" },
+      { name: "Push-up", slug: "push-up", equipment: null, loadTrackingType: "BODYWEIGHT", loadEntryMode: "BODYWEIGHT" },
+    ];
+    const request = { id: "request-1", status: "PENDING", createdAt: new Date(), user: { id: "owner-1", email: "private@example.com", settings: null, onboardingProfile: profile } };
+    const prisma = { programmeRequest: { findUnique: vi.fn().mockResolvedValue(request) }, exercise: { findMany: vi.fn().mockResolvedValue(exercises) } };
+
+    const { aiPrompt } = await buildCoachBrief(prisma as never, "request-1");
+
+    expect(aiPrompt).toContain(formatStoredCoachBrief(profile));
+    expect(aiPrompt).toContain("Training preferences: nope");
+    expect(aiPrompt).toContain("Limitations: none");
+    expect(aiPrompt).toContain("Additional notes: no");
+    expect(aiPrompt).toContain("Chest Press | exercise: chest-press | trackingType: MACHINE_LEVEL | loadEntryMode: STACK_TOTAL");
+    expect(aiPrompt).toContain("One-arm Dumbbell Row | exercise: one-arm-dumbbell-row | trackingType: KILOGRAM | loadEntryMode: PER_DUMBBELL");
+    expect(aiPrompt).toContain('Use the field name "exercise"');
+    expect(aiPrompt).toContain('Do NOT use "exerciseSlug"');
+    expect(aiPrompt).toContain('MACHINE_LEVEL: { "type": "machineLevel", "value": <integer> }');
+    expect(aiPrompt).toContain('KILOGRAM: { "type": "kg", "value": <number> }');
+    expect(aiPrompt).toContain('BODYWEIGHT or REPS_ONLY: "load": null');
+    expect(aiPrompt).toContain("If no safe starting weight or machine level is known");
+    expect(aiPrompt).toContain('"schemaVersion": 2');
+    expect(aiPrompt).toContain('"operation": "create-programme"');
+    expect(aiPrompt).toContain('"exercise": "chest-press"');
+    expect(aiPrompt).toContain("Return ONLY one valid JSON object");
+    expect(aiPrompt).not.toContain("```");
   });
 });

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { bootstrapAdministrator } from "../../prisma/admin-bootstrap";
 import { AUTH_SESSION_TTL_MS, MAGIC_LINK_TTL_MS, MagicLinkRateLimitError, assertAdminUser, consumeMagicLinkToken, createMagicLinkToken, deleteAuthSessionByToken, findAuthenticatedUser, hashOpaqueToken, magicLinkExpired, sessionCookieOptions } from "@/server/auth";
 
 describe("magic-link authentication", () => {
@@ -60,6 +61,44 @@ describe("magic-link authentication", () => {
     expect(await consumeMagicLinkToken(prisma as never, "expired-secret", now)).toBeNull();
     expect(updateMany).not.toHaveBeenCalled();
     expect(authCreate).not.toHaveBeenCalled();
+  });
+
+  it("retains an existing ADMIN role during a later normal magic-link login", async () => {
+    const now = new Date("2026-09-08T12:00:00.000Z");
+    const user = { id: "user-1", email: "victor@example.com", role: "USER" as "USER" | "ADMIN" };
+    await bootstrapAdministrator({
+      user: {
+        updateMany: vi.fn(async ({ where, data }) => {
+          if (where.email === user.email) user.role = data.role;
+          return { count: where.email === user.email ? 1 : 0 };
+        }),
+      },
+    } as never, user.email, { info: vi.fn() });
+    expect(user.role).toBe("ADMIN");
+
+    const upsert = vi.fn(async ({ create, update }) => {
+      if (update.role) user.role = update.role;
+      if (!user.id) Object.assign(user, create);
+      return { ...user };
+    });
+    const tx = {
+      magicLinkToken: {
+        findUnique: vi.fn().mockResolvedValue({ id: "link-1", email: user.email, expiresAt: new Date(now.getTime() + 60_000), usedAt: null }),
+        updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+      },
+      user: { upsert },
+      authSession: { create: vi.fn() },
+    };
+    const prisma = { $transaction: (callback: (value: typeof tx) => unknown) => callback(tx) };
+
+    const result = await consumeMagicLinkToken(prisma as never, "another-valid-link", now);
+
+    expect(upsert).toHaveBeenCalledWith(expect.objectContaining({
+      create: expect.objectContaining({ email: user.email }),
+      update: {},
+    }));
+    expect(result?.user.role).toBe("ADMIN");
+    expect(user.role).toBe("ADMIN");
   });
 
   it("resolves valid server sessions, rejects expired sessions, and deletes logout sessions by hash", async () => {
