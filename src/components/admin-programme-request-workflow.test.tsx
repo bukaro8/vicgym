@@ -27,4 +27,19 @@ describe("administrator programme preview", () => {
     await waitFor(() => expect(writeText).toHaveBeenCalledWith("Strict self-contained AI prompt"));
     expect(screen.getByRole("button", { name: "AI prompt copied" })).toBeInTheDocument();
   });
+
+  it("explains and explicitly reopens a cancelled request before exposing programme creation", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ reopened: true }) });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<AdminProgrammeRequestWorkflow requestId="request-1" coachBrief="Coach brief" aiPrompt="AI prompt" requestStatus="CANCELLED" ownerEmail="owner@example.com"/>);
+    expect(screen.getByText("This request is no longer actively pending review.")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Programme JSON")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Reopen request" }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith("/api/admin/programme-requests/request-1/reopen", expect.objectContaining({ method: "POST" })));
+    expect(await screen.findByText("Request reopened. It is pending again and ready for programme validation.")).toBeInTheDocument();
+    expect(screen.getByLabelText("Programme JSON")).toBeInTheDocument();
+    vi.unstubAllGlobals();
+  });
 });

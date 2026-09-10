@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const { apply, preview } = vi.hoisted(() => ({ apply: vi.fn(), preview: vi.fn() }));
 vi.mock("@/server/coach-import", () => ({ parseCoachImport: vi.fn(() => ({ schemaVersion: 2 })), previewCoachImport: preview, applyCoachImportInTransaction: apply }));
 
-import { applyRequestProgramme, buildCoachBrief, formatStoredCoachBrief, listProgrammeRequests, normalizeRequestFilter, previewRequestProgramme, questionnaireLabel } from "@/server/admin-programme-requests";
+import { applyRequestProgramme, buildCoachBrief, formatStoredCoachBrief, listProgrammeRequests, normalizeRequestFilter, previewRequestProgramme, questionnaireLabel, reopenProgrammeRequest } from "@/server/admin-programme-requests";
 
 describe("administrator programme request processing", () => {
   beforeEach(() => { vi.clearAllMocks(); preview.mockResolvedValue({ kind: "create" }); apply.mockResolvedValue({ kind: "create", program: "owner-program", versionNumber: 1 }); });
@@ -25,6 +25,28 @@ describe("administrator programme request processing", () => {
     const prisma = { $transaction: (callback: (value: typeof tx) => unknown) => callback(tx) };
     await expect(applyRequestProgramme(prisma as never, "processed-request", "{}")).rejects.toThrow("already processed");
     expect(apply).not.toHaveBeenCalled();
+  });
+  it("lets an administrator explicitly reopen a cancelled request for its original owner", async () => {
+    const findFirst = vi.fn().mockResolvedValueOnce({ id: "request-1", userId: "owner-1" }).mockResolvedValueOnce(null);
+    const updateMany = vi.fn().mockResolvedValue({ count: 1 });
+    const tx = { programmeRequest: { findFirst, updateMany }, workoutProgram: { findFirst: vi.fn().mockResolvedValue(null) } };
+    const prisma = { $transaction: (callback: (value: typeof tx) => unknown) => callback(tx) };
+    const result = await reopenProgrammeRequest(prisma as never, { id: "admin-1", email: "admin@example.com", role: "ADMIN" }, "request-1");
+    expect(result).toEqual({ id: "request-1", userId: "owner-1", status: "PENDING" });
+    expect(updateMany).toHaveBeenCalledWith({ where: { id: "request-1", status: "CANCELLED" }, data: { status: "PENDING" } });
+  });
+  it("does not let a normal user reopen a cancelled request", async () => {
+    const transaction = vi.fn();
+    await expect(reopenProgrammeRequest({ $transaction: transaction } as never, { id: "user-1", email: "user@example.com", role: "USER" }, "request-1")).rejects.toThrow("Administrator access required");
+    expect(transaction).not.toHaveBeenCalled();
+  });
+  it("does not reopen a cancelled request when its owner already has a real programme", async () => {
+    const findFirst = vi.fn().mockResolvedValueOnce({ id: "request-1", userId: "owner-1" }).mockResolvedValueOnce(null);
+    const updateMany = vi.fn();
+    const tx = { programmeRequest: { findFirst, updateMany }, workoutProgram: { findFirst: vi.fn().mockResolvedValue({ id: "programme-1", name: "Existing Programme" }) } };
+    const prisma = { $transaction: (callback: (value: typeof tx) => unknown) => callback(tx) };
+    await expect(reopenProgrammeRequest(prisma as never, { id: "admin-1", email: "admin@example.com", role: "ADMIN" }, "request-1")).rejects.toThrow("already exists");
+    expect(updateMany).not.toHaveBeenCalled();
   });
   it("defaults invalid or missing filters to Pending and scopes explicit statuses", async () => {
     expect(normalizeRequestFilter(undefined)).toBe("PENDING"); expect(normalizeRequestFilter("unknown")).toBe("PENDING"); expect(normalizeRequestFilter("COMPLETED")).toBe("COMPLETED");

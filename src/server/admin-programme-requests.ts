@@ -1,6 +1,8 @@
 import "server-only";
 
 import { Prisma, type PrismaClient } from "@/generated/prisma/client";
+import type { AuthenticatedUser } from "@/server/auth";
+import { assertAdminUser } from "@/server/auth";
 import { applyCoachImportInTransaction, parseCoachImport, previewCoachImport } from "@/server/coach-import";
 
 export class ProgrammeRequestError extends Error {}
@@ -128,3 +130,20 @@ async function pendingOwner(db: PrismaClient | Prisma.TransactionClient, request
 export async function previewRequestProgramme(prisma: PrismaClient, requestId: string, raw: string) { const request = await pendingOwner(prisma, requestId); if (parseCoachImport(raw).schemaVersion !== 2) throw new ProgrammeRequestError("An initial programme request requires schemaVersion 2 create-programme JSON"); return previewCoachImport(prisma, request.userId, raw, { personalisedRequestId: request.id }); }
 export async function applyRequestProgramme(prisma: PrismaClient, requestId: string, raw: string) { if (parseCoachImport(raw).schemaVersion !== 2) throw new ProgrammeRequestError("An initial programme request requires schemaVersion 2 create-programme JSON"); return prisma.$transaction(async (tx) => { const request = await pendingOwner(tx, requestId); const claimed = await tx.programmeRequest.updateMany({ where: { id: request.id, status: "PENDING" }, data: { status: "COMPLETED", completedAt: new Date() } }); if (claimed.count !== 1) throw new ProgrammeRequestError("Programme request was already processed"); const result = await applyCoachImportInTransaction(tx, request.userId, raw, { personalisedRequestId: request.id }); return { ...result, ownerId: request.userId }; }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }); }
 export async function cancelProgrammeRequest(prisma: PrismaClient, requestId: string) { const result = await prisma.programmeRequest.updateMany({ where: { id: requestId, status: "PENDING" }, data: { status: "CANCELLED", cancelledAt: new Date() } }); if (result.count !== 1) throw new ProgrammeRequestError("Pending programme request not found or already processed"); }
+
+export async function reopenProgrammeRequest(prisma: PrismaClient, actor: AuthenticatedUser, requestId: string) {
+  assertAdminUser(actor);
+  return prisma.$transaction(async (tx) => {
+    const request = await tx.programmeRequest.findFirst({ where: { id: requestId, status: "CANCELLED" }, select: { id: true, userId: true } });
+    if (!request) throw new ProgrammeRequestError("Cancelled programme request not found or already reopened");
+    const [existingProgramme, anotherPendingRequest] = await Promise.all([
+      tx.workoutProgram.findFirst({ where: { userId: request.userId, isDemo: false }, select: { id: true, name: true } }),
+      tx.programmeRequest.findFirst({ where: { userId: request.userId, status: "PENDING", id: { not: request.id } }, select: { id: true } }),
+    ]);
+    if (existingProgramme) throw new ProgrammeRequestError(`${existingProgramme.name} already exists for this user. A second initial programme cannot be created.`);
+    if (anotherPendingRequest) throw new ProgrammeRequestError("This user already has another pending personalised programme request.");
+    const reopened = await tx.programmeRequest.updateMany({ where: { id: request.id, status: "CANCELLED" }, data: { status: "PENDING" } });
+    if (reopened.count !== 1) throw new ProgrammeRequestError("Programme request status changed before it could be reopened");
+    return { id: request.id, userId: request.userId, status: "PENDING" as const };
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+}
