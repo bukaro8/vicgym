@@ -1974,6 +1974,7 @@ export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   role: 'role',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2386,70 +2387,84 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'UserRole'
  */
 export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
-    
+
 
 
 /**
  * Reference to a field of type 'UserRole[]'
  */
 export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
-    
+
+
+
+/**
+ * Reference to a field of type 'UserStatus'
+ */
+export type EnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus'>
+
+
+
+/**
+ * Reference to a field of type 'UserStatus[]'
+ */
+export type ListEnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus[]'>
+
 
 
 /**
  * Reference to a field of type 'OnboardingPath'
  */
 export type EnumOnboardingPathFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingPath'>
-    
+
 
 
 /**
  * Reference to a field of type 'OnboardingPath[]'
  */
 export type ListEnumOnboardingPathFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingPath[]'>
-    
+
 
 
 /**
  * Reference to a field of type 'TrainingGoal'
  */
 export type EnumTrainingGoalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingGoal'>
-    
+
 
 
 /**
  * Reference to a field of type 'TrainingGoal[]'
  */
 export type ListEnumTrainingGoalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingGoal[]'>
-    
+
 
 
 /**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
+
 
 
 /**
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
+
 
 
 /**
  * Reference to a field of type 'TrainingExperience'
  */
 export type EnumTrainingExperienceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingExperience'>
-    
+
 
 
 /**
  * Reference to a field of type 'TrainingExperience[]'
  */
 export type ListEnumTrainingExperienceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingExperience[]'>
-    
+
 
 
 /**
@@ -2505,7 +2520,7 @@ export type ListEnumLimitationAreaFieldRefInput<$PrismaModel> = FieldRefInputTyp
  * Reference to a field of type 'LimitationArea'
  */
 export type EnumLimitationAreaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LimitationArea'>
-    
+
 
 
 /**

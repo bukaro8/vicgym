@@ -40,12 +40,16 @@ export async function createMagicLinkToken(prisma: PrismaClient, email: string, 
   const token = createOpaqueToken();
   const tokenHash = hashOpaqueToken(token);
   const expiresAt = new Date(now.getTime() + MAGIC_LINK_TTL_MS);
-  await prisma.$transaction(async (tx) => {
+  const created = await prisma.$transaction(async (tx) => {
+    const existingUser = await tx.user.findUnique({ where: { email: normalizedEmail }, select: { status: true } });
+    if (existingUser?.status === "DISABLED") return false;
     const recent = await tx.magicLinkToken.findFirst({ where: { email: normalizedEmail, createdAt: { gt: new Date(now.getTime() - MAGIC_LINK_REQUEST_COOLDOWN_MS) } }, select: { id: true } });
     if (recent) throw new MagicLinkRateLimitError("A sign-in link was requested recently");
     await tx.magicLinkToken.updateMany({ where: { email: normalizedEmail, usedAt: null }, data: { usedAt: now } });
     await tx.magicLinkToken.create({ data: { email: normalizedEmail, tokenHash, expiresAt } });
+    return true;
   });
+  if (!created) return null;
   return { token, tokenHash, expiresAt, email: normalizedEmail };
 }
 
@@ -56,19 +60,20 @@ export async function consumeMagicLinkToken(prisma: PrismaClient, token: string,
     if (!link || link.usedAt || magicLinkExpired(link.expiresAt, now)) return null;
     const consumed = await tx.magicLinkToken.updateMany({ where: { id: link.id, usedAt: null, expiresAt: { gt: now } }, data: { usedAt: now } });
     if (consumed.count !== 1) return null;
-    const user = await tx.user.upsert({ where: { email: link.email }, create: { email: link.email, settings: { create: {} } }, update: {}, select: { id: true, email: true, role: true } });
+    const user = await tx.user.upsert({ where: { email: link.email }, create: { email: link.email, settings: { create: {} } }, update: {}, select: { id: true, email: true, role: true, status: true } });
+    if (user.status === "DISABLED") return null;
     const sessionToken = createOpaqueToken();
     const expiresAt = new Date(now.getTime() + AUTH_SESSION_TTL_MS);
     await tx.authSession.create({ data: { userId: user.id, tokenHash: hashOpaqueToken(sessionToken), expiresAt } });
-    return { user, sessionToken, expiresAt };
+    return { user: { id: user.id, email: user.email, role: user.role }, sessionToken, expiresAt };
   });
 }
 
 export async function findAuthenticatedUser(prisma: PrismaClient, token: string | undefined, now = new Date()): Promise<AuthenticatedUser | null> {
   if (!token) return null;
-  const session = await prisma.authSession.findUnique({ where: { tokenHash: hashOpaqueToken(token) }, select: { expiresAt: true, user: { select: { id: true, email: true, role: true } } } });
-  if (!session || session.expiresAt <= now) return null;
-  return session.user;
+  const session = await prisma.authSession.findUnique({ where: { tokenHash: hashOpaqueToken(token) }, select: { expiresAt: true, user: { select: { id: true, email: true, role: true, status: true } } } });
+  if (!session || session.expiresAt <= now || session.user.status !== "ACTIVE") return null;
+  return { id: session.user.id, email: session.user.email, role: session.user.role };
 }
 
 export async function getCurrentUser(): Promise<AuthenticatedUser | null> {

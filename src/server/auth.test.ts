@@ -7,9 +7,11 @@ describe("magic-link authentication", () => {
   it("creates an expiring token and stores only its hash", async () => {
     const now = new Date("2026-09-08T12:00:00.000Z");
     const create = vi.fn();
-    const tx = { magicLinkToken: { findFirst: vi.fn().mockResolvedValue(null), updateMany: vi.fn(), create } };
+    const tx = { user: { findUnique: vi.fn().mockResolvedValue(null) }, magicLinkToken: { findFirst: vi.fn().mockResolvedValue(null), updateMany: vi.fn(), create } };
     const prisma = { $transaction: (callback: (value: typeof tx) => unknown) => callback(tx) };
     const issued = await createMagicLinkToken(prisma as never, " Victor@Example.com ", now);
+    expect(issued).not.toBeNull();
+    if (!issued) throw new Error("Expected an issued token");
     expect(issued.email).toBe("victor@example.com");
     expect(issued.expiresAt.getTime() - now.getTime()).toBe(MAGIC_LINK_TTL_MS);
     expect(issued.tokenHash).toBe(hashOpaqueToken(issued.token));
@@ -18,7 +20,7 @@ describe("magic-link authentication", () => {
   });
 
   it("rate-limits repeated requests without issuing another token", async () => {
-    const tx = { magicLinkToken: { findFirst: vi.fn().mockResolvedValue({ id: "recent-link" }), updateMany: vi.fn(), create: vi.fn() } };
+    const tx = { user: { findUnique: vi.fn().mockResolvedValue(null) }, magicLinkToken: { findFirst: vi.fn().mockResolvedValue({ id: "recent-link" }), updateMany: vi.fn(), create: vi.fn() } };
     const prisma = { $transaction: (callback: (value: typeof tx) => unknown) => callback(tx) };
     await expect(createMagicLinkToken(prisma as never, "victor@example.com", new Date("2026-09-08T12:00:00.000Z"))).rejects.toBeInstanceOf(MagicLinkRateLimitError);
     expect(tx.magicLinkToken.create).not.toHaveBeenCalled();
@@ -33,7 +35,7 @@ describe("magic-link authentication", () => {
         findUnique: vi.fn(async () => ({ id: "link-1", email: "victor@example.com", expiresAt: new Date(now.getTime() + 60_000), usedAt })),
         updateMany: vi.fn(async () => { if (usedAt) return { count: 0 }; usedAt = now; return { count: 1 }; }),
       },
-      user: { upsert: vi.fn(async () => ({ id: "user-1", email: "victor@example.com", role: "USER" })) },
+      user: { upsert: vi.fn(async () => ({ id: "user-1", email: "victor@example.com", role: "USER", status: "ACTIVE" })) },
       authSession: { create: authCreate },
     };
     const prisma = { $transaction: (callback: (value: typeof tx) => unknown) => callback(tx) };
@@ -79,7 +81,7 @@ describe("magic-link authentication", () => {
     const upsert = vi.fn(async ({ create, update }) => {
       if (update.role) user.role = update.role;
       if (!user.id) Object.assign(user, create);
-      return { ...user };
+      return { ...user, status: "ACTIVE" };
     });
     const tx = {
       magicLinkToken: {
@@ -103,16 +105,55 @@ describe("magic-link authentication", () => {
 
   it("resolves valid server sessions, rejects expired sessions, and deletes logout sessions by hash", async () => {
     const now = new Date("2026-09-08T12:00:00.000Z");
-    const findUnique = vi.fn().mockResolvedValue({ expiresAt: new Date(now.getTime() + 60_000), user: { id: "user-1", email: "victor@example.com", role: "USER" } });
+    const findUnique = vi.fn().mockResolvedValue({ expiresAt: new Date(now.getTime() + 60_000), user: { id: "user-1", email: "victor@example.com", role: "USER", status: "ACTIVE" } });
     const deleteMany = vi.fn();
     const prisma = { authSession: { findUnique, deleteMany } };
     expect(await findAuthenticatedUser(prisma as never, "session-secret", now)).toEqual({ id: "user-1", email: "victor@example.com", role: "USER" });
     expect(findUnique).toHaveBeenCalledWith(expect.objectContaining({ where: { tokenHash: hashOpaqueToken("session-secret") } }));
-    findUnique.mockResolvedValueOnce({ expiresAt: now, user: { id: "user-1", email: "victor@example.com" } });
+    findUnique.mockResolvedValueOnce({ expiresAt: now, user: { id: "user-1", email: "victor@example.com", role: "USER", status: "ACTIVE" } });
     expect(await findAuthenticatedUser(prisma as never, "expired", now)).toBeNull();
     await deleteAuthSessionByToken(prisma as never, "session-secret");
     expect(deleteMany).toHaveBeenCalledWith({ where: { tokenHash: hashOpaqueToken("session-secret") } });
     expect(sessionCookieOptions(new Date(now.getTime() + 1), true)).toMatchObject({ httpOnly: true, secure: true, sameSite: "lax", path: "/" });
+  });
+
+  it("does not issue or consume authentication for a disabled account", async () => {
+    const tokenCreate = vi.fn();
+    const issueTx = { user: { findUnique: vi.fn().mockResolvedValue({ status: "DISABLED" }) }, magicLinkToken: { findFirst: vi.fn(), updateMany: vi.fn(), create: tokenCreate } };
+    const issuePrisma = { $transaction: (callback: (value: typeof issueTx) => unknown) => callback(issueTx) };
+    expect(await createMagicLinkToken(issuePrisma as never, "disabled@example.com")).toBeNull();
+    expect(tokenCreate).not.toHaveBeenCalled();
+
+    const authCreate = vi.fn();
+    const now = new Date("2026-09-10T12:00:00Z");
+    const consumeTx = {
+      magicLinkToken: { findUnique: vi.fn().mockResolvedValue({ id: "link-1", email: "disabled@example.com", expiresAt: new Date(now.getTime() + 60_000), usedAt: null }), updateMany: vi.fn().mockResolvedValue({ count: 1 }) },
+      user: { upsert: vi.fn().mockResolvedValue({ id: "user-1", email: "disabled@example.com", role: "USER", status: "DISABLED" }) },
+      authSession: { create: authCreate },
+    };
+    const consumePrisma = { $transaction: (callback: (value: typeof consumeTx) => unknown) => callback(consumeTx) };
+    expect(await consumeMagicLinkToken(consumePrisma as never, "valid-link", now)).toBeNull();
+    expect(authCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects an existing session as soon as its user is disabled", async () => {
+    const now = new Date("2026-09-10T12:00:00Z");
+    const prisma = { authSession: { findUnique: vi.fn().mockResolvedValue({ expiresAt: new Date(now.getTime() + 60_000), user: { id: "user-1", email: "disabled@example.com", role: "USER", status: "DISABLED" } }) } };
+    expect(await findAuthenticatedUser(prisma as never, "existing-session", now)).toBeNull();
+  });
+
+  it("allows a reactivated user to create a new authenticated session", async () => {
+    const now = new Date("2026-09-10T12:00:00Z");
+    const authCreate = vi.fn();
+    const tx = {
+      magicLinkToken: { findUnique: vi.fn().mockResolvedValue({ id: "link-2", email: "reactivated@example.com", expiresAt: new Date(now.getTime() + 60_000), usedAt: null }), updateMany: vi.fn().mockResolvedValue({ count: 1 }) },
+      user: { upsert: vi.fn().mockResolvedValue({ id: "user-2", email: "reactivated@example.com", role: "USER", status: "ACTIVE" }) },
+      authSession: { create: authCreate },
+    };
+    const prisma = { $transaction: (callback: (value: typeof tx) => unknown) => callback(tx) };
+    const result = await consumeMagicLinkToken(prisma as never, "new-link-after-reactivation", now);
+    expect(result?.user.email).toBe("reactivated@example.com");
+    expect(authCreate).toHaveBeenCalledOnce();
   });
 
   it("enforces administrator role exclusively from the server session", () => {

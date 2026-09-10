@@ -41,6 +41,7 @@ The shared seed creates only the verified exercise/equipment catalogue. Each new
 - An ADMIN-only request list, enriched Coach Brief, AI programme/welcome-email prompt exports, schema-version-2 preview, explicit apply, cancellation/reopening, and reviewed welcome-email workflow.
 - Deterministic 2/3/4/5-day starter programmes generated only from the active shared catalogue.
 - User roles (`USER` by default and explicitly assigned `ADMIN`) enforced on the server.
+- ADMIN user management with active/disabled account status, session revocation, reactivation, and guarded full user deletion.
 - One authoritative active programme per user, selected by that user's `AppSettings.activeProgramId`.
 - Initial programme creation from validated `schemaVersion: 2` JSON.
 - Weekly patch updates through backwards-compatible `schemaVersion: 1` JSON.
@@ -113,6 +114,7 @@ The shared seed creates only the verified exercise/equipment catalogue. Each new
 - Best-effort Resend notifications to `ADMIN_EMAIL` when a personalised request is submitted. A programme welcome email is sent only after an administrator previews and explicitly confirms its externally drafted body.
 - Fifteen-minute, single-use login tokens; only SHA-256 token hashes are stored, with a one-minute per-email request cooldown.
 - Secure, HTTP-only, same-site application sessions with a 30-day expiry.
+- Disabled accounts receive no new magic-link session, and existing sessions are revoked and rejected on authenticated requests.
 - Personal programmes, settings, sessions, history, reports, and synchronization records are scoped to the authenticated user.
 - The browser's offline database is namespaced by authenticated user so accounts cannot see or replay one another's local mutations.
 - Optional `AUTH_ALLOWED_EMAILS` registration allowlist for a small private deployment.
@@ -722,6 +724,7 @@ Generate a new weekly report and copy its exact `program` and `baseVersion`. A p
 - VicGym targets a small trusted user group. Roles exist, but there is not yet an administrator console, team model, or invitation UI.
 - Fully personalised onboarding uses a detailed questionnaire and manual administrator review. Programme and welcome-email prompts are copied to an external AI; OpenAI API automation is not included.
 - Accounts are created on first successful magic-link use. An optional email allowlist is the current registration control.
+- User deletion is permanent and removes personal account data; shared exercises, equipment, muscles, and catalogue media remain global.
 - Authentication sessions expire after 30 days and are not currently listed or remotely revoked through a user-facing session-management screen.
 - There is no in-app programme/workout-day editor by design.
 - VicGym does not call ChatGPT or ExerciseDB automatically at runtime.

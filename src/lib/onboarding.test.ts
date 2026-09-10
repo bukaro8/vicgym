@@ -7,7 +7,9 @@ const valid = { goal: "GENERAL_FITNESS", trainingDaysPerWeek: 3, experience: "SO
 
 describe("onboarding inputs", () => {
   it("defines USER as the database default role", () => {
-    expect(readFileSync("prisma/schema.prisma", "utf8")).toMatch(/role\s+UserRole\s+@default\(USER\)/);
+    const schema = readFileSync("prisma/schema.prisma", "utf8");
+    expect(schema).toMatch(/role\s+UserRole\s+@default\(USER\)/);
+    expect(schema).toMatch(/status\s+UserStatus\s+@default\(ACTIVE\)/);
   });
   it("does not accept client-supplied identity or role", () => {
     expect(onboardingPathSchema.safeParse({ path: "SEMI_PERSONALISED", role: "ADMIN" }).success).toBe(false);

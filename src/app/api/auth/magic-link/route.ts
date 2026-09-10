@@ -18,6 +18,7 @@ export async function POST(request: Request) {
     if (!emailIsAllowed(email)) return NextResponse.json(genericResponse, { headers: { "Cache-Control": "no-store" } });
     const authEnv = getAuthEmailEnv();
     const issued = await createMagicLinkToken(getPrisma(), email);
+    if (!issued) return NextResponse.json(genericResponse, { headers: { "Cache-Control": "no-store" } });
     const url = new URL("/api/auth/verify", authEnv.APP_ORIGIN);
     url.searchParams.set("token", issued.token);
     try {
