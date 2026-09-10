@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { clearOfflineRuntimeCaches, configureOfflineOwner } from "@/lib/offline-db";
+import { cn } from "@/lib/utils";
 
-export function LogoutButton() {
+export function LogoutButton({ variant = "default", label = "Sign out" }: { variant?: "default" | "admin-desktop" | "admin-mobile"; label?: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   async function logout() {
@@ -20,5 +21,5 @@ export function LogoutButton() {
       router.refresh();
     } catch { setBusy(false); }
   }
-  return <button type="button" onClick={() => void logout()} disabled={busy} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border bg-card px-5 font-semibold text-foreground disabled:opacity-60"><LogOut className="size-4"/>{busy ? "Signing out…" : "Sign out"}</button>;
+  return <button type="button" onClick={() => void logout()} disabled={busy} className={cn("inline-flex items-center justify-center font-semibold text-foreground disabled:opacity-60", variant === "default" && "min-h-12 w-full gap-2 rounded-2xl border bg-card px-5", variant === "admin-desktop" && "min-h-10 gap-2 rounded-xl px-3 text-sm hover:bg-muted", variant === "admin-mobile" && "min-h-16 flex-col gap-1 text-[0.6875rem]")}><LogOut className={variant === "admin-mobile" ? "size-5" : "size-4"}/>{busy ? "Signing out…" : label}</button>;
 }

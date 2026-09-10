@@ -4,6 +4,7 @@ export const onboardingPaths = ["SEMI_PERSONALISED", "FULLY_PERSONALISED"] as co
 export const trainingGoals = ["LOSE_FAT", "BUILD_MUSCLE", "GENERAL_FITNESS"] as const;
 export const trainingExperiences = ["BEGINNER", "SOME_EXPERIENCE", "EXPERIENCED"] as const;
 export const cardioPreferences = ["MINIMAL", "SOME", "ENJOYS_CARDIO"] as const;
+export const outsideGymActivities = ["LOW", "MODERATE", "HIGH"] as const;
 export const limitationAreas = ["UPPER_BODY", "LOWER_BODY", "BACK", "CORE", "OTHER"] as const;
 
 export const onboardingPathSchema = z.object({ path: z.enum(onboardingPaths) }).strict();
@@ -28,6 +29,11 @@ export const fullyPersonalisedSchema = z.object({
   experience: z.enum(trainingExperiences),
   sessionLengthMinutes: z.union([z.literal(45), z.literal(60), z.literal(90), z.literal(120)]),
   cardioPreference: z.enum(cardioPreferences),
+  age: z.number().int().min(16).max(100),
+  heightCm: z.number().int().min(100).max(250),
+  weightKg: z.number().min(25).max(350),
+  outsideGymActivity: z.enum(outsideGymActivities),
+  averageDailySteps: z.number().int().min(0).max(100_000).nullable().optional().default(null),
   trainingPreferences: z.string().trim().min(1).max(2000),
   hasLimitations: z.boolean(),
   limitationsText: z.string().trim().max(2000).optional().default(""),

@@ -123,6 +123,11 @@ export const OnboardingProfileScalarFieldEnum = {
   experience: 'experience',
   sessionLengthMinutes: 'sessionLengthMinutes',
   cardioPreference: 'cardioPreference',
+  age: 'age',
+  heightCm: 'heightCm',
+  weightKg: 'weightKg',
+  outsideGymActivity: 'outsideGymActivity',
+  averageDailySteps: 'averageDailySteps',
   hasLimitations: 'hasLimitations',
   limitationAreas: 'limitationAreas',
   limitationsText: 'limitationsText',
@@ -148,6 +153,8 @@ export const ProgrammeRequestScalarFieldEnum = {
   cancelledAt: 'cancelledAt',
   submittedNotificationSentAt: 'submittedNotificationSentAt',
   completedNotificationSentAt: 'completedNotificationSentAt',
+  welcomeEmailSentAt: 'welcomeEmailSentAt',
+  welcomeEmailBody: 'welcomeEmailBody',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -256,6 +263,7 @@ export type ExerciseMediaScalarFieldEnum = (typeof ExerciseMediaScalarFieldEnum)
 export const WorkoutProgramScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  programmeRequestId: 'programmeRequestId',
   slug: 'slug',
   name: 'name',
   isDemo: 'isDemo',

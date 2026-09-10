@@ -43,8 +43,8 @@ describe("coach JSON contract", () => {
     const programFindFirst = vi.fn().mockResolvedValueOnce(null).mockResolvedValueOnce(null).mockResolvedValueOnce({ id: "program-1" });
     const programUpdate = vi.fn().mockResolvedValue({ id: "program-1" });
     const tx = { programmeRequest: { findFirst: vi.fn().mockResolvedValue(null) }, workoutProgram: { findFirst: programFindFirst, create: vi.fn().mockResolvedValue({ id: "program-1", slug: "small-gym" }), updateMany: vi.fn(), update: programUpdate }, programVersion: { create: vi.fn().mockResolvedValue({ id: "version-1", versionNumber: 1 }), findFirst: vi.fn().mockResolvedValue({ id: "version-1" }) }, appSettings: { findUnique: vi.fn().mockResolvedValue({ activeProgram: null }), upsert: vi.fn() }, exercise: { findMany: vi.fn().mockResolvedValue([{ id: "exercise-1", slug: "chest-press", name: "Chest Press", active: true, equipmentId: "equipment-1", equipment: { available: true }, loadTrackingType: "MACHINE_LEVEL", loadEntryMode: "STACK_TOTAL" }]) } };
-    const result = await applyCoachImportInTransaction(tx as never, "owner-1", creation);
-    expect(tx.workoutProgram.create).toHaveBeenCalledWith({ data: expect.objectContaining({ userId: "owner-1" }) });
+    const result = await applyCoachImportInTransaction(tx as never, "owner-1", creation, { personalisedRequestId: "request-1" });
+    expect(tx.workoutProgram.create).toHaveBeenCalledWith({ data: expect.objectContaining({ userId: "owner-1", programmeRequestId: "request-1" }) });
     expect(programUpdate).toHaveBeenCalledWith(expect.objectContaining({ where: { id: "program-1" }, data: expect.objectContaining({ activeVersionId: "version-1", status: "ACTIVE" }) }));
     expect(tx.appSettings.upsert).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: "owner-1" }, update: { activeProgramId: "program-1" } }));
     expect(result.versionNumber).toBe(1);

@@ -27,9 +27,9 @@ describe("onboarding state", () => {
   it("saves the authenticated user's coach brief and then creates a pending request", async () => {
     const tx = { appSettings: { findUnique: vi.fn().mockResolvedValue({ activeProgramId: null }), update: vi.fn() }, onboardingProfile: { upsert: vi.fn() }, programmeRequest: { findFirst: vi.fn().mockResolvedValue(null), create: vi.fn().mockResolvedValue({ id: "request-1", status: "PENDING" }) } };
     const prisma = { $transaction: (callback: (value: typeof tx) => unknown) => callback(tx) };
-    const answers = { goal: "BUILD_MUSCLE", trainingDaysPerWeek: 4, experience: "SOME_EXPERIENCE", sessionLengthMinutes: 60, cardioPreference: "SOME", trainingPreferences: "Machines and free weights", hasLimitations: true, limitationsText: "Coach should review knee discomfort", personalPriorities: "Consistency", additionalNotes: "Morning training" } as const;
+    const answers = { goal: "BUILD_MUSCLE", trainingDaysPerWeek: 4, experience: "SOME_EXPERIENCE", sessionLengthMinutes: 60, cardioPreference: "SOME", age: 42, heightCm: 181, weightKg: 86.4, outsideGymActivity: "MODERATE", averageDailySteps: 6400, trainingPreferences: "Machines and free weights", hasLimitations: true, limitationsText: "Coach should review knee discomfort", personalPriorities: "Consistency", additionalNotes: "Morning training" } as const;
     await expect(submitFullyPersonalisedOnboarding(prisma as never, "owner-1", answers)).resolves.toEqual({ id: "request-1", status: "PENDING" });
-    expect(tx.onboardingProfile.upsert).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: "owner-1" }, update: expect.objectContaining({ trainingPreferences: answers.trainingPreferences, personalPriorities: answers.personalPriorities, limitationReviewRequired: true }) }));
+    expect(tx.onboardingProfile.upsert).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: "owner-1" }, update: expect.objectContaining({ age: 42, heightCm: 181, weightKg: 86.4, outsideGymActivity: "MODERATE", averageDailySteps: 6400, trainingPreferences: answers.trainingPreferences, personalPriorities: answers.personalPriorities, limitationReviewRequired: true }) }));
     expect(tx.programmeRequest.create).toHaveBeenCalledWith({ data: { userId: "owner-1" }, select: { id: true, status: true } });
   });
 });

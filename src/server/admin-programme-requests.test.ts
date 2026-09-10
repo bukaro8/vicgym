@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const { apply, preview } = vi.hoisted(() => ({ apply: vi.fn(), preview: vi.fn() }));
 vi.mock("@/server/coach-import", () => ({ parseCoachImport: vi.fn(() => ({ schemaVersion: 2 })), previewCoachImport: preview, applyCoachImportInTransaction: apply }));
 
-import { applyRequestProgramme, buildCoachBrief, formatStoredCoachBrief, listProgrammeRequests, normalizeRequestFilter, previewRequestProgramme, questionnaireLabel, reopenProgrammeRequest } from "@/server/admin-programme-requests";
+import { applyRequestProgramme, buildCoachBrief, buildWelcomeEmailPrompt, formatStoredCoachBrief, listProgrammeRequests, normalizeRequestFilter, previewRequestProgramme, questionnaireLabel, reopenProgrammeRequest } from "@/server/admin-programme-requests";
 
 describe("administrator programme request processing", () => {
   beforeEach(() => { vi.clearAllMocks(); preview.mockResolvedValue({ kind: "create" }); apply.mockResolvedValue({ kind: "create", program: "owner-program", versionNumber: 1 }); });
@@ -59,12 +59,14 @@ describe("administrator programme request processing", () => {
     expect(result.map((request) => request.id)).toEqual(["pending", "completed", "cancelled"]);
   });
   it("exports a compact human-readable Coach Brief with catalogue load rules", async () => {
-    const profile = { goal: "GENERAL_FITNESS", trainingDaysPerWeek: 3, sessionLengthMinutes: 60, experience: "SOME_EXPERIENCE", cardioPreference: "ENJOYS_CARDIO", trainingPreferences: "Machines", hasLimitations: false, limitationsText: null, personalPriorities: "Consistency", additionalNotes: null };
-    const request = { id: "request-1", status: "PENDING", createdAt: new Date(), user: { id: "owner-1", email: "private@example.com", settings: null, onboardingProfile: profile } };
+    const profile = { goal: "GENERAL_FITNESS", trainingDaysPerWeek: 3, sessionLengthMinutes: 60, experience: "SOME_EXPERIENCE", cardioPreference: "ENJOYS_CARDIO", age: 37, heightCm: 176, weightKg: 79.5, outsideGymActivity: "HIGH", averageDailySteps: 9100, trainingPreferences: "Machines", hasLimitations: false, limitationsText: null, personalPriorities: "Consistency", additionalNotes: null };
+    const request = { id: "request-1", status: "PENDING", createdAt: new Date(), createdProgram: null, user: { id: "owner-1", email: "private@example.com", settings: null, onboardingProfile: profile } };
     const prisma = { programmeRequest: { findUnique: vi.fn().mockResolvedValue(request) }, exercise: { findMany: vi.fn().mockResolvedValue([{ name: "Chest Press", slug: "chest-press", equipment: { name: "Chest Press" }, loadTrackingType: "MACHINE_LEVEL", loadEntryMode: "STACK_TOTAL" }]) } };
     const result = await buildCoachBrief(prisma as never, "request-1");
     expect(result.markdown).toContain("Goal: Maintain / general fitness"); expect(result.markdown).toContain("Cardio preference: I enjoy cardio"); expect(result.markdown).toContain("Chest Press [chest-press]"); expect(result.markdown).toContain("tracking: Machine level"); expect(result.aiPrompt).toContain('"type": "machineLevel"'); expect(result.markdown).not.toContain("private@example.com");
     expect(result.aiPrompt).toContain(formatStoredCoachBrief(profile));
+    expect(result.markdown).toContain("Age: 37"); expect(result.markdown).toContain("Height: 176 cm"); expect(result.markdown).toContain("Weight: 79.5 kg"); expect(result.markdown).toContain("Outside-gym activity: High"); expect(result.markdown).toContain("Average daily steps: 9,100");
+    expect(result.aiPrompt).toContain("Do not use BMI as the main basis"); expect(result.aiPrompt).toContain("Actual completed workout performance should drive later progression");
     expect(questionnaireLabel("SOME_EXPERIENCE")).toBe("Some experience");
   });
 
@@ -97,5 +99,14 @@ describe("administrator programme request processing", () => {
     expect(aiPrompt).toContain('"exercise": "chest-press"');
     expect(aiPrompt).toContain("Return ONLY one valid JSON object");
     expect(aiPrompt).not.toContain("```");
+  });
+
+  it("builds a welcome-email prompt from verbatim onboarding answers and the created programme", () => {
+    const profile = { goal: "BUILD_MUSCLE", trainingDaysPerWeek: 4, sessionLengthMinutes: 60, experience: "BEGINNER", cardioPreference: "SOME", age: 39, heightCm: 180, weightKg: 84.2, outsideGymActivity: "LOW", averageDailySteps: null, trainingPreferences: "nope", hasLimitations: true, limitationsText: "none", personalPriorities: "steady progress", additionalNotes: "not sure" };
+    const prompt = buildWelcomeEmailPrompt(profile, { name: "Four Day Plan", activeVersion: { days: [{ name: "Upper A", rotationOrder: 1, workoutExercises: [{ position: 1, sets: 3, targetReps: 12, exercise: { name: "Chest Press", slug: "chest-press" } }] }] } });
+    expect(prompt).toContain("Age: 39"); expect(prompt).toContain("Weight: 84.2 kg"); expect(prompt).toContain("Average daily steps: Not provided");
+    expect(prompt).toContain("Training preferences: nope"); expect(prompt).toContain("Limitations: none"); expect(prompt).toContain("Additional notes: not sure");
+    expect(prompt).toContain("CREATED PROGRAMME: Four Day Plan"); expect(prompt).toContain("Upper A"); expect(prompt).toContain("Chest Press [chest-press]");
+    expect(prompt).toContain("email body text only"); expect(prompt).toContain("first 1–2 weeks"); expect(prompt).toContain("If current steps are known"); expect(prompt).toContain("actual workout performance");
   });
 });

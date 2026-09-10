@@ -39,6 +39,12 @@ enum CardioPreference {
   ENJOYS_CARDIO
 }
 
+enum OutsideGymActivity {
+  LOW
+  MODERATE
+  HIGH
+}
+
 enum LimitationArea {
   UPPER_BODY
   LOWER_BODY
@@ -167,6 +173,11 @@ model OnboardingProfile {
   experience               TrainingExperience?
   sessionLengthMinutes     Int?
   cardioPreference         CardioPreference?
+  age                      Int?
+  heightCm                 Int?
+  weightKg                 Decimal?            @db.Decimal(6, 2)
+  outsideGymActivity       OutsideGymActivity?
+  averageDailySteps        Int?
   hasLimitations           Boolean             @default(false)
   limitationAreas          LimitationArea[]
   limitationsText          String?
@@ -190,9 +201,12 @@ model ProgrammeRequest {
   cancelledAt                 DateTime?
   submittedNotificationSentAt DateTime?
   completedNotificationSentAt DateTime?
+  welcomeEmailSentAt          DateTime?
+  welcomeEmailBody            String?
   createdAt                   DateTime               @default(now())
   updatedAt                   DateTime               @updatedAt
   user                        User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdProgram              WorkoutProgram?
 
   @@index([userId, status, createdAt])
 }
@@ -304,21 +318,23 @@ model ExerciseMedia {
 }
 
 model WorkoutProgram {
-  id               String           @id @default(uuid()) @db.Uuid
-  userId           String           @db.Uuid
-  slug             String
-  name             String
-  isDemo           Boolean          @default(false)
-  status           ProgramStatus    @default(DRAFT)
-  activeVersionId  String?          @unique @db.Uuid
-  notice           String?
-  activatedAt      DateTime?
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activeVersion    ProgramVersion?  @relation("ActiveProgramVersion", fields: [activeVersionId], references: [id], onDelete: SetNull)
-  activeInSettings AppSettings?
-  versions         ProgramVersion[] @relation("ProgramVersions")
+  id                 String            @id @default(uuid()) @db.Uuid
+  userId             String            @db.Uuid
+  programmeRequestId String?           @unique @db.Uuid
+  slug               String
+  name               String
+  isDemo             Boolean           @default(false)
+  status             ProgramStatus     @default(DRAFT)
+  activeVersionId    String?           @unique @db.Uuid
+  notice             String?
+  activatedAt        DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  programmeRequest   ProgrammeRequest? @relation(fields: [programmeRequestId], references: [id], onDelete: SetNull)
+  activeVersion      ProgramVersion?   @relation("ActiveProgramVersion", fields: [activeVersionId], references: [id], onDelete: SetNull)
+  activeInSettings   AppSettings?
+  versions           ProgramVersion[]  @relation("ProgramVersions")
 
   @@unique([userId, slug])
   @@index([userId, status])

@@ -29,12 +29,20 @@ export type AggregateOnboardingProfile = {
 export type OnboardingProfileAvgAggregateOutputType = {
   trainingDaysPerWeek: number | null
   sessionLengthMinutes: number | null
+  age: number | null
+  heightCm: number | null
+  weightKg: runtime.Decimal | null
+  averageDailySteps: number | null
   recommendedCardioMinutes: number | null
 }
 
 export type OnboardingProfileSumAggregateOutputType = {
   trainingDaysPerWeek: number | null
   sessionLengthMinutes: number | null
+  age: number | null
+  heightCm: number | null
+  weightKg: runtime.Decimal | null
+  averageDailySteps: number | null
   recommendedCardioMinutes: number | null
 }
 
@@ -46,6 +54,11 @@ export type OnboardingProfileMinAggregateOutputType = {
   experience: $Enums.TrainingExperience | null
   sessionLengthMinutes: number | null
   cardioPreference: $Enums.CardioPreference | null
+  age: number | null
+  heightCm: number | null
+  weightKg: runtime.Decimal | null
+  outsideGymActivity: $Enums.OutsideGymActivity | null
+  averageDailySteps: number | null
   hasLimitations: boolean | null
   limitationsText: string | null
   trainingPreferences: string | null
@@ -66,6 +79,11 @@ export type OnboardingProfileMaxAggregateOutputType = {
   experience: $Enums.TrainingExperience | null
   sessionLengthMinutes: number | null
   cardioPreference: $Enums.CardioPreference | null
+  age: number | null
+  heightCm: number | null
+  weightKg: runtime.Decimal | null
+  outsideGymActivity: $Enums.OutsideGymActivity | null
+  averageDailySteps: number | null
   hasLimitations: boolean | null
   limitationsText: string | null
   trainingPreferences: string | null
@@ -86,6 +104,11 @@ export type OnboardingProfileCountAggregateOutputType = {
   experience: number
   sessionLengthMinutes: number
   cardioPreference: number
+  age: number
+  heightCm: number
+  weightKg: number
+  outsideGymActivity: number
+  averageDailySteps: number
   hasLimitations: number
   limitationAreas: number
   limitationsText: number
@@ -104,12 +127,20 @@ export type OnboardingProfileCountAggregateOutputType = {
 export type OnboardingProfileAvgAggregateInputType = {
   trainingDaysPerWeek?: true
   sessionLengthMinutes?: true
+  age?: true
+  heightCm?: true
+  weightKg?: true
+  averageDailySteps?: true
   recommendedCardioMinutes?: true
 }
 
 export type OnboardingProfileSumAggregateInputType = {
   trainingDaysPerWeek?: true
   sessionLengthMinutes?: true
+  age?: true
+  heightCm?: true
+  weightKg?: true
+  averageDailySteps?: true
   recommendedCardioMinutes?: true
 }
 
@@ -121,6 +152,11 @@ export type OnboardingProfileMinAggregateInputType = {
   experience?: true
   sessionLengthMinutes?: true
   cardioPreference?: true
+  age?: true
+  heightCm?: true
+  weightKg?: true
+  outsideGymActivity?: true
+  averageDailySteps?: true
   hasLimitations?: true
   limitationsText?: true
   trainingPreferences?: true
@@ -141,6 +177,11 @@ export type OnboardingProfileMaxAggregateInputType = {
   experience?: true
   sessionLengthMinutes?: true
   cardioPreference?: true
+  age?: true
+  heightCm?: true
+  weightKg?: true
+  outsideGymActivity?: true
+  averageDailySteps?: true
   hasLimitations?: true
   limitationsText?: true
   trainingPreferences?: true
@@ -161,6 +202,11 @@ export type OnboardingProfileCountAggregateInputType = {
   experience?: true
   sessionLengthMinutes?: true
   cardioPreference?: true
+  age?: true
+  heightCm?: true
+  weightKg?: true
+  outsideGymActivity?: true
+  averageDailySteps?: true
   hasLimitations?: true
   limitationAreas?: true
   limitationsText?: true
@@ -269,6 +315,11 @@ export type OnboardingProfileGroupByOutputType = {
   experience: $Enums.TrainingExperience | null
   sessionLengthMinutes: number | null
   cardioPreference: $Enums.CardioPreference | null
+  age: number | null
+  heightCm: number | null
+  weightKg: runtime.Decimal | null
+  outsideGymActivity: $Enums.OutsideGymActivity | null
+  averageDailySteps: number | null
   hasLimitations: boolean
   limitationAreas: $Enums.LimitationArea[]
   limitationsText: string | null
@@ -313,6 +364,11 @@ export type OnboardingProfileWhereInput = {
   experience?: Prisma.EnumTrainingExperienceNullableFilter<"OnboardingProfile"> | $Enums.TrainingExperience | null
   sessionLengthMinutes?: Prisma.IntNullableFilter<"OnboardingProfile"> | number | null
   cardioPreference?: Prisma.EnumCardioPreferenceNullableFilter<"OnboardingProfile"> | $Enums.CardioPreference | null
+  age?: Prisma.IntNullableFilter<"OnboardingProfile"> | number | null
+  heightCm?: Prisma.IntNullableFilter<"OnboardingProfile"> | number | null
+  weightKg?: Prisma.DecimalNullableFilter<"OnboardingProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: Prisma.EnumOutsideGymActivityNullableFilter<"OnboardingProfile"> | $Enums.OutsideGymActivity | null
+  averageDailySteps?: Prisma.IntNullableFilter<"OnboardingProfile"> | number | null
   hasLimitations?: Prisma.BoolFilter<"OnboardingProfile"> | boolean
   limitationAreas?: Prisma.EnumLimitationAreaNullableListFilter<"OnboardingProfile">
   limitationsText?: Prisma.StringNullableFilter<"OnboardingProfile"> | string | null
@@ -335,6 +391,11 @@ export type OnboardingProfileOrderByWithRelationInput = {
   experience?: Prisma.SortOrderInput | Prisma.SortOrder
   sessionLengthMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
   cardioPreference?: Prisma.SortOrderInput | Prisma.SortOrder
+  age?: Prisma.SortOrderInput | Prisma.SortOrder
+  heightCm?: Prisma.SortOrderInput | Prisma.SortOrder
+  weightKg?: Prisma.SortOrderInput | Prisma.SortOrder
+  outsideGymActivity?: Prisma.SortOrderInput | Prisma.SortOrder
+  averageDailySteps?: Prisma.SortOrderInput | Prisma.SortOrder
   hasLimitations?: Prisma.SortOrder
   limitationAreas?: Prisma.SortOrder
   limitationsText?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -360,6 +421,11 @@ export type OnboardingProfileWhereUniqueInput = Prisma.AtLeast<{
   experience?: Prisma.EnumTrainingExperienceNullableFilter<"OnboardingProfile"> | $Enums.TrainingExperience | null
   sessionLengthMinutes?: Prisma.IntNullableFilter<"OnboardingProfile"> | number | null
   cardioPreference?: Prisma.EnumCardioPreferenceNullableFilter<"OnboardingProfile"> | $Enums.CardioPreference | null
+  age?: Prisma.IntNullableFilter<"OnboardingProfile"> | number | null
+  heightCm?: Prisma.IntNullableFilter<"OnboardingProfile"> | number | null
+  weightKg?: Prisma.DecimalNullableFilter<"OnboardingProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: Prisma.EnumOutsideGymActivityNullableFilter<"OnboardingProfile"> | $Enums.OutsideGymActivity | null
+  averageDailySteps?: Prisma.IntNullableFilter<"OnboardingProfile"> | number | null
   hasLimitations?: Prisma.BoolFilter<"OnboardingProfile"> | boolean
   limitationAreas?: Prisma.EnumLimitationAreaNullableListFilter<"OnboardingProfile">
   limitationsText?: Prisma.StringNullableFilter<"OnboardingProfile"> | string | null
@@ -382,6 +448,11 @@ export type OnboardingProfileOrderByWithAggregationInput = {
   experience?: Prisma.SortOrderInput | Prisma.SortOrder
   sessionLengthMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
   cardioPreference?: Prisma.SortOrderInput | Prisma.SortOrder
+  age?: Prisma.SortOrderInput | Prisma.SortOrder
+  heightCm?: Prisma.SortOrderInput | Prisma.SortOrder
+  weightKg?: Prisma.SortOrderInput | Prisma.SortOrder
+  outsideGymActivity?: Prisma.SortOrderInput | Prisma.SortOrder
+  averageDailySteps?: Prisma.SortOrderInput | Prisma.SortOrder
   hasLimitations?: Prisma.SortOrder
   limitationAreas?: Prisma.SortOrder
   limitationsText?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -411,6 +482,11 @@ export type OnboardingProfileScalarWhereWithAggregatesInput = {
   experience?: Prisma.EnumTrainingExperienceNullableWithAggregatesFilter<"OnboardingProfile"> | $Enums.TrainingExperience | null
   sessionLengthMinutes?: Prisma.IntNullableWithAggregatesFilter<"OnboardingProfile"> | number | null
   cardioPreference?: Prisma.EnumCardioPreferenceNullableWithAggregatesFilter<"OnboardingProfile"> | $Enums.CardioPreference | null
+  age?: Prisma.IntNullableWithAggregatesFilter<"OnboardingProfile"> | number | null
+  heightCm?: Prisma.IntNullableWithAggregatesFilter<"OnboardingProfile"> | number | null
+  weightKg?: Prisma.DecimalNullableWithAggregatesFilter<"OnboardingProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: Prisma.EnumOutsideGymActivityNullableWithAggregatesFilter<"OnboardingProfile"> | $Enums.OutsideGymActivity | null
+  averageDailySteps?: Prisma.IntNullableWithAggregatesFilter<"OnboardingProfile"> | number | null
   hasLimitations?: Prisma.BoolWithAggregatesFilter<"OnboardingProfile"> | boolean
   limitationAreas?: Prisma.EnumLimitationAreaNullableListFilter<"OnboardingProfile">
   limitationsText?: Prisma.StringNullableWithAggregatesFilter<"OnboardingProfile"> | string | null
@@ -431,6 +507,11 @@ export type OnboardingProfileCreateInput = {
   experience?: $Enums.TrainingExperience | null
   sessionLengthMinutes?: number | null
   cardioPreference?: $Enums.CardioPreference | null
+  age?: number | null
+  heightCm?: number | null
+  weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: $Enums.OutsideGymActivity | null
+  averageDailySteps?: number | null
   hasLimitations?: boolean
   limitationAreas?: Prisma.OnboardingProfileCreatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: string | null
@@ -453,6 +534,11 @@ export type OnboardingProfileUncheckedCreateInput = {
   experience?: $Enums.TrainingExperience | null
   sessionLengthMinutes?: number | null
   cardioPreference?: $Enums.CardioPreference | null
+  age?: number | null
+  heightCm?: number | null
+  weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: $Enums.OutsideGymActivity | null
+  averageDailySteps?: number | null
   hasLimitations?: boolean
   limitationAreas?: Prisma.OnboardingProfileCreatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: string | null
@@ -473,6 +559,11 @@ export type OnboardingProfileUpdateInput = {
   experience?: Prisma.NullableEnumTrainingExperienceFieldUpdateOperationsInput | $Enums.TrainingExperience | null
   sessionLengthMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cardioPreference?: Prisma.NullableEnumCardioPreferenceFieldUpdateOperationsInput | $Enums.CardioPreference | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  heightCm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: Prisma.NullableEnumOutsideGymActivityFieldUpdateOperationsInput | $Enums.OutsideGymActivity | null
+  averageDailySteps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   hasLimitations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   limitationAreas?: Prisma.OnboardingProfileUpdatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -495,6 +586,11 @@ export type OnboardingProfileUncheckedUpdateInput = {
   experience?: Prisma.NullableEnumTrainingExperienceFieldUpdateOperationsInput | $Enums.TrainingExperience | null
   sessionLengthMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cardioPreference?: Prisma.NullableEnumCardioPreferenceFieldUpdateOperationsInput | $Enums.CardioPreference | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  heightCm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: Prisma.NullableEnumOutsideGymActivityFieldUpdateOperationsInput | $Enums.OutsideGymActivity | null
+  averageDailySteps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   hasLimitations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   limitationAreas?: Prisma.OnboardingProfileUpdatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -516,6 +612,11 @@ export type OnboardingProfileCreateManyInput = {
   experience?: $Enums.TrainingExperience | null
   sessionLengthMinutes?: number | null
   cardioPreference?: $Enums.CardioPreference | null
+  age?: number | null
+  heightCm?: number | null
+  weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: $Enums.OutsideGymActivity | null
+  averageDailySteps?: number | null
   hasLimitations?: boolean
   limitationAreas?: Prisma.OnboardingProfileCreatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: string | null
@@ -536,6 +637,11 @@ export type OnboardingProfileUpdateManyMutationInput = {
   experience?: Prisma.NullableEnumTrainingExperienceFieldUpdateOperationsInput | $Enums.TrainingExperience | null
   sessionLengthMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cardioPreference?: Prisma.NullableEnumCardioPreferenceFieldUpdateOperationsInput | $Enums.CardioPreference | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  heightCm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: Prisma.NullableEnumOutsideGymActivityFieldUpdateOperationsInput | $Enums.OutsideGymActivity | null
+  averageDailySteps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   hasLimitations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   limitationAreas?: Prisma.OnboardingProfileUpdatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -557,6 +663,11 @@ export type OnboardingProfileUncheckedUpdateManyInput = {
   experience?: Prisma.NullableEnumTrainingExperienceFieldUpdateOperationsInput | $Enums.TrainingExperience | null
   sessionLengthMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cardioPreference?: Prisma.NullableEnumCardioPreferenceFieldUpdateOperationsInput | $Enums.CardioPreference | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  heightCm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: Prisma.NullableEnumOutsideGymActivityFieldUpdateOperationsInput | $Enums.OutsideGymActivity | null
+  averageDailySteps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   hasLimitations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   limitationAreas?: Prisma.OnboardingProfileUpdatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -591,6 +702,11 @@ export type OnboardingProfileCountOrderByAggregateInput = {
   experience?: Prisma.SortOrder
   sessionLengthMinutes?: Prisma.SortOrder
   cardioPreference?: Prisma.SortOrder
+  age?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  outsideGymActivity?: Prisma.SortOrder
+  averageDailySteps?: Prisma.SortOrder
   hasLimitations?: Prisma.SortOrder
   limitationAreas?: Prisma.SortOrder
   limitationsText?: Prisma.SortOrder
@@ -607,6 +723,10 @@ export type OnboardingProfileCountOrderByAggregateInput = {
 export type OnboardingProfileAvgOrderByAggregateInput = {
   trainingDaysPerWeek?: Prisma.SortOrder
   sessionLengthMinutes?: Prisma.SortOrder
+  age?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  averageDailySteps?: Prisma.SortOrder
   recommendedCardioMinutes?: Prisma.SortOrder
 }
 
@@ -618,6 +738,11 @@ export type OnboardingProfileMaxOrderByAggregateInput = {
   experience?: Prisma.SortOrder
   sessionLengthMinutes?: Prisma.SortOrder
   cardioPreference?: Prisma.SortOrder
+  age?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  outsideGymActivity?: Prisma.SortOrder
+  averageDailySteps?: Prisma.SortOrder
   hasLimitations?: Prisma.SortOrder
   limitationsText?: Prisma.SortOrder
   trainingPreferences?: Prisma.SortOrder
@@ -638,6 +763,11 @@ export type OnboardingProfileMinOrderByAggregateInput = {
   experience?: Prisma.SortOrder
   sessionLengthMinutes?: Prisma.SortOrder
   cardioPreference?: Prisma.SortOrder
+  age?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  outsideGymActivity?: Prisma.SortOrder
+  averageDailySteps?: Prisma.SortOrder
   hasLimitations?: Prisma.SortOrder
   limitationsText?: Prisma.SortOrder
   trainingPreferences?: Prisma.SortOrder
@@ -653,6 +783,10 @@ export type OnboardingProfileMinOrderByAggregateInput = {
 export type OnboardingProfileSumOrderByAggregateInput = {
   trainingDaysPerWeek?: Prisma.SortOrder
   sessionLengthMinutes?: Prisma.SortOrder
+  age?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  averageDailySteps?: Prisma.SortOrder
   recommendedCardioMinutes?: Prisma.SortOrder
 }
 
@@ -716,6 +850,18 @@ export type NullableEnumCardioPreferenceFieldUpdateOperationsInput = {
   set?: $Enums.CardioPreference | null
 }
 
+export type NullableDecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type NullableEnumOutsideGymActivityFieldUpdateOperationsInput = {
+  set?: $Enums.OutsideGymActivity | null
+}
+
 export type OnboardingProfileUpdatelimitationAreasInput = {
   set?: $Enums.LimitationArea[]
   push?: $Enums.LimitationArea | $Enums.LimitationArea[]
@@ -732,6 +878,11 @@ export type OnboardingProfileCreateWithoutUserInput = {
   experience?: $Enums.TrainingExperience | null
   sessionLengthMinutes?: number | null
   cardioPreference?: $Enums.CardioPreference | null
+  age?: number | null
+  heightCm?: number | null
+  weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: $Enums.OutsideGymActivity | null
+  averageDailySteps?: number | null
   hasLimitations?: boolean
   limitationAreas?: Prisma.OnboardingProfileCreatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: string | null
@@ -752,6 +903,11 @@ export type OnboardingProfileUncheckedCreateWithoutUserInput = {
   experience?: $Enums.TrainingExperience | null
   sessionLengthMinutes?: number | null
   cardioPreference?: $Enums.CardioPreference | null
+  age?: number | null
+  heightCm?: number | null
+  weightKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: $Enums.OutsideGymActivity | null
+  averageDailySteps?: number | null
   hasLimitations?: boolean
   limitationAreas?: Prisma.OnboardingProfileCreatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: string | null
@@ -788,6 +944,11 @@ export type OnboardingProfileUpdateWithoutUserInput = {
   experience?: Prisma.NullableEnumTrainingExperienceFieldUpdateOperationsInput | $Enums.TrainingExperience | null
   sessionLengthMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cardioPreference?: Prisma.NullableEnumCardioPreferenceFieldUpdateOperationsInput | $Enums.CardioPreference | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  heightCm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: Prisma.NullableEnumOutsideGymActivityFieldUpdateOperationsInput | $Enums.OutsideGymActivity | null
+  averageDailySteps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   hasLimitations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   limitationAreas?: Prisma.OnboardingProfileUpdatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -808,6 +969,11 @@ export type OnboardingProfileUncheckedUpdateWithoutUserInput = {
   experience?: Prisma.NullableEnumTrainingExperienceFieldUpdateOperationsInput | $Enums.TrainingExperience | null
   sessionLengthMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   cardioPreference?: Prisma.NullableEnumCardioPreferenceFieldUpdateOperationsInput | $Enums.CardioPreference | null
+  age?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  heightCm?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  weightKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  outsideGymActivity?: Prisma.NullableEnumOutsideGymActivityFieldUpdateOperationsInput | $Enums.OutsideGymActivity | null
+  averageDailySteps?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   hasLimitations?: Prisma.BoolFieldUpdateOperationsInput | boolean
   limitationAreas?: Prisma.OnboardingProfileUpdatelimitationAreasInput | $Enums.LimitationArea[]
   limitationsText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -831,6 +997,11 @@ export type OnboardingProfileSelect<ExtArgs extends runtime.Types.Extensions.Int
   experience?: boolean
   sessionLengthMinutes?: boolean
   cardioPreference?: boolean
+  age?: boolean
+  heightCm?: boolean
+  weightKg?: boolean
+  outsideGymActivity?: boolean
+  averageDailySteps?: boolean
   hasLimitations?: boolean
   limitationAreas?: boolean
   limitationsText?: boolean
@@ -853,6 +1024,11 @@ export type OnboardingProfileSelectCreateManyAndReturn<ExtArgs extends runtime.T
   experience?: boolean
   sessionLengthMinutes?: boolean
   cardioPreference?: boolean
+  age?: boolean
+  heightCm?: boolean
+  weightKg?: boolean
+  outsideGymActivity?: boolean
+  averageDailySteps?: boolean
   hasLimitations?: boolean
   limitationAreas?: boolean
   limitationsText?: boolean
@@ -875,6 +1051,11 @@ export type OnboardingProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   experience?: boolean
   sessionLengthMinutes?: boolean
   cardioPreference?: boolean
+  age?: boolean
+  heightCm?: boolean
+  weightKg?: boolean
+  outsideGymActivity?: boolean
+  averageDailySteps?: boolean
   hasLimitations?: boolean
   limitationAreas?: boolean
   limitationsText?: boolean
@@ -897,6 +1078,11 @@ export type OnboardingProfileSelectScalar = {
   experience?: boolean
   sessionLengthMinutes?: boolean
   cardioPreference?: boolean
+  age?: boolean
+  heightCm?: boolean
+  weightKg?: boolean
+  outsideGymActivity?: boolean
+  averageDailySteps?: boolean
   hasLimitations?: boolean
   limitationAreas?: boolean
   limitationsText?: boolean
@@ -910,7 +1096,7 @@ export type OnboardingProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OnboardingProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "path" | "goal" | "trainingDaysPerWeek" | "experience" | "sessionLengthMinutes" | "cardioPreference" | "hasLimitations" | "limitationAreas" | "limitationsText" | "trainingPreferences" | "personalPriorities" | "additionalNotes" | "limitationReviewRequired" | "recommendedCardioMinutes" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["onboardingProfile"]>
+export type OnboardingProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "path" | "goal" | "trainingDaysPerWeek" | "experience" | "sessionLengthMinutes" | "cardioPreference" | "age" | "heightCm" | "weightKg" | "outsideGymActivity" | "averageDailySteps" | "hasLimitations" | "limitationAreas" | "limitationsText" | "trainingPreferences" | "personalPriorities" | "additionalNotes" | "limitationReviewRequired" | "recommendedCardioMinutes" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["onboardingProfile"]>
 export type OnboardingProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -934,6 +1120,11 @@ export type $OnboardingProfilePayload<ExtArgs extends runtime.Types.Extensions.I
     experience: $Enums.TrainingExperience | null
     sessionLengthMinutes: number | null
     cardioPreference: $Enums.CardioPreference | null
+    age: number | null
+    heightCm: number | null
+    weightKg: runtime.Decimal | null
+    outsideGymActivity: $Enums.OutsideGymActivity | null
+    averageDailySteps: number | null
     hasLimitations: boolean
     limitationAreas: $Enums.LimitationArea[]
     limitationsText: string | null
@@ -1376,6 +1567,11 @@ export interface OnboardingProfileFieldRefs {
   readonly experience: Prisma.FieldRef<"OnboardingProfile", 'TrainingExperience'>
   readonly sessionLengthMinutes: Prisma.FieldRef<"OnboardingProfile", 'Int'>
   readonly cardioPreference: Prisma.FieldRef<"OnboardingProfile", 'CardioPreference'>
+  readonly age: Prisma.FieldRef<"OnboardingProfile", 'Int'>
+  readonly heightCm: Prisma.FieldRef<"OnboardingProfile", 'Int'>
+  readonly weightKg: Prisma.FieldRef<"OnboardingProfile", 'Decimal'>
+  readonly outsideGymActivity: Prisma.FieldRef<"OnboardingProfile", 'OutsideGymActivity'>
+  readonly averageDailySteps: Prisma.FieldRef<"OnboardingProfile", 'Int'>
   readonly hasLimitations: Prisma.FieldRef<"OnboardingProfile", 'Boolean'>
   readonly limitationAreas: Prisma.FieldRef<"OnboardingProfile", 'LimitationArea[]'>
   readonly limitationsText: Prisma.FieldRef<"OnboardingProfile", 'String'>

@@ -20,9 +20,20 @@ describe("onboarding inputs", () => {
   });
 
   it("validates the complete fully personalised coach brief", () => {
-    const brief = { goal: "BUILD_MUSCLE", trainingDaysPerWeek: 4, experience: "EXPERIENCED", sessionLengthMinutes: 90, cardioPreference: "SOME", trainingPreferences: "Enjoy machines", hasLimitations: true, limitationsText: "For coach review", personalPriorities: "Consistency", additionalNotes: "" };
+    const brief = { goal: "BUILD_MUSCLE", trainingDaysPerWeek: 4, experience: "EXPERIENCED", sessionLengthMinutes: 90, cardioPreference: "SOME", age: 38, heightCm: 178, weightKg: 82.5, outsideGymActivity: "MODERATE", averageDailySteps: 7200, trainingPreferences: "Enjoy machines", hasLimitations: true, limitationsText: "For coach review", personalPriorities: "Consistency", additionalNotes: "" };
     expect(fullyPersonalisedSchema.safeParse(brief).success).toBe(true);
     expect(fullyPersonalisedSchema.safeParse({ ...brief, limitationsText: "" }).success).toBe(false);
     expect(fullyPersonalisedSchema.safeParse({ ...brief, userId: "other-user" }).success).toBe(false);
+  });
+  it("validates age, height, weight, activity level, and optional daily steps", () => {
+    const brief = { goal: "GENERAL_FITNESS", trainingDaysPerWeek: 3, experience: "BEGINNER", sessionLengthMinutes: 60, cardioPreference: "SOME", age: 30, heightCm: 170, weightKg: 70.5, outsideGymActivity: "LOW", averageDailySteps: null, trainingPreferences: "no", hasLimitations: false, limitationsText: "", personalPriorities: "none", additionalNotes: "nope" };
+    expect(fullyPersonalisedSchema.safeParse(brief).success).toBe(true);
+    expect(fullyPersonalisedSchema.safeParse({ ...brief, age: 15 }).success).toBe(false);
+    expect(fullyPersonalisedSchema.safeParse({ ...brief, age: 30.5 }).success).toBe(false);
+    expect(fullyPersonalisedSchema.safeParse({ ...brief, heightCm: 251 }).success).toBe(false);
+    expect(fullyPersonalisedSchema.safeParse({ ...brief, weightKg: 24 }).success).toBe(false);
+    expect(fullyPersonalisedSchema.safeParse({ ...brief, outsideGymActivity: "EXTREME" }).success).toBe(false);
+    expect(fullyPersonalisedSchema.safeParse({ ...brief, averageDailySteps: 8500 }).success).toBe(true);
+    expect(fullyPersonalisedSchema.safeParse({ ...brief, averageDailySteps: -1 }).success).toBe(false);
   });
 });

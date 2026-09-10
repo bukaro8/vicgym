@@ -275,10 +275,10 @@ export async function applyCoachImportInTransaction(tx: Prisma.TransactionClient
   const input = parseCoachImport(raw);
   const resolved = await resolveImport(tx, userId, input, options);
     if (resolved.kind === "create") {
-      const program = await tx.workoutProgram.create({ data: { userId, slug: resolved.input.program.slug, name: resolved.input.program.name, status: "DRAFT", isDemo: false } });
+      const program = await tx.workoutProgram.create({ data: { userId, programmeRequestId: options.personalisedRequestId, slug: resolved.input.program.slug, name: resolved.input.program.name, status: "DRAFT", isDemo: false } });
       const version = await tx.programVersion.create({ data: { programId: program.id, versionNumber: 1, source: ProgramVersionSource.IMPORT, notes: "Initial programme created from validated JSON after explicit preview confirmation.", ...versionData(resolved.days) } });
       await setActiveProgramme(tx, userId, program.id, version.id);
-      return { kind: "create" as const, program: program.slug, versionNumber: 1, preview: resolved.preview };
+      return { kind: "create" as const, programId: program.id, program: program.slug, versionNumber: 1, preview: resolved.preview };
     }
     const version = await tx.programVersion.create({ data: { programId: resolved.programId, versionNumber: resolved.baseVersion + 1, source: ProgramVersionSource.IMPORT, notes: "Validated coach JSON applied after explicit preview confirmation.", ...versionData(resolved.days) } });
     await setActiveProgramme(tx, userId, resolved.programId, version.id);

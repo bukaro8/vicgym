@@ -42,4 +42,19 @@ describe("administrator programme preview", () => {
     expect(screen.getByLabelText("Programme JSON")).toBeInTheDocument();
     vi.unstubAllGlobals();
   });
+
+  it("previews the exact welcome email and sends it only after explicit confirmation", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ sent: true, text: "A personal welcome body that is ready to send.\n\nOpen VicGym: https://gym.example.com/" }) });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<AdminProgrammeRequestWorkflow requestId="request-1" coachBrief="Coach brief" aiPrompt="AI prompt" welcomeEmailPrompt="Welcome AI prompt" welcomeEmailSentAt={null} welcomeEmailBody={null} appUrl="https://gym.example.com/" requestStatus="COMPLETED" ownerEmail="owner@example.com"/>);
+    fireEvent.change(screen.getByLabelText("Welcome email draft"), { target: { value: "A personal welcome body that is ready to send." } });
+    fireEvent.click(screen.getByRole("button", { name: "Preview welcome email" }));
+    const exact = "A personal welcome body that is ready to send.\n\nOpen VicGym: https://gym.example.com/";
+    expect(screen.getByText((_content, element) => element?.tagName === "P" && element.textContent === exact)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send Welcome Email" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByRole("button", { name: "Send Welcome Email" }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith("/api/admin/programme-requests/request-1/welcome-email", expect.objectContaining({ body: JSON.stringify({ body: "A personal welcome body that is ready to send.", confirmation: "SEND_WELCOME_EMAIL" }) })));
+    vi.unstubAllGlobals();
+  });
 });

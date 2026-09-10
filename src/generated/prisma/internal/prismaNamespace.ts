@@ -1989,6 +1989,11 @@ export const OnboardingProfileScalarFieldEnum = {
   experience: 'experience',
   sessionLengthMinutes: 'sessionLengthMinutes',
   cardioPreference: 'cardioPreference',
+  age: 'age',
+  heightCm: 'heightCm',
+  weightKg: 'weightKg',
+  outsideGymActivity: 'outsideGymActivity',
+  averageDailySteps: 'averageDailySteps',
   hasLimitations: 'hasLimitations',
   limitationAreas: 'limitationAreas',
   limitationsText: 'limitationsText',
@@ -2014,6 +2019,8 @@ export const ProgrammeRequestScalarFieldEnum = {
   cancelledAt: 'cancelledAt',
   submittedNotificationSentAt: 'submittedNotificationSentAt',
   completedNotificationSentAt: 'completedNotificationSentAt',
+  welcomeEmailSentAt: 'welcomeEmailSentAt',
+  welcomeEmailBody: 'welcomeEmailBody',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2122,6 +2129,7 @@ export type ExerciseMediaScalarFieldEnum = (typeof ExerciseMediaScalarFieldEnum)
 export const WorkoutProgramScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  programmeRequestId: 'programmeRequestId',
   slug: 'slug',
   name: 'name',
   isDemo: 'isDemo',
@@ -2448,21 +2456,49 @@ export type ListEnumTrainingExperienceFieldRefInput<$PrismaModel> = FieldRefInpu
  * Reference to a field of type 'CardioPreference'
  */
 export type EnumCardioPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CardioPreference'>
-    
+
 
 
 /**
  * Reference to a field of type 'CardioPreference[]'
  */
 export type ListEnumCardioPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CardioPreference[]'>
-    
+
+
+
+/**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+
+
+
+/**
+ * Reference to a field of type 'OutsideGymActivity'
+ */
+export type EnumOutsideGymActivityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutsideGymActivity'>
+
+
+
+/**
+ * Reference to a field of type 'OutsideGymActivity[]'
+ */
+export type ListEnumOutsideGymActivityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutsideGymActivity[]'>
+
 
 
 /**
  * Reference to a field of type 'LimitationArea[]'
  */
 export type ListEnumLimitationAreaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LimitationArea[]'>
-    
+
 
 
 /**
@@ -2539,20 +2575,6 @@ export type EnumLoadTrackingTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
  * Reference to a field of type 'LoadTrackingType[]'
  */
 export type ListEnumLoadTrackingTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LoadTrackingType[]'>
-    
-
-
-/**
- * Reference to a field of type 'Decimal'
- */
-export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
-    
-
-
-/**
- * Reference to a field of type 'Decimal[]'
- */
-export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
     
 
 
@@ -2928,4 +2950,3 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
-

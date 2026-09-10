@@ -37,8 +37,8 @@ The shared seed creates only the verified exercise/equipment catalogue. Each new
 
 ### Programme management
 
-- First-login onboarding with instant semi-personalised and detailed coach-reviewed paths.
-- An ADMIN-only pending-request list, coach brief, ChatGPT export, schema-version-2 preview, explicit apply, and cancellation workflow.
+- First-login onboarding with instant semi-personalised and detailed coach-reviewed paths, including age, height, weight, outside-gym activity, and optional average daily steps for fully personalised requests.
+- An ADMIN-only request list, enriched Coach Brief, AI programme/welcome-email prompt exports, schema-version-2 preview, explicit apply, cancellation/reopening, and reviewed welcome-email workflow.
 - Deterministic 2/3/4/5-day starter programmes generated only from the active shared catalogue.
 - User roles (`USER` by default and explicitly assigned `ADMIN`) enforced on the server.
 - One authoritative active programme per user, selected by that user's `AppSettings.activeProgramId`.
@@ -110,7 +110,7 @@ The shared seed creates only the verified exercise/equipment catalogue. Each new
 ### Security and deployment
 
 - Passwordless email magic-link authentication through Resend.
-- Best-effort Resend notifications to `ADMIN_EMAIL` when a personalised request is submitted and to the requesting user when their programme becomes active.
+- Best-effort Resend notifications to `ADMIN_EMAIL` when a personalised request is submitted. A programme welcome email is sent only after an administrator previews and explicitly confirms its externally drafted body.
 - Fifteen-minute, single-use login tokens; only SHA-256 token hashes are stored, with a one-minute per-email request cooldown.
 - Secure, HTTP-only, same-site application sessions with a 30-day expiry.
 - Personal programmes, settings, sessions, history, reports, and synchronization records are scoped to the authenticated user.
@@ -140,13 +140,14 @@ Raw `SetLog` and `RestPeriod` records are the source of truth. Progress, previou
 1. Run migrations and seed the verified catalogue.
 2. Sign in and choose **Create my programme now** or **Build a fully personalised programme**.
 3. The instant path answers a short questionnaire and atomically creates and activates immutable programme version 1. The fully personalised path creates a pending coach-review request and no generic programme.
-4. Alternatively, a validated `schemaVersion: 2` import can create an initial programme through **More → Coach review**.
-5. Start a workout from **Home** or **Workouts**.
-6. Log sets, use the rest timer, and explicitly finish the workout.
-7. Review factual history under **Progress**.
-8. Copy a weekly report from **Coach review** into the existing coaching conversation.
-9. If ChatGPT recommends changes, paste its `schemaVersion: 1` patch back into VicGym.
-10. Validate, preview, and explicitly apply it. VicGym creates version 2, 3, and so on without altering completed sessions.
+4. For a fully personalised request, an administrator can create the programme, copy a self-contained welcome-email prompt, paste the externally drafted body, preview the exact message, and explicitly send it through Resend.
+5. Alternatively, a validated `schemaVersion: 2` import can create an initial programme through **More → Coach review**.
+6. Start a workout from **Home** or **Workouts**.
+7. Log sets, use the rest timer, and explicitly finish the workout.
+8. Review factual history under **Progress**.
+9. Copy a weekly report from **Coach review** into the existing coaching conversation.
+10. If ChatGPT recommends changes, paste its `schemaVersion: 1` patch back into VicGym.
+11. Validate, preview, and explicitly apply it. VicGym creates version 2, 3, and so on without altering completed sessions.
 
 ## Using the app
 
@@ -486,7 +487,7 @@ Production requirements:
 
 Mutation routes accept same-origin JSON only. Route handlers always revalidate the server-side session even though the Next.js proxy performs an early cookie-presence check. Browser-cached offline data is protected by the phone/browser profile and account namespace, not by an additional encryption key. Signing out preserves that account's unsynchronized local queue so it can recover after the same user signs in again; another account receives a distinct local database.
 
-Personalised-programme notification delivery happens only after the corresponding database transaction commits. Provider failures are logged and never roll back request submission or programme activation. Successful delivery timestamps are stored on `ProgrammeRequest`, and stable Resend idempotency keys prevent duplicate messages during retries.
+Personalised-request admin notification happens only after the request transaction commits. The user welcome email is deliberately separate from programme activation: an administrator must preview and confirm it. Provider failures are logged and never roll back request submission or programme activation. The exact sent welcome text and delivery timestamp are stored on `ProgrammeRequest`, while stable Resend idempotency keys prevent accidental duplicate delivery.
 
 ## Application routes
 
@@ -719,7 +720,7 @@ Generate a new weekly report and copy its exact `program` and `baseVersion`. A p
 ## Current limitations
 
 - VicGym targets a small trusted user group. Roles exist, but there is not yet an administrator console, team model, or invitation UI.
-- Fully personalised onboarding uses a detailed V1 questionnaire, manual administrator review, and best-effort email notifications; OpenAI automation is not included.
+- Fully personalised onboarding uses a detailed questionnaire and manual administrator review. Programme and welcome-email prompts are copied to an external AI; OpenAI API automation is not included.
 - Accounts are created on first successful magic-link use. An optional email allowlist is the current registration control.
 - Authentication sessions expire after 30 days and are not currently listed or remotely revoked through a user-facing session-management screen.
 - There is no in-app programme/workout-day editor by design.

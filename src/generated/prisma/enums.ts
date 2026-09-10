@@ -59,6 +59,15 @@ export const CardioPreference = {
 export type CardioPreference = (typeof CardioPreference)[keyof typeof CardioPreference]
 
 
+export const OutsideGymActivity = {
+  LOW: 'LOW',
+  MODERATE: 'MODERATE',
+  HIGH: 'HIGH'
+} as const
+
+export type OutsideGymActivity = (typeof OutsideGymActivity)[keyof typeof OutsideGymActivity]
+
+
 export const LimitationArea = {
   UPPER_BODY: 'UPPER_BODY',
   LOWER_BODY: 'LOWER_BODY',

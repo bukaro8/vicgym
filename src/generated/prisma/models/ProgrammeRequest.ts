@@ -33,6 +33,8 @@ export type ProgrammeRequestMinAggregateOutputType = {
   cancelledAt: Date | null
   submittedNotificationSentAt: Date | null
   completedNotificationSentAt: Date | null
+  welcomeEmailSentAt: Date | null
+  welcomeEmailBody: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -46,6 +48,8 @@ export type ProgrammeRequestMaxAggregateOutputType = {
   cancelledAt: Date | null
   submittedNotificationSentAt: Date | null
   completedNotificationSentAt: Date | null
+  welcomeEmailSentAt: Date | null
+  welcomeEmailBody: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -59,6 +63,8 @@ export type ProgrammeRequestCountAggregateOutputType = {
   cancelledAt: number
   submittedNotificationSentAt: number
   completedNotificationSentAt: number
+  welcomeEmailSentAt: number
+  welcomeEmailBody: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -74,6 +80,8 @@ export type ProgrammeRequestMinAggregateInputType = {
   cancelledAt?: true
   submittedNotificationSentAt?: true
   completedNotificationSentAt?: true
+  welcomeEmailSentAt?: true
+  welcomeEmailBody?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -87,6 +95,8 @@ export type ProgrammeRequestMaxAggregateInputType = {
   cancelledAt?: true
   submittedNotificationSentAt?: true
   completedNotificationSentAt?: true
+  welcomeEmailSentAt?: true
+  welcomeEmailBody?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,6 +110,8 @@ export type ProgrammeRequestCountAggregateInputType = {
   cancelledAt?: true
   submittedNotificationSentAt?: true
   completedNotificationSentAt?: true
+  welcomeEmailSentAt?: true
+  welcomeEmailBody?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -186,6 +198,8 @@ export type ProgrammeRequestGroupByOutputType = {
   cancelledAt: Date | null
   submittedNotificationSentAt: Date | null
   completedNotificationSentAt: Date | null
+  welcomeEmailSentAt: Date | null
+  welcomeEmailBody: string | null
   createdAt: Date
   updatedAt: Date
   _count: ProgrammeRequestCountAggregateOutputType | null
@@ -220,9 +234,12 @@ export type ProgrammeRequestWhereInput = {
   cancelledAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
   submittedNotificationSentAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
   completedNotificationSentAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
+  welcomeEmailSentAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
+  welcomeEmailBody?: Prisma.StringNullableFilter<"ProgrammeRequest"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ProgrammeRequest"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProgrammeRequest"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  createdProgram?: Prisma.XOR<Prisma.WorkoutProgramNullableScalarRelationFilter, Prisma.WorkoutProgramWhereInput> | null
 }
 
 export type ProgrammeRequestOrderByWithRelationInput = {
@@ -234,9 +251,12 @@ export type ProgrammeRequestOrderByWithRelationInput = {
   cancelledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   submittedNotificationSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedNotificationSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  welcomeEmailSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  welcomeEmailBody?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  createdProgram?: Prisma.WorkoutProgramOrderByWithRelationInput
 }
 
 export type ProgrammeRequestWhereUniqueInput = Prisma.AtLeast<{
@@ -251,9 +271,12 @@ export type ProgrammeRequestWhereUniqueInput = Prisma.AtLeast<{
   cancelledAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
   submittedNotificationSentAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
   completedNotificationSentAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
+  welcomeEmailSentAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
+  welcomeEmailBody?: Prisma.StringNullableFilter<"ProgrammeRequest"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ProgrammeRequest"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProgrammeRequest"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  createdProgram?: Prisma.XOR<Prisma.WorkoutProgramNullableScalarRelationFilter, Prisma.WorkoutProgramWhereInput> | null
 }, "id">
 
 export type ProgrammeRequestOrderByWithAggregationInput = {
@@ -265,6 +288,8 @@ export type ProgrammeRequestOrderByWithAggregationInput = {
   cancelledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   submittedNotificationSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedNotificationSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  welcomeEmailSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  welcomeEmailBody?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProgrammeRequestCountOrderByAggregateInput
@@ -284,6 +309,8 @@ export type ProgrammeRequestScalarWhereWithAggregatesInput = {
   cancelledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProgrammeRequest"> | Date | string | null
   submittedNotificationSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProgrammeRequest"> | Date | string | null
   completedNotificationSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProgrammeRequest"> | Date | string | null
+  welcomeEmailSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProgrammeRequest"> | Date | string | null
+  welcomeEmailBody?: Prisma.StringNullableWithAggregatesFilter<"ProgrammeRequest"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProgrammeRequest"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ProgrammeRequest"> | Date | string
 }
@@ -296,9 +323,12 @@ export type ProgrammeRequestCreateInput = {
   cancelledAt?: Date | string | null
   submittedNotificationSentAt?: Date | string | null
   completedNotificationSentAt?: Date | string | null
+  welcomeEmailSentAt?: Date | string | null
+  welcomeEmailBody?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProgrammeRequestsInput
+  createdProgram?: Prisma.WorkoutProgramCreateNestedOneWithoutProgrammeRequestInput
 }
 
 export type ProgrammeRequestUncheckedCreateInput = {
@@ -310,8 +340,11 @@ export type ProgrammeRequestUncheckedCreateInput = {
   cancelledAt?: Date | string | null
   submittedNotificationSentAt?: Date | string | null
   completedNotificationSentAt?: Date | string | null
+  welcomeEmailSentAt?: Date | string | null
+  welcomeEmailBody?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  createdProgram?: Prisma.WorkoutProgramUncheckedCreateNestedOneWithoutProgrammeRequestInput
 }
 
 export type ProgrammeRequestUpdateInput = {
@@ -322,9 +355,12 @@ export type ProgrammeRequestUpdateInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProgrammeRequestsNestedInput
+  createdProgram?: Prisma.WorkoutProgramUpdateOneWithoutProgrammeRequestNestedInput
 }
 
 export type ProgrammeRequestUncheckedUpdateInput = {
@@ -336,8 +372,11 @@ export type ProgrammeRequestUncheckedUpdateInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdProgram?: Prisma.WorkoutProgramUncheckedUpdateOneWithoutProgrammeRequestNestedInput
 }
 
 export type ProgrammeRequestCreateManyInput = {
@@ -349,6 +388,8 @@ export type ProgrammeRequestCreateManyInput = {
   cancelledAt?: Date | string | null
   submittedNotificationSentAt?: Date | string | null
   completedNotificationSentAt?: Date | string | null
+  welcomeEmailSentAt?: Date | string | null
+  welcomeEmailBody?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -361,6 +402,8 @@ export type ProgrammeRequestUpdateManyMutationInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -374,6 +417,8 @@ export type ProgrammeRequestUncheckedUpdateManyInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -397,6 +442,8 @@ export type ProgrammeRequestCountOrderByAggregateInput = {
   cancelledAt?: Prisma.SortOrder
   submittedNotificationSentAt?: Prisma.SortOrder
   completedNotificationSentAt?: Prisma.SortOrder
+  welcomeEmailSentAt?: Prisma.SortOrder
+  welcomeEmailBody?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -410,6 +457,8 @@ export type ProgrammeRequestMaxOrderByAggregateInput = {
   cancelledAt?: Prisma.SortOrder
   submittedNotificationSentAt?: Prisma.SortOrder
   completedNotificationSentAt?: Prisma.SortOrder
+  welcomeEmailSentAt?: Prisma.SortOrder
+  welcomeEmailBody?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -423,8 +472,15 @@ export type ProgrammeRequestMinOrderByAggregateInput = {
   cancelledAt?: Prisma.SortOrder
   submittedNotificationSentAt?: Prisma.SortOrder
   completedNotificationSentAt?: Prisma.SortOrder
+  welcomeEmailSentAt?: Prisma.SortOrder
+  welcomeEmailBody?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type ProgrammeRequestNullableScalarRelationFilter = {
+  is?: Prisma.ProgrammeRequestWhereInput | null
+  isNot?: Prisma.ProgrammeRequestWhereInput | null
 }
 
 export type ProgrammeRequestCreateNestedManyWithoutUserInput = {
@@ -473,6 +529,22 @@ export type EnumProgrammeRequestStatusFieldUpdateOperationsInput = {
   set?: $Enums.ProgrammeRequestStatus
 }
 
+export type ProgrammeRequestCreateNestedOneWithoutCreatedProgramInput = {
+  create?: Prisma.XOR<Prisma.ProgrammeRequestCreateWithoutCreatedProgramInput, Prisma.ProgrammeRequestUncheckedCreateWithoutCreatedProgramInput>
+  connectOrCreate?: Prisma.ProgrammeRequestCreateOrConnectWithoutCreatedProgramInput
+  connect?: Prisma.ProgrammeRequestWhereUniqueInput
+}
+
+export type ProgrammeRequestUpdateOneWithoutCreatedProgramNestedInput = {
+  create?: Prisma.XOR<Prisma.ProgrammeRequestCreateWithoutCreatedProgramInput, Prisma.ProgrammeRequestUncheckedCreateWithoutCreatedProgramInput>
+  connectOrCreate?: Prisma.ProgrammeRequestCreateOrConnectWithoutCreatedProgramInput
+  upsert?: Prisma.ProgrammeRequestUpsertWithoutCreatedProgramInput
+  disconnect?: Prisma.ProgrammeRequestWhereInput | boolean
+  delete?: Prisma.ProgrammeRequestWhereInput | boolean
+  connect?: Prisma.ProgrammeRequestWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProgrammeRequestUpdateToOneWithWhereWithoutCreatedProgramInput, Prisma.ProgrammeRequestUpdateWithoutCreatedProgramInput>, Prisma.ProgrammeRequestUncheckedUpdateWithoutCreatedProgramInput>
+}
+
 export type ProgrammeRequestCreateWithoutUserInput = {
   id?: string
   status?: $Enums.ProgrammeRequestStatus
@@ -481,8 +553,11 @@ export type ProgrammeRequestCreateWithoutUserInput = {
   cancelledAt?: Date | string | null
   submittedNotificationSentAt?: Date | string | null
   completedNotificationSentAt?: Date | string | null
+  welcomeEmailSentAt?: Date | string | null
+  welcomeEmailBody?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  createdProgram?: Prisma.WorkoutProgramCreateNestedOneWithoutProgrammeRequestInput
 }
 
 export type ProgrammeRequestUncheckedCreateWithoutUserInput = {
@@ -493,8 +568,11 @@ export type ProgrammeRequestUncheckedCreateWithoutUserInput = {
   cancelledAt?: Date | string | null
   submittedNotificationSentAt?: Date | string | null
   completedNotificationSentAt?: Date | string | null
+  welcomeEmailSentAt?: Date | string | null
+  welcomeEmailBody?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  createdProgram?: Prisma.WorkoutProgramUncheckedCreateNestedOneWithoutProgrammeRequestInput
 }
 
 export type ProgrammeRequestCreateOrConnectWithoutUserInput = {
@@ -535,8 +613,86 @@ export type ProgrammeRequestScalarWhereInput = {
   cancelledAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
   submittedNotificationSentAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
   completedNotificationSentAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
+  welcomeEmailSentAt?: Prisma.DateTimeNullableFilter<"ProgrammeRequest"> | Date | string | null
+  welcomeEmailBody?: Prisma.StringNullableFilter<"ProgrammeRequest"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ProgrammeRequest"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProgrammeRequest"> | Date | string
+}
+
+export type ProgrammeRequestCreateWithoutCreatedProgramInput = {
+  id?: string
+  status?: $Enums.ProgrammeRequestStatus
+  adminNotes?: string | null
+  completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  submittedNotificationSentAt?: Date | string | null
+  completedNotificationSentAt?: Date | string | null
+  welcomeEmailSentAt?: Date | string | null
+  welcomeEmailBody?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutProgrammeRequestsInput
+}
+
+export type ProgrammeRequestUncheckedCreateWithoutCreatedProgramInput = {
+  id?: string
+  userId: string
+  status?: $Enums.ProgrammeRequestStatus
+  adminNotes?: string | null
+  completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  submittedNotificationSentAt?: Date | string | null
+  completedNotificationSentAt?: Date | string | null
+  welcomeEmailSentAt?: Date | string | null
+  welcomeEmailBody?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ProgrammeRequestCreateOrConnectWithoutCreatedProgramInput = {
+  where: Prisma.ProgrammeRequestWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProgrammeRequestCreateWithoutCreatedProgramInput, Prisma.ProgrammeRequestUncheckedCreateWithoutCreatedProgramInput>
+}
+
+export type ProgrammeRequestUpsertWithoutCreatedProgramInput = {
+  update: Prisma.XOR<Prisma.ProgrammeRequestUpdateWithoutCreatedProgramInput, Prisma.ProgrammeRequestUncheckedUpdateWithoutCreatedProgramInput>
+  create: Prisma.XOR<Prisma.ProgrammeRequestCreateWithoutCreatedProgramInput, Prisma.ProgrammeRequestUncheckedCreateWithoutCreatedProgramInput>
+  where?: Prisma.ProgrammeRequestWhereInput
+}
+
+export type ProgrammeRequestUpdateToOneWithWhereWithoutCreatedProgramInput = {
+  where?: Prisma.ProgrammeRequestWhereInput
+  data: Prisma.XOR<Prisma.ProgrammeRequestUpdateWithoutCreatedProgramInput, Prisma.ProgrammeRequestUncheckedUpdateWithoutCreatedProgramInput>
+}
+
+export type ProgrammeRequestUpdateWithoutCreatedProgramInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProgrammeRequestStatusFieldUpdateOperationsInput | $Enums.ProgrammeRequestStatus
+  adminNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  submittedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutProgrammeRequestsNestedInput
+}
+
+export type ProgrammeRequestUncheckedUpdateWithoutCreatedProgramInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProgrammeRequestStatusFieldUpdateOperationsInput | $Enums.ProgrammeRequestStatus
+  adminNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  submittedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ProgrammeRequestCreateManyUserInput = {
@@ -547,6 +703,8 @@ export type ProgrammeRequestCreateManyUserInput = {
   cancelledAt?: Date | string | null
   submittedNotificationSentAt?: Date | string | null
   completedNotificationSentAt?: Date | string | null
+  welcomeEmailSentAt?: Date | string | null
+  welcomeEmailBody?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -559,8 +717,11 @@ export type ProgrammeRequestUpdateWithoutUserInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdProgram?: Prisma.WorkoutProgramUpdateOneWithoutProgrammeRequestNestedInput
 }
 
 export type ProgrammeRequestUncheckedUpdateWithoutUserInput = {
@@ -571,8 +732,11 @@ export type ProgrammeRequestUncheckedUpdateWithoutUserInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdProgram?: Prisma.WorkoutProgramUncheckedUpdateOneWithoutProgrammeRequestNestedInput
 }
 
 export type ProgrammeRequestUncheckedUpdateManyWithoutUserInput = {
@@ -583,6 +747,8 @@ export type ProgrammeRequestUncheckedUpdateManyWithoutUserInput = {
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submittedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedNotificationSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  welcomeEmailBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -598,9 +764,12 @@ export type ProgrammeRequestSelect<ExtArgs extends runtime.Types.Extensions.Inte
   cancelledAt?: boolean
   submittedNotificationSentAt?: boolean
   completedNotificationSentAt?: boolean
+  welcomeEmailSentAt?: boolean
+  welcomeEmailBody?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  createdProgram?: boolean | Prisma.ProgrammeRequest$createdProgramArgs<ExtArgs>
 }, ExtArgs["result"]["programmeRequest"]>
 
 export type ProgrammeRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -612,6 +781,8 @@ export type ProgrammeRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   cancelledAt?: boolean
   submittedNotificationSentAt?: boolean
   completedNotificationSentAt?: boolean
+  welcomeEmailSentAt?: boolean
+  welcomeEmailBody?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -626,6 +797,8 @@ export type ProgrammeRequestSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   cancelledAt?: boolean
   submittedNotificationSentAt?: boolean
   completedNotificationSentAt?: boolean
+  welcomeEmailSentAt?: boolean
+  welcomeEmailBody?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -640,13 +813,16 @@ export type ProgrammeRequestSelectScalar = {
   cancelledAt?: boolean
   submittedNotificationSentAt?: boolean
   completedNotificationSentAt?: boolean
+  welcomeEmailSentAt?: boolean
+  welcomeEmailBody?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProgrammeRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "adminNotes" | "completedAt" | "cancelledAt" | "submittedNotificationSentAt" | "completedNotificationSentAt" | "createdAt" | "updatedAt", ExtArgs["result"]["programmeRequest"]>
+export type ProgrammeRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "adminNotes" | "completedAt" | "cancelledAt" | "submittedNotificationSentAt" | "completedNotificationSentAt" | "welcomeEmailSentAt" | "welcomeEmailBody" | "createdAt" | "updatedAt", ExtArgs["result"]["programmeRequest"]>
 export type ProgrammeRequestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  createdProgram?: boolean | Prisma.ProgrammeRequest$createdProgramArgs<ExtArgs>
 }
 export type ProgrammeRequestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -659,6 +835,7 @@ export type $ProgrammeRequestPayload<ExtArgs extends runtime.Types.Extensions.In
   name: "ProgrammeRequest"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    createdProgram: Prisma.$WorkoutProgramPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -669,6 +846,8 @@ export type $ProgrammeRequestPayload<ExtArgs extends runtime.Types.Extensions.In
     cancelledAt: Date | null
     submittedNotificationSentAt: Date | null
     completedNotificationSentAt: Date | null
+    welcomeEmailSentAt: Date | null
+    welcomeEmailBody: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["programmeRequest"]>
@@ -1066,6 +1245,7 @@ readonly fields: ProgrammeRequestFieldRefs;
 export interface Prisma__ProgrammeRequestClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  createdProgram<T extends Prisma.ProgrammeRequest$createdProgramArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProgrammeRequest$createdProgramArgs<ExtArgs>>): Prisma.Prisma__WorkoutProgramClient<runtime.Types.Result.GetResult<Prisma.$WorkoutProgramPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1103,6 +1283,8 @@ export interface ProgrammeRequestFieldRefs {
   readonly cancelledAt: Prisma.FieldRef<"ProgrammeRequest", 'DateTime'>
   readonly submittedNotificationSentAt: Prisma.FieldRef<"ProgrammeRequest", 'DateTime'>
   readonly completedNotificationSentAt: Prisma.FieldRef<"ProgrammeRequest", 'DateTime'>
+  readonly welcomeEmailSentAt: Prisma.FieldRef<"ProgrammeRequest", 'DateTime'>
+  readonly welcomeEmailBody: Prisma.FieldRef<"ProgrammeRequest", 'String'>
   readonly createdAt: Prisma.FieldRef<"ProgrammeRequest", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ProgrammeRequest", 'DateTime'>
 }
@@ -1503,6 +1685,25 @@ export type ProgrammeRequestDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many ProgrammeRequests to delete.
    */
   limit?: number
+}
+
+/**
+ * ProgrammeRequest.createdProgram
+ */
+export type ProgrammeRequest$createdProgramArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WorkoutProgram
+   */
+  select?: Prisma.WorkoutProgramSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WorkoutProgram
+   */
+  omit?: Prisma.WorkoutProgramOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkoutProgramInclude<ExtArgs> | null
+  where?: Prisma.WorkoutProgramWhereInput
 }
 
 /**
