@@ -22,8 +22,9 @@ function startOfLondonWeek(now: Date): Date {
 
 export default async function Home() {
   const user = await requireCurrentUser();
+  if (user.role === "ADMIN") redirect("/admin/requests");
   const prisma = getPrisma();
-  if (user.role !== "ADMIN" && (await getOnboardingState(prisma, user.id)).mode !== "READY") redirect("/onboarding");
+  if ((await getOnboardingState(prisma, user.id)).mode !== "READY") redirect("/onboarding");
   const now = new Date();
   const [settings, program, weeklySessions, lastWorkout, activeSession] = await Promise.all([
     prisma.appSettings.findUnique({ where: { userId: user.id } }),

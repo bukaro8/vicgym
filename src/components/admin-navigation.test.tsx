@@ -17,7 +17,7 @@ describe("administrator navigation", () => {
     expect(screen.queryByRole("link", { name: "Exercises" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Progress" })).not.toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Logout" })).toHaveLength(2);
-    expect(screen.getByRole("link", { name: "Return to VicGym" })).toHaveAttribute("href", "/");
+    expect(screen.queryByRole("link", { name: "Return to VicGym" })).not.toBeInTheDocument();
   });
 
   it("indicates the Users route and exposes the compact mobile destination", () => {
@@ -25,7 +25,7 @@ describe("administrator navigation", () => {
     render(<AdminShell><main>Users directory</main></AdminShell>);
     expect(screen.getAllByRole("link", { name: "Users" })).toHaveLength(2);
     for (const link of screen.getAllByRole("link", { name: "Users" })) expect(link).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "VicGym" })).toHaveAttribute("href", "/");
+    expect(screen.queryByRole("link", { name: "VicGym" })).not.toBeInTheDocument();
   });
 
   it("keeps the normal VicGym navigation outside admin routes", () => {

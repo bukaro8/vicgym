@@ -4,6 +4,7 @@ import { SerwistProvider } from "@serwist/turbopack/react";
 import { OfflineProvider } from "@/components/offline-provider";
 import { RestTimerProvider } from "@/components/rest-timer-provider";
 import { OnboardingGate } from "@/components/onboarding-gate";
+import { AdminRouteGate } from "@/components/admin-route-gate";
 import { getPrisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/server/auth";
 import { getOnboardingState } from "@/server/onboarding";
@@ -44,10 +45,10 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const user = await getCurrentUser();
-  const onboarding = user ? user.role === "ADMIN" ? { mode: "READY" as const } : await getOnboardingState(getPrisma(), user.id) : null;
+  const onboarding = user?.role === "USER" ? await getOnboardingState(getPrisma(), user.id) : null;
   return (
     <html lang="en">
-      <body className="min-h-dvh antialiased">{user && onboarding ? <OnboardingGate mode={onboarding.mode}><SerwistProvider swUrl="/serwist/sw.js"><OfflineProvider userId={user.id}><RestTimerProvider>{children}</RestTimerProvider></OfflineProvider></SerwistProvider></OnboardingGate> : children}</body>
+      <body className="min-h-dvh antialiased">{user?.role === "ADMIN" ? <AdminRouteGate>{children}</AdminRouteGate> : user && onboarding ? <OnboardingGate mode={onboarding.mode}><SerwistProvider swUrl="/serwist/sw.js"><OfflineProvider userId={user.id}><RestTimerProvider>{children}</RestTimerProvider></OfflineProvider></SerwistProvider></OnboardingGate> : children}</body>
     </html>
   );
 }

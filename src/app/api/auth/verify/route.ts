@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getAuthEmailEnv } from "@/lib/env";
 import { getPrisma } from "@/lib/prisma";
 import { AUTH_COOKIE_NAME, consumeMagicLinkToken, sessionCookieOptions } from "@/server/auth";
+import { authenticatedHomePath } from "@/lib/auth-routing";
 
 export const runtime = "nodejs";
 
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
     loginUrl.searchParams.set("error", "expired-link");
     return NextResponse.redirect(loginUrl, { headers: { "Referrer-Policy": "no-referrer", "Cache-Control": "no-store" } });
   }
-  const response = NextResponse.redirect(new URL("/", env.APP_ORIGIN), { headers: { "Referrer-Policy": "no-referrer", "Cache-Control": "no-store" } });
+  const response = NextResponse.redirect(new URL(authenticatedHomePath(result.user.role), env.APP_ORIGIN), { headers: { "Referrer-Policy": "no-referrer", "Cache-Control": "no-store" } });
   response.cookies.set(AUTH_COOKIE_NAME, result.sessionToken, sessionCookieOptions(result.expiresAt, env.APP_ORIGIN.startsWith("https://")));
   return response;
 }
