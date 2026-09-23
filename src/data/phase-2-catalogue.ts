@@ -54,6 +54,19 @@ export const localExerciseMediaSeed: LocalExerciseMediaSeed[] = [
   { exerciseSlug: "step-up", filename: "Step-up.png", alt: "Person performing a step-up on an aerobic exercise platform" },
   { exerciseSlug: "renegade-row", filename: "renegade-row.png", alt: "Clean instructional illustration of a dumbbell renegade row" },
   { exerciseSlug: "dumbbell-thruster", filename: "dumbbell-thruster.png", alt: "Clean instructional illustration of a dumbbell thruster" },
+  { exerciseSlug: "bodyweight-squat", filename: "bodyweight-squat.png", alt: "Grey anatomy illustration of a bodyweight squat" },
+  { exerciseSlug: "calf-raises", filename: "calf-raises.png", alt: "Grey anatomy illustration of a calf raise" },
+  { exerciseSlug: "dumbbell-front-raise", filename: "dumbbell-front-raise.png", alt: "Grey anatomy illustration of a dumbbell front raise" },
+  { exerciseSlug: "dumbbell-squat", filename: "dumbbell-squat.png", alt: "Grey anatomy illustration of a dumbbell squat" },
+  { exerciseSlug: "goblet-squat", filename: "goblet-squat.png", alt: "Grey anatomy illustration of a goblet squat" },
+  { exerciseSlug: "dumbbell-lateral-raise", filename: "dumbbell-lateral-raise.png", alt: "Grey anatomy illustration of a dumbbell lateral raise" },
+  { exerciseSlug: "dumbbell-reverse-fly", filename: "dumbbell-reverse-fly.png", alt: "Grey anatomy illustration of a dumbbell reverse fly" },
+  { exerciseSlug: "dumbbell-romanian-deadlift", filename: "dumbbell-romanian-deadlift.png", alt: "Grey anatomy illustration of a dumbbell Romanian deadlift" },
+  { exerciseSlug: "one-arm-dumbbell-row", filename: "one-arm-dumbbell-row.png", alt: "Grey anatomy illustration of a one-arm dumbbell row" },
+  { exerciseSlug: "plank", filename: "plank.png", alt: "Grey anatomy illustration of a plank" },
+  { exerciseSlug: "push-up", filename: "push-up.png", alt: "Grey anatomy illustration of a push-up" },
+  { exerciseSlug: "reverse-lunge", filename: "reverse-lunge.png", alt: "Grey anatomy illustration of a reverse lunge" },
+  { exerciseSlug: "v-up", filename: "v-up.png", alt: "Grey anatomy illustration of a V-up" },
 ];
 
 // These derivatives are bundled in public/media/exercises. Keeping their
@@ -63,17 +76,8 @@ export const exerciseDbMediaSeed: ExerciseDbMediaSeed[] = [
   ...posterExerciseMediaSeed,
   { exerciseSlug: "barbell-bent-over-row", externalId: "eZyBC3j", sourceFilename: "exercisedb-eZyBC3j-source", sourceUrl: "https://static.exercisedb.dev/media/eZyBC3j.gif", alt: "Barbell bent over row movement demonstration supplied by ExerciseDB" },
   { exerciseSlug: "barbell-deadlift", externalId: "ila4NZS", sourceFilename: "exercisedb-ila4NZS-source", sourceUrl: "https://static.exercisedb.dev/media/ila4NZS.gif", alt: "Barbell deadlift movement demonstration supplied by ExerciseDB" },
-  { exerciseSlug: "bodyweight-squat", externalId: "exr_41n2hmGR8WuVfe1U", sourceFilename: "exercisedb-exr_41n2hmGR8WuVfe1U-source", alt: "Squat movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/OCSQUGO/41n2hmGR8WuVfe1U__Bodyweight-Squat-(male)_Thighs-SIDE-POV_.mp4" },
-  { exerciseSlug: "calf-raises", externalId: "exr_41n2hSGs9Q3NVGhs", sourceFilename: "exercisedb-exr_41n2hSGs9Q3NVGhs-source", alt: "Bodyweight Standing Calf Raise movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/rYfe7Ll/41n2hSGs9Q3NVGhs__Bodyweight-Standing-Calf-Raise_Calves.mp4" },
-  { exerciseSlug: "dumbbell-lateral-raise", externalId: "exr_41n2hjuGpcex14w7", sourceFilename: "exercisedb-exr_41n2hjuGpcex14w7-source", alt: "Lateral Raise movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/j3qqj9g/41n2hjuGpcex14w7__Dumbbell-Lateral-Raise_shoulder_.mp4" },
-  { exerciseSlug: "dumbbell-romanian-deadlift", externalId: "exr_41n2hn8rpbYihzEW", sourceFilename: "exercisedb-exr_41n2hn8rpbYihzEW-source", alt: "Romanian Deadlift movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/sZiAup2/41n2hn8rpbYihzEW__Dumbbell-Romanian-Deadlift_Hips.mp4" },
-  { exerciseSlug: "goblet-squat", externalId: "exr_41n2hQDiSwTZXM4F", sourceFilename: "exercisedb-exr_41n2hQDiSwTZXM4F-source", alt: "Goblet Squat movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/nFmXQAf/41n2hQDiSwTZXM4F__Dumbbell-Goblet-Squat_Thighs.mp4" },
   { exerciseSlug: "hip-raises", externalId: "exr_41n2hnFD2bT6sruf", sourceFilename: "exercisedb-exr_41n2hnFD2bT6sruf-source", alt: "Sliding Floor Bridge Curl on Towel movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/UintDRh/41n2hnFD2bT6sruf__Sliding-Floor-Bridge-Curl-on-Towel_Thighs.mp4" },
   { exerciseSlug: "lying-leg-raises", externalId: "exr_41n2hq3Wm6ANkgUz", sourceFilename: "exercisedb-exr_41n2hq3Wm6ANkgUz-source", alt: "Lying Leg Raise and Hold movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/xm1Zyp9/41n2hq3Wm6ANkgUz__Lying-Leg-Raise-and-Hold_Hips.mp4" },
-  { exerciseSlug: "one-arm-dumbbell-row", externalId: "exr_41n2hY9EdwkdGz9a", sourceFilename: "exercisedb-exr_41n2hY9EdwkdGz9a-source", alt: "Dumbbell One Arm Bent-over Row movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/7imWBgZ/41n2hY9EdwkdGz9a__Dumbbell-Bent-over-Row_Back_.mp4" },
-  { exerciseSlug: "plank", externalId: "exr_41n2hXQw5yAbbXL8", sourceFilename: "exercisedb-exr_41n2hXQw5yAbbXL8-source", alt: "Front Plank movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/nJZVWqt/41n2hXQw5yAbbXL8__Front-Plank-(female)_Waist_.mp4" },
-  { exerciseSlug: "push-up", externalId: "exr_41n2hNXJadYcfjnd", sourceFilename: "exercisedb-exr_41n2hNXJadYcfjnd-source", alt: "Push-up movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/G8ZH9KB/41n2hNXJadYcfjnd__Push-up-m_Chest.mp4" },
-  { exerciseSlug: "reverse-lunge", externalId: "exr_41n2hNjcmNgtPJ1H", sourceFilename: "exercisedb-exr_41n2hNjcmNgtPJ1H-source", alt: "Bodyweight Rear Lunge movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/4uTBU4U/41n2hNjcmNgtPJ1H__Bodyweight-Rear-Lunge_Thighs.mp4" },
 ];
 
 export type EquipmentSeed = {

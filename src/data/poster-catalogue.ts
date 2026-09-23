@@ -219,27 +219,11 @@ export const posterExerciseMediaSeed: ExerciseDbMediaSeed[] = [
     "alt": "dumbbell standing kickback movement demonstration supplied by ExerciseDB"
   },
   {
-    "exerciseSlug": "dumbbell-front-raise",
-    "externalId": "exr_41n2howQHvcrcrW6",
-    "sourceFilename": "exercisedb-exr_41n2howQHvcrcrW6-source",
-    "sourceUrl": "https://cdn.exercisedb.dev/media/w/images/s2XapP9vOr.jpg",
-    "alt": "Front Raise movement demonstration supplied by ExerciseDB",
-    "videoUrl": "https://cdn.exercisedb.dev/w/videos/s0tBYjQ/41n2howQHvcrcrW6__Dumbbell-Front-Raise_Shoulders.mp4"
-  },
-  {
     "exerciseSlug": "dumbbell-shrug",
     "externalId": "NJzBsGJ",
     "sourceFilename": "exercisedb-NJzBsGJ-source",
     "sourceUrl": "https://static.exercisedb.dev/media/NJzBsGJ.gif",
     "alt": "dumbbell shrug movement demonstration supplied by ExerciseDB"
-  },
-  {
-    "exerciseSlug": "dumbbell-reverse-fly",
-    "externalId": "exr_41n2hyNf5GebszTf",
-    "sourceFilename": "exercisedb-exr_41n2hyNf5GebszTf-source",
-    "sourceUrl": "https://cdn.exercisedb.dev/media/w/images/WHgesY7OwI.jpg",
-    "alt": "Dumbbell Rear Delt Fly movement demonstration supplied by ExerciseDB",
-    "videoUrl": "https://cdn.exercisedb.dev/w/videos/FlYe7Y5/41n2hyNf5GebszTf__Dumbbell-Rear-Delt-Fly-(female)_Shoulders.mp4"
   },
   {
     "exerciseSlug": "dumbbell-side-bend",
@@ -258,14 +242,6 @@ export const posterExerciseMediaSeed: ExerciseDbMediaSeed[] = [
     "videoUrl": "https://cdn.exercisedb.dev/w/videos/d0fWZfg/41n2huf7mAC2rhfC__Dumbbell-Jumping-Squat_Plyometric_.mp4"
   },
   {
-    "exerciseSlug": "v-up",
-    "externalId": "exr_41n2huc12BsuDNYQ",
-    "sourceFilename": "exercisedb-exr_41n2huc12BsuDNYQ-source",
-    "sourceUrl": "https://cdn.exercisedb.dev/media/w/images/yqARt8px3A.jpg",
-    "alt": "V-up movement demonstration supplied by ExerciseDB",
-    "videoUrl": "https://cdn.exercisedb.dev/w/videos/df6UdBu/41n2huc12BsuDNYQ__V-up-(male)_Waist.mp4"
-  },
-  {
     "exerciseSlug": "dumbbell-triceps-extension",
     "externalId": "PdmaD0N",
     "sourceFilename": "exercisedb-PdmaD0N-source",
@@ -278,13 +254,6 @@ export const posterExerciseMediaSeed: ExerciseDbMediaSeed[] = [
     "sourceFilename": "exercisedb-WU9BLIs-source",
     "sourceUrl": "https://static.exercisedb.dev/media/WU9BLIs.gif",
     "alt": "weighted russian twist (legs up) movement demonstration supplied by ExerciseDB"
-  },
-  {
-    "exerciseSlug": "dumbbell-squat",
-    "externalId": "HsvHqgf",
-    "sourceFilename": "exercisedb-HsvHqgf-source",
-    "sourceUrl": "https://static.exercisedb.dev/media/HsvHqgf.gif",
-    "alt": "dumbbell squat movement demonstration supplied by ExerciseDB"
   },
   {
     "exerciseSlug": "floor-t-raise",

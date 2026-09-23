@@ -45,6 +45,19 @@ describe("poster catalogue expansion", () => {
     ]));
   });
 
+  it("uses uploaded local illustrations instead of provider media for the reviewed exercises", () => {
+    const uploadedSlugs = [
+      "renegade-row", "dumbbell-thruster", "bodyweight-squat", "calf-raises",
+      "dumbbell-front-raise", "dumbbell-squat", "goblet-squat", "dumbbell-lateral-raise",
+      "dumbbell-reverse-fly", "dumbbell-romanian-deadlift", "one-arm-dumbbell-row",
+      "plank", "push-up", "reverse-lunge", "v-up",
+    ];
+    for (const slug of uploadedSlugs) {
+      expect(localExerciseMediaSeed.some((media) => media.exerciseSlug === slug)).toBe(true);
+      expect(exerciseDbMediaSeed.some((media) => media.exerciseSlug === slug)).toBe(false);
+    }
+  });
+
   it("keeps any explicitly declared unmatched movements free of misleading equipment media", () => {
     for (const slug of posterPlaceholderSlugs) {
       expect(posterExerciseSeed.some((exercise) => exercise.slug === slug)).toBe(true);

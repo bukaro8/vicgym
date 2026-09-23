@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-08T15:25:35.952Z",
+  "generatedAt": "2026-09-23T22:50:47.978Z",
   "items": [
     {
       "equipmentSlug": "triceps-press",
@@ -347,6 +347,186 @@
         "/media/exercises/step-up/Step-up-640.avif",
         "/media/exercises/step-up/Step-up-1280.webp",
         "/media/exercises/step-up/Step-up-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:renegade-row",
+      "role": "PRIMARY",
+      "originalFilename": "renegade-row.png",
+      "originalSha256": "fa7788b2c0ba2f28e589cf30e59a2cee1fb4da6d7cda3012ccfe2e626d4e714c",
+      "derivatives": [
+        "/media/exercises/renegade-row/renegade-row-640.webp",
+        "/media/exercises/renegade-row/renegade-row-640.avif",
+        "/media/exercises/renegade-row/renegade-row-1280.webp",
+        "/media/exercises/renegade-row/renegade-row-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:dumbbell-thruster",
+      "role": "PRIMARY",
+      "originalFilename": "dumbbell-thruster.png",
+      "originalSha256": "293a961ce570b4f02b38dd9bd63a19d0a155ee320f9be70a55d09c643703106d",
+      "derivatives": [
+        "/media/exercises/dumbbell-thruster/dumbbell-thruster-640.webp",
+        "/media/exercises/dumbbell-thruster/dumbbell-thruster-640.avif",
+        "/media/exercises/dumbbell-thruster/dumbbell-thruster-1280.webp",
+        "/media/exercises/dumbbell-thruster/dumbbell-thruster-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:bodyweight-squat",
+      "role": "PRIMARY",
+      "originalFilename": "bodyweight-squat.png",
+      "originalSha256": "f3e66624896acaa2ce3d6bc9d86b07ed7c9fe6f628f094af003416e14eb60a8b",
+      "derivatives": [
+        "/media/exercises/bodyweight-squat/bodyweight-squat-640.webp",
+        "/media/exercises/bodyweight-squat/bodyweight-squat-640.avif",
+        "/media/exercises/bodyweight-squat/bodyweight-squat-1280.webp",
+        "/media/exercises/bodyweight-squat/bodyweight-squat-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:calf-raises",
+      "role": "PRIMARY",
+      "originalFilename": "calf-raises.png",
+      "originalSha256": "2f7f479486d147cb56b1210ce02804d45d43dc63a6826f99ae162a25c4edb738",
+      "derivatives": [
+        "/media/exercises/calf-raises/calf-raises-640.webp",
+        "/media/exercises/calf-raises/calf-raises-640.avif",
+        "/media/exercises/calf-raises/calf-raises-1280.webp",
+        "/media/exercises/calf-raises/calf-raises-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:dumbbell-front-raise",
+      "role": "PRIMARY",
+      "originalFilename": "dumbbell-front-raise.png",
+      "originalSha256": "e141f8663aa0c88686dc1a8d49fa72edcbe4979b9a1f8829e6720d2b7b39a4b9",
+      "derivatives": [
+        "/media/exercises/dumbbell-front-raise/dumbbell-front-raise-640.webp",
+        "/media/exercises/dumbbell-front-raise/dumbbell-front-raise-640.avif",
+        "/media/exercises/dumbbell-front-raise/dumbbell-front-raise-1280.webp",
+        "/media/exercises/dumbbell-front-raise/dumbbell-front-raise-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:dumbbell-squat",
+      "role": "PRIMARY",
+      "originalFilename": "dumbbell-squat.png",
+      "originalSha256": "654133d15d1e67ea962e3c0cb2e0e80d46a3bf34c320e19f98ebfd5f470d3309",
+      "derivatives": [
+        "/media/exercises/dumbbell-squat/dumbbell-squat-640.webp",
+        "/media/exercises/dumbbell-squat/dumbbell-squat-640.avif",
+        "/media/exercises/dumbbell-squat/dumbbell-squat-1280.webp",
+        "/media/exercises/dumbbell-squat/dumbbell-squat-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:goblet-squat",
+      "role": "PRIMARY",
+      "originalFilename": "goblet-squat.png",
+      "originalSha256": "ec9aef76d5a4a3b98698e788185561eef98cb7fbc215deed871aa673fc3a6ae2",
+      "derivatives": [
+        "/media/exercises/goblet-squat/goblet-squat-640.webp",
+        "/media/exercises/goblet-squat/goblet-squat-640.avif",
+        "/media/exercises/goblet-squat/goblet-squat-1280.webp",
+        "/media/exercises/goblet-squat/goblet-squat-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:dumbbell-lateral-raise",
+      "role": "PRIMARY",
+      "originalFilename": "dumbbell-lateral-raise.png",
+      "originalSha256": "33a04ecd4054fc8ead54d8e9a0319250d8f0180ca2cf169bd0b257275d9a6b8d",
+      "derivatives": [
+        "/media/exercises/dumbbell-lateral-raise/dumbbell-lateral-raise-640.webp",
+        "/media/exercises/dumbbell-lateral-raise/dumbbell-lateral-raise-640.avif",
+        "/media/exercises/dumbbell-lateral-raise/dumbbell-lateral-raise-1280.webp",
+        "/media/exercises/dumbbell-lateral-raise/dumbbell-lateral-raise-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:dumbbell-reverse-fly",
+      "role": "PRIMARY",
+      "originalFilename": "dumbbell-reverse-fly.png",
+      "originalSha256": "b3242a31785c3471c5fb64f95b6d075fdd4678d34c3450c591a0d62ad112b1b9",
+      "derivatives": [
+        "/media/exercises/dumbbell-reverse-fly/dumbbell-reverse-fly-640.webp",
+        "/media/exercises/dumbbell-reverse-fly/dumbbell-reverse-fly-640.avif",
+        "/media/exercises/dumbbell-reverse-fly/dumbbell-reverse-fly-1280.webp",
+        "/media/exercises/dumbbell-reverse-fly/dumbbell-reverse-fly-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:dumbbell-romanian-deadlift",
+      "role": "PRIMARY",
+      "originalFilename": "dumbbell-romanian-deadlift.png",
+      "originalSha256": "b25c27eda79ac9670a7cfc56fab2b76b6f2a8cac20fba4fe7c45f69047e2e3b9",
+      "derivatives": [
+        "/media/exercises/dumbbell-romanian-deadlift/dumbbell-romanian-deadlift-640.webp",
+        "/media/exercises/dumbbell-romanian-deadlift/dumbbell-romanian-deadlift-640.avif",
+        "/media/exercises/dumbbell-romanian-deadlift/dumbbell-romanian-deadlift-1280.webp",
+        "/media/exercises/dumbbell-romanian-deadlift/dumbbell-romanian-deadlift-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:one-arm-dumbbell-row",
+      "role": "PRIMARY",
+      "originalFilename": "one-arm-dumbbell-row.png",
+      "originalSha256": "6c456023bc9d89694f78f6fcd4c3769e08ece84bd1bae311ccc90ceb17b3c1ba",
+      "derivatives": [
+        "/media/exercises/one-arm-dumbbell-row/one-arm-dumbbell-row-640.webp",
+        "/media/exercises/one-arm-dumbbell-row/one-arm-dumbbell-row-640.avif",
+        "/media/exercises/one-arm-dumbbell-row/one-arm-dumbbell-row-1280.webp",
+        "/media/exercises/one-arm-dumbbell-row/one-arm-dumbbell-row-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:plank",
+      "role": "PRIMARY",
+      "originalFilename": "plank.png",
+      "originalSha256": "c0b8cb9ca0df9e12ef1542d20bc20898738e6ae6d7cc92fbcc2e9ae6ef761f48",
+      "derivatives": [
+        "/media/exercises/plank/plank-640.webp",
+        "/media/exercises/plank/plank-640.avif",
+        "/media/exercises/plank/plank-1280.webp",
+        "/media/exercises/plank/plank-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:push-up",
+      "role": "PRIMARY",
+      "originalFilename": "push-up.png",
+      "originalSha256": "571a64f4c598ff7202b4f1d04650fce4076af46f7bd8bdedb68756317ffc7f1c",
+      "derivatives": [
+        "/media/exercises/push-up/push-up-640.webp",
+        "/media/exercises/push-up/push-up-640.avif",
+        "/media/exercises/push-up/push-up-1280.webp",
+        "/media/exercises/push-up/push-up-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:reverse-lunge",
+      "role": "PRIMARY",
+      "originalFilename": "reverse-lunge.png",
+      "originalSha256": "3c240f45b3bc54ffde5c0d31260b104a36b5eee81dbedcd0c969b7b423a064e6",
+      "derivatives": [
+        "/media/exercises/reverse-lunge/reverse-lunge-640.webp",
+        "/media/exercises/reverse-lunge/reverse-lunge-640.avif",
+        "/media/exercises/reverse-lunge/reverse-lunge-1280.webp",
+        "/media/exercises/reverse-lunge/reverse-lunge-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:v-up",
+      "role": "PRIMARY",
+      "originalFilename": "v-up.png",
+      "originalSha256": "9b36d7c8a8898808139dd10c84179ad66effad276f56d8eccbdbf14b693f0e4b",
+      "derivatives": [
+        "/media/exercises/v-up/v-up-640.webp",
+        "/media/exercises/v-up/v-up-640.avif",
+        "/media/exercises/v-up/v-up-1280.webp",
+        "/media/exercises/v-up/v-up-1280.avif"
       ]
     }
   ]
