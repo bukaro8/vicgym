@@ -2387,140 +2387,140 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'UserRole'
  */
 export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
-
+    
 
 
 /**
  * Reference to a field of type 'UserRole[]'
  */
 export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'UserStatus'
  */
 export type EnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus'>
-
+    
 
 
 /**
  * Reference to a field of type 'UserStatus[]'
  */
 export type ListEnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'OnboardingPath'
  */
 export type EnumOnboardingPathFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingPath'>
-
+    
 
 
 /**
  * Reference to a field of type 'OnboardingPath[]'
  */
 export type ListEnumOnboardingPathFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OnboardingPath[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'TrainingGoal'
  */
 export type EnumTrainingGoalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingGoal'>
-
+    
 
 
 /**
  * Reference to a field of type 'TrainingGoal[]'
  */
 export type ListEnumTrainingGoalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingGoal[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-
+    
 
 
 /**
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'TrainingExperience'
  */
 export type EnumTrainingExperienceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingExperience'>
-
+    
 
 
 /**
  * Reference to a field of type 'TrainingExperience[]'
  */
 export type ListEnumTrainingExperienceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainingExperience[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'CardioPreference'
  */
 export type EnumCardioPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CardioPreference'>
-
+    
 
 
 /**
  * Reference to a field of type 'CardioPreference[]'
  */
 export type ListEnumCardioPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CardioPreference[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'Decimal'
  */
 export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
-
+    
 
 
 /**
  * Reference to a field of type 'Decimal[]'
  */
 export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'OutsideGymActivity'
  */
 export type EnumOutsideGymActivityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutsideGymActivity'>
-
+    
 
 
 /**
  * Reference to a field of type 'OutsideGymActivity[]'
  */
 export type ListEnumOutsideGymActivityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OutsideGymActivity[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'LimitationArea[]'
  */
 export type ListEnumLimitationAreaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LimitationArea[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'LimitationArea'
  */
 export type EnumLimitationAreaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LimitationArea'>
-
+    
 
 
 /**
@@ -2965,3 +2965,4 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
+

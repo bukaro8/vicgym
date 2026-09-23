@@ -23,7 +23,9 @@ Import only after reviewing the displayed candidate:
 npm run exercise-media:import -- goblet-squat exr_selected_id
 ```
 
-The importer is intentionally restricted to VicGym's approved non-machine exercise slugs. It refuses other slugs and machine exercises, so verified VicGym machine photographs remain unchanged. It writes 640/1280 WebP and AVIF derivatives to `public/media/exercises/<vicgym-slug>/`, upserts the local image row by provider/external ID, and stores an optional provider-hosted video reference without downloading it. Pass `--assets-only` when preparing bundled derivatives for catalogue-seed metadata without changing the current database.
+The importer derives its allowlist from VicGym's non-machine catalogue entries. It refuses unknown slugs and machine exercises, including in assets-only mode, so verified VicGym machine photographs remain unchanged. It writes 640/1280 WebP and AVIF derivatives to `public/media/exercises/<vicgym-slug>/`, upserts the local image row by provider/external ID, and stores an optional provider-hosted video reference without downloading it. Pass `--assets-only` when preparing bundled derivatives for catalogue-seed metadata without changing the current database.
+
+The existing public ExerciseDB fallback is used for IDs without the `exr_` prefix. It supplies GIF images through `oss.exercisedb.dev`; imports use a static image frame with the same local derivatives. Review detail records and actual images as well as search names. See [the poster review](dumbbell-poster-catalogue.md) for approved mappings and unmatched movements. An API outage alone does not justify a placeholder.
 
 The ExerciseMedia record retains provider, external ID, source URL, kind, and attribution. Re-running the same mapping updates the existing record rather than adding a duplicate.
 

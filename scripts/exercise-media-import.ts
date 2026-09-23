@@ -7,11 +7,11 @@ import sharp from "sharp";
 
 import { getExerciseDbExercise, getPublicExerciseDbExercise, preferredExerciseDbImage, EXERCISEDB_PROVIDER } from "../src/lib/exercisedb-core";
 import { getPrisma } from "../src/lib/prisma";
+import { equipmentSeed, exerciseSeed } from "../src/data/phase-2-catalogue";
 
-const importableExerciseSlugs = new Set([
-  "bodyweight-squat", "dumbbell-biceps-curl", "dumbbell-lateral-raise", "dumbbell-romanian-deadlift", "glute-bridge", "goblet-squat", "one-arm-dumbbell-row", "push-up", "reverse-lunge", "standing-dumbbell-shoulder-press", "step-up", "hip-raises", "calf-raises", "plank", "lying-leg-raises",
-  "barbell-bent-over-row", "barbell-deadlift",
-]);
+const importableExerciseSlugs = new Set(exerciseSeed.filter((exercise) =>
+  !equipmentSeed.some((equipment) => equipment.slug === exercise.equipmentSlug && equipment.type === "MACHINE"),
+).map((exercise) => exercise.slug));
 const projectRoot = path.resolve(import.meta.dirname, "..");
 
 function safeFilePart(value: string) {
@@ -42,7 +42,7 @@ async function main() {
   const assetsOnly = args.includes("--assets-only");
   const [exerciseSlug, externalExerciseId] = args.filter((argument) => argument !== "--assets-only");
   if (!exerciseSlug || !externalExerciseId) throw new Error("Usage: npm run exercise-media:import -- <vicgym-exercise-slug> <exercisedb-exercise-id> [--assets-only]");
-  if (!importableExerciseSlugs.has(exerciseSlug)) throw new Error("This import is limited to the current placeholder exercise list.");
+  if (!importableExerciseSlugs.has(exerciseSlug)) throw new Error("This import requires an existing non-machine catalogue exercise.");
 
   const prisma = assetsOnly ? null : getPrisma();
   const exercise = prisma ? await prisma.exercise.findUnique({ where: { slug: exerciseSlug }, include: { equipment: true } }) : null;

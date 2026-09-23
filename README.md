@@ -326,6 +326,8 @@ Historical `weightKg` values are preserved unchanged. Old machine records are no
 
 ## Exercise catalogue
 
+The shared seed now contains **42 exercises**. The [dumbbell poster catalogue review](docs/dumbbell-poster-catalogue.md) lists the retained additions, exact slugs, load semantics, muscles, API or generated-media matches, existing-name aliases, and deferred movements. It also records the seven reviewed poster entries removed from the catalogue. The tables below describe the original catalogue; the review supplies the additions.
+
 The seed currently defines 25 active exercises. The exact slugs below are the identifiers accepted by programme imports.
 
 ### Small-gym machines
@@ -581,8 +583,8 @@ npm run db:seed
 The seed is idempotent. It creates or updates:
 
 - 14 verified equipment records and supplied-photo metadata;
-- 16 muscles;
-- 27 active exercises and muscle relationships;
+- 18 muscles;
+- 42 active exercises and muscle relationships;
 - approved exercise-specific image/video metadata.
 
 It does not create users, settings, programmes, workout history, or authentication sessions, and it does not call ExerciseDB at runtime. A user's settings row is created with their account after they consume their first magic link.

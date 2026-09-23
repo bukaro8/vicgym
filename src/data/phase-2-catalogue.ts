@@ -1,3 +1,5 @@
+import { posterExerciseSeed, posterExerciseMediaSeed } from "./poster-catalogue";
+
 export type EquipmentTypeSeed =
   | "MACHINE"
   | "DUMBBELL"
@@ -50,12 +52,15 @@ export const localExerciseMediaSeed: LocalExerciseMediaSeed[] = [
   { exerciseSlug: "glute-bridge", filename: "Glute Bridge.png", alt: "Person performing a floor glute bridge" },
   { exerciseSlug: "standing-dumbbell-shoulder-press", filename: "Standing Dumbbell Shoulder Press.png", alt: "Person performing a standing dumbbell shoulder press" },
   { exerciseSlug: "step-up", filename: "Step-up.png", alt: "Person performing a step-up on an aerobic exercise platform" },
+  { exerciseSlug: "renegade-row", filename: "renegade-row.png", alt: "Clean instructional illustration of a dumbbell renegade row" },
+  { exerciseSlug: "dumbbell-thruster", filename: "dumbbell-thruster.png", alt: "Clean instructional illustration of a dumbbell thruster" },
 ];
 
 // These derivatives are bundled in public/media/exercises. Keeping their
 // metadata in the normal seed makes a fresh production database render the
 // approved ExerciseDB movement images without a production API request.
 export const exerciseDbMediaSeed: ExerciseDbMediaSeed[] = [
+  ...posterExerciseMediaSeed,
   { exerciseSlug: "barbell-bent-over-row", externalId: "eZyBC3j", sourceFilename: "exercisedb-eZyBC3j-source", sourceUrl: "https://static.exercisedb.dev/media/eZyBC3j.gif", alt: "Barbell bent over row movement demonstration supplied by ExerciseDB" },
   { exerciseSlug: "barbell-deadlift", externalId: "ila4NZS", sourceFilename: "exercisedb-ila4NZS-source", sourceUrl: "https://static.exercisedb.dev/media/ila4NZS.gif", alt: "Barbell deadlift movement demonstration supplied by ExerciseDB" },
   { exerciseSlug: "bodyweight-squat", externalId: "exr_41n2hmGR8WuVfe1U", sourceFilename: "exercisedb-exr_41n2hmGR8WuVfe1U-source", alt: "Squat movement demonstration supplied by ExerciseDB", videoUrl: "https://cdn.exercisedb.dev/w/videos/OCSQUGO/41n2hmGR8WuVfe1U__Bodyweight-Squat-(male)_Thighs-SIDE-POV_.mp4" },
@@ -223,6 +228,7 @@ export const muscleSeed = [
   { slug: "triceps", name: "Triceps", groupName: "Arms" },
   { slug: "anterior-deltoids", name: "Anterior deltoids", groupName: "Shoulders" },
   { slug: "lateral-deltoids", name: "Lateral deltoids", groupName: "Shoulders" },
+  { slug: "posterior-deltoids", name: "Posterior deltoids", groupName: "Shoulders" },
   { slug: "lats", name: "Lats", groupName: "Back" },
   { slug: "biceps", name: "Biceps", groupName: "Arms" },
   { slug: "upper-back", name: "Upper back", groupName: "Back" },
@@ -235,9 +241,10 @@ export const muscleSeed = [
   { slug: "lower-back", name: "Lower back", groupName: "Back" },
   { slug: "forearms", name: "Forearms", groupName: "Arms" },
   { slug: "hip-flexors", name: "Hip flexors", groupName: "Hips" },
+  { slug: "adductors", name: "Adductors", groupName: "Legs" },
 ] as const;
 
-type ExerciseSeed = {
+export type ExerciseSeed = {
   slug: string;
   name: string;
   equipmentSlug: string | null;
@@ -254,6 +261,7 @@ const bodyweight = "BODYWEIGHT" as const;
 const repsOnly = "REPS_ONLY" as const;
 
 export const exerciseSeed: ExerciseSeed[] = [
+  ...posterExerciseSeed,
   { slug: "triceps-press", name: "Triceps Press", equipmentSlug: "triceps-press", primaryMuscle: "triceps", secondaryMuscles: [], repMode: "TOTAL", loadEntryMode: "STACK_TOTAL", loadTrackingType: machineLevel },
   { slug: "chest-press", name: "Chest Press", equipmentSlug: "chest-press", primaryMuscle: "chest", secondaryMuscles: ["triceps", "anterior-deltoids"], repMode: "TOTAL", loadEntryMode: "STACK_TOTAL", loadTrackingType: machineLevel },
   { slug: "shoulder-press", name: "Shoulder Press", equipmentSlug: "shoulder-press", primaryMuscle: "anterior-deltoids", secondaryMuscles: ["lateral-deltoids", "triceps"], repMode: "TOTAL", loadEntryMode: "STACK_TOTAL", loadTrackingType: machineLevel },
