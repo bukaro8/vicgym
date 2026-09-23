@@ -2,7 +2,7 @@ import { ImageIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-type EquipmentImage = { storagePath: string; altText: string };
+type EquipmentImage = { storagePath: string; altText: string; provider?: string };
 
 export function ResponsiveEquipmentImage({ image, className, sizes = "(max-width: 640px) 100vw, 50vw", priority = false, placeholderTitle = "Exercise image not yet available", placeholderDescription = "A movement-specific image has not been added yet." }: Readonly<{ image?: EquipmentImage | null; className?: string; sizes?: string; priority?: boolean; placeholderTitle?: string; placeholderDescription?: string }>) {
   if (!image) {
@@ -18,12 +18,13 @@ export function ResponsiveEquipmentImage({ image, className, sizes = "(max-width
   }
 
   const stem = image.storagePath.replace(/-1280\.webp$/, "");
+  const isLocalIllustration = image.provider === "vicgym-local";
 
   return (
-    <picture>
+    <picture className={cn("block", isLocalIllustration && "bg-muted p-3 sm:p-5")}>
       <source type="image/avif" srcSet={`${stem}-640.avif 640w, ${stem}-1280.avif 1280w`} sizes={sizes} />
       <source type="image/webp" srcSet={`${stem}-640.webp 640w, ${stem}-1280.webp 1280w`} sizes={sizes} />
-      <img src={`${stem}-1280.webp`} alt={image.altText} width={1280} height={960} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} decoding="async" className={cn("aspect-[4/3] h-full w-full object-cover", className)} />
+      <img src={`${stem}-1280.webp`} alt={image.altText} width={1280} height={960} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} decoding="async" className={cn("aspect-[4/3] h-full w-full", isLocalIllustration ? "object-contain object-center" : "object-cover", className, isLocalIllustration && "object-contain object-center")} />
     </picture>
   );
 }
