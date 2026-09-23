@@ -1,6 +1,8 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_TARGET_REPS, DEMO_SETS, demoProgrammeSeed, equipmentSeed, exerciseDbMediaSeed, exerciseSeed, localExerciseMediaSeed } from "@/data/phase-2-catalogue";
+import { DEFAULT_TARGET_REPS, DEMO_SETS, demoProgrammeSeed, equipmentSeed, exerciseDbMediaSeed, exerciseSeed, localExerciseMediaSeed, localExerciseMediaStem } from "@/data/phase-2-catalogue";
 
 describe("Phase 2 fixture boundaries", () => {
   it("maps every supplied photo once and gives every equipment item one primary", () => {
@@ -74,6 +76,18 @@ describe("Phase 2 fixture boundaries", () => {
       expect.objectContaining({ exerciseSlug: "barbell-bent-over-row", externalId: "eZyBC3j" }),
       expect.objectContaining({ exerciseSlug: "barbell-deadlift", externalId: "ila4NZS" }),
     ]));
+  });
+
+  it("keeps every local exercise media reference backed by repository derivatives", () => {
+    for (const media of localExerciseMediaSeed) {
+      const stem = localExerciseMediaStem(media.exerciseSlug, media.filename);
+      expect(stem.startsWith("/media/exercises/")).toBe(true);
+      for (const width of [640, 1280]) {
+        for (const format of ["webp", "avif"]) {
+          expect(existsSync(path.join(process.cwd(), "public", `${stem}-${width}.${format}`))).toBe(true);
+        }
+      }
+    }
   });
 
   it("keeps the demo programme constrained to the exercise library", () => {

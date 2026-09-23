@@ -138,6 +138,16 @@ for (const [exerciseSlug, sourceFilename] of [
   if (exerciseId) await prisma.exerciseMedia.deleteMany({ where: { exerciseId, sourceFilename } });
 }
 
+// A local movement illustration is authoritative for its exercise. Remove
+// older provider image rows so an old PRIMARY row cannot win resolution after
+// a catalogue media replacement. This does not touch workout history or
+// provider video/reference rows.
+for (const media of localExerciseMediaSeed) {
+  const exerciseId = exerciseIds.get(media.exerciseSlug);
+  if (!exerciseId) throw new Error(`Missing exercise for local media cleanup: ${media.exerciseSlug}`);
+  await prisma.exerciseMedia.deleteMany({ where: { exerciseId, kind: "IMAGE", provider: { not: "vicgym-local" } } });
+}
+
 for (const media of localExerciseMediaSeed) {
   const exerciseId = exerciseIds.get(media.exerciseSlug);
   if (!exerciseId) throw new Error(`Missing exercise for local media: ${media.exerciseSlug}`);

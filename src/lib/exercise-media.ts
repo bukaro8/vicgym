@@ -5,6 +5,7 @@ export type ExerciseDisplayMedia = {
   role: string;
   kind?: string;
   sourceFilename?: string;
+  provider?: string;
   sourceUrl?: string | null;
 };
 
@@ -19,7 +20,11 @@ type ExerciseMediaSource = {
  * always wins so a future real movement image can be added without UI changes.
  */
 export function getExercisePrimaryMedia(exercise: ExerciseMediaSource): ExerciseDisplayMedia | null {
-  const exerciseImage = exercise.media?.find((media) => media.role === "PRIMARY" && media.kind !== "VIDEO");
+  const exerciseImages = exercise.media?.filter((media) => media.role === "PRIMARY" && media.kind !== "VIDEO") ?? [];
+  // Local VicGym illustrations are authoritative when a catalogue entry has
+  // also accumulated older provider media rows. This keeps media replacement
+  // safe even before a production seed cleanup has run.
+  const exerciseImage = exerciseImages.find((media) => media.provider === "vicgym-local") ?? exerciseImages[0];
   if (exerciseImage) return exerciseImage;
   return exercise.equipment?.type === "MACHINE"
     ? exercise.equipment.media.find((media) => media.role === "PRIMARY") ?? null
