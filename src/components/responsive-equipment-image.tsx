@@ -21,7 +21,7 @@ export function ResponsiveEquipmentImage({ image, className, sizes = "(max-width
   const isLocalIllustration = image.provider === "vicgym-local";
 
   return (
-    <picture className={cn("block", isLocalIllustration && "bg-muted p-3 sm:p-5")}>
+    <picture className={cn("block", isLocalIllustration && "bg-white p-3 sm:p-5")}>
       <source type="image/avif" srcSet={`${stem}-640.avif 640w, ${stem}-1280.avif 1280w`} sizes={sizes} />
       <source type="image/webp" srcSet={`${stem}-640.webp 640w, ${stem}-1280.webp 1280w`} sizes={sizes} />
       <img src={`${stem}-1280.webp`} alt={image.altText} width={1280} height={960} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} decoding="async" className={cn("aspect-[4/3] h-full w-full", isLocalIllustration ? "object-contain object-center" : "object-cover", className, isLocalIllustration && "object-contain object-center")} />
