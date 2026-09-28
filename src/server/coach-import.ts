@@ -39,13 +39,6 @@ const changeSchema = z.object({
   if (value.load !== undefined && value.weightKg !== undefined) context.addIssue({ code: "custom", message: "Use load or weightKg, never both." });
 });
 
-const patchSchema = z.object({
-  schemaVersion: z.literal(1),
-  program: slugSchema,
-  baseVersion: z.number().int().positive(),
-  changes: z.array(changeSchema).min(1).max(100),
-}).strict();
-
 const creationDaySchema = z.object({
   slug: slugSchema,
   name: z.string().trim().min(1).max(120),
@@ -61,6 +54,14 @@ const creationDaySchema = z.object({
     positions.add(exercise.position);
   });
 });
+
+const addDaySchema = z.object({ action: z.literal("add-day"), day: creationDaySchema }).strict();
+const patchSchema = z.object({
+  schemaVersion: z.literal(1),
+  program: slugSchema,
+  baseVersion: z.number().int().positive(),
+  changes: z.array(z.union([changeSchema, addDaySchema])).min(1).max(100),
+}).strict();
 
 const creationSchema = z.object({
   schemaVersion: z.literal(2),
@@ -107,7 +108,7 @@ type ResolvedCreation = { kind: "create"; input: CoachCreationImport; days: Plan
 type ImportOptions = { personalisedRequestId?: string };
 
 function error(message: string): never { throw new Error(message); }
-function hasConfiguration(change: CoachPatchImport["changes"][number]) { return change.sets !== undefined || change.targetReps !== undefined || change.load !== undefined || change.weightKg !== undefined || change.restSeconds !== undefined || change.autoRest !== undefined || change.position !== undefined; }
+function hasConfiguration(change: z.infer<typeof changeSchema>) { return change.sets !== undefined || change.targetReps !== undefined || change.load !== undefined || change.weightKg !== undefined || change.restSeconds !== undefined || change.autoRest !== undefined || change.position !== undefined; }
 function buildPreview(program: string, programName: string, kind: "patch" | "create", baseVersion: number | null, nextVersion: number, days: PlannedDay[], items: PreviewItem[]): ImportPreview {
   return { kind, program, programName, baseVersion, nextVersion, days: days.map((day) => ({ slug: day.slug, name: day.name, rotationOrder: day.rotationOrder, exerciseCount: day.exercises.length, exercises: day.exercises.map((exercise) => ({ slug: exercise.slug, name: exercise.name, position: exercise.position, sets: exercise.sets, targetReps: exercise.targetReps, plannedLoad: plannedLoadText(exercise), restSeconds: exercise.restSeconds, autoRest: exercise.autoRest })) })), changes: items, changed: items.filter((item) => item.kind === "changed"), added: items.filter((item) => item.kind === "added"), removed: items.filter((item) => item.kind === "removed"), reordered: items.filter((item) => item.kind === "reordered") };
 }
@@ -120,6 +121,12 @@ export function parseCoachImport(raw: string): CoachImport {
   if (parsed.data.schemaVersion === 1) {
     const seen = new Set<string>();
     for (const item of parsed.data.changes) {
+      if (item.action === "add-day") {
+        for (const other of parsed.data.changes) {
+          if (other.action !== "add-day" && other.day === item.day.slug) error(`Configure new day ${item.day.slug} inside add-day only.`);
+        }
+        continue;
+      }
       const key = `${item.day}:${item.exercise}`;
       if (seen.has(key)) error(`Duplicate or conflicting change for ${item.exercise} in ${item.day}.`);
       seen.add(key);
@@ -209,8 +216,22 @@ async function resolvePatch(db: Db, userId: string, input: CoachPatchImport): Pr
       position: item.position,
     };
   }) }]));
-  const exercises = await catalogueBySlug(db, input.changes.map((change) => change.exercise));
+  const exercises = await catalogueBySlug(db, input.changes.flatMap((change) => change.action === "add-day" ? change.day.exercises.map((item) => item.exercise) : [change.exercise]));
+  const addedDays: PreviewItem[] = [];
   for (const change of input.changes) {
+    if (change.action === "add-day") {
+      const day = change.day;
+      if (days.has(day.slug)) error(`Workout day already exists: ${day.slug}.`);
+      if ([...days.values()].some((existing) => existing.rotationOrder === day.rotationOrder)) error(`Rotation order ${day.rotationOrder} is already used. Choose an unused rotation order.`);
+      if (days.size >= 20) error("A programme may contain at most 20 workout days.");
+      if (!day.exercises.length) error("A new workout day must contain at least one exercise.");
+      days.set(day.slug, { slug: day.slug, name: day.name, rotationOrder: day.rotationOrder, exercises: day.exercises.map((item) => {
+        const exercise = exercises.get(item.exercise)!;
+        return { exerciseId: exercise.id, slug: exercise.slug, name: exercise.name, sets: item.sets, targetReps: item.targetReps, ...validateImportedLoad(item, exercise), restSeconds: item.restSeconds, autoRest: item.autoRest, position: item.position };
+      }) });
+      addedDays.push({ kind: "added", day: day.name, exercise: "New workout day", details: [`Create ${day.name} [${day.slug}] at rotation ${day.rotationOrder}, with ${day.exercises.length} exercises.`] });
+      continue;
+    }
     const day = days.get(change.day);
     if (!day) error(`Unknown workout day: ${change.day}.`);
     const exercise = exercises.get(change.exercise)!;
@@ -239,10 +260,10 @@ async function resolvePatch(db: Db, userId: string, input: CoachPatchImport): Pr
     day.exercises.sort((a, b) => a.position - b.position);
   }
   const before = new Map(program.activeVersion.days.flatMap((day) => day.workoutExercises.map((item) => [`${day.slug}:${item.exercise.slug}`, item])));
-  const items: PreviewItem[] = [];
+  const items: PreviewItem[] = [...addedDays];
   for (const day of days.values()) for (const finalExercise of day.exercises) {
     const previous = before.get(`${day.slug}:${finalExercise.slug}`);
-    if (!previous) { items.push({ kind: "added", day: day.name, exercise: finalExercise.name, details: [`Added to ${day.name} at position ${finalExercise.position}.`] }); continue; }
+    if (!previous) { items.push({ kind: "added", day: day.name, exercise: finalExercise.name, details: [`Added to ${day.name} at position ${finalExercise.position}: ${finalExercise.sets} sets × ${finalExercise.targetReps} reps, ${plannedLoadText(finalExercise)}, ${finalExercise.restSeconds} sec rest, auto rest ${finalExercise.autoRest ? "on" : "off"}.`] }); continue; }
     const changes: string[] = [];
     const priorHasTyped = previous.loadTrackingTypeSnapshot !== null && previous.loadEntryModeSnapshot !== null;
     const priorLoad = priorHasTyped

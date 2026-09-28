@@ -1,16 +1,56 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { applyCoachImportInTransaction, parseCoachImport, validateImportedLoad } from "@/server/coach-import";
+import { applyCoachImportInTransaction, previewCoachImport, parseCoachImport, validateImportedLoad } from "@/server/coach-import";
 
 const valid = JSON.stringify({ schemaVersion: 1, program: "demo-four-day", baseVersion: 1, changes: [{ day: "demo-upper-a", exercise: "chest-press", sets: 3 }] });
 const creation = JSON.stringify({ schemaVersion: 2, operation: "create-programme", program: { slug: "small-gym", name: "Small Gym Programme" }, days: [{ slug: "upper-a", name: "Upper A", rotationOrder: 1, exercises: [{ exercise: "chest-press", sets: 3, targetReps: 12, load: { type: "machineLevel", value: 8 }, restSeconds: 120, autoRest: true, position: 1 }] }] });
 
 describe("coach JSON contract", () => {
+  const newDay = { slug: "extra-day", name: "Extra Day", rotationOrder: 2, exercises: [{ exercise: "push-up", sets: 3, targetReps: 12, load: null, restSeconds: 60, autoRest: true, position: 1 }] };
+  function dayPatch(day = newDay, baseVersion = 1) { return JSON.stringify({ schemaVersion: 1, program: "small-gym", baseVersion, changes: [{ action: "add-day", day }] }); }
+  function patchDb() {
+    const program = { id: "program-1", slug: "small-gym", name: "Small Gym", status: "ACTIVE", activeVersion: { versionNumber: 1, days: [{ slug: "upper-a", name: "Upper A", rotationOrder: 1, workoutExercises: [] }] } };
+    const tx = {
+      workoutProgram: { findFirst: vi.fn().mockResolvedValue(program), create: vi.fn(), updateMany: vi.fn(), update: vi.fn() },
+      appSettings: { findUnique: vi.fn().mockResolvedValue({ activeProgram: program }), upsert: vi.fn() },
+      programVersion: { create: vi.fn().mockResolvedValue({ id: "version-2", versionNumber: 2 }), findFirst: vi.fn().mockResolvedValue({ id: "version-2" }) },
+      exercise: { findMany: vi.fn().mockResolvedValue([{ id: "push-up-id", slug: "push-up", name: "Push-up", equipmentId: null, loadTrackingType: "BODYWEIGHT", loadEntryMode: "BODYWEIGHT" }]) },
+    };
+    return { tx, program };
+  }
+  it("previews a new day without writes and applies version 2 to the same programme", async () => {
+    const { tx, program } = patchDb();
+    const original = structuredClone(program);
+    const preview = await previewCoachImport(tx as never, "owner-1", dayPatch());
+    expect(preview.days.map((day) => day.slug)).toEqual(["upper-a", "extra-day"]);
+    expect(preview.added).toEqual(expect.arrayContaining([expect.objectContaining({ exercise: "New workout day" })]));
+    expect(tx.programVersion.create).not.toHaveBeenCalled();
+    await applyCoachImportInTransaction(tx as never, "owner-1", dayPatch());
+    expect(tx.programVersion.create).toHaveBeenCalledWith({ data: expect.objectContaining({ programId: "program-1", versionNumber: 2, days: { create: expect.arrayContaining([expect.objectContaining({ slug: "extra-day", workoutExercises: { create: [expect.objectContaining({ exerciseId: "push-up-id", restSeconds: 60 })] } })]) } }) });
+    expect(tx.workoutProgram.create).not.toHaveBeenCalled();
+    expect(program).toEqual(original);
+    expect(tx.appSettings.upsert).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: "owner-1" } }));
+  });
+  it("rejects existing slugs, occupied rotations, empty days and stale patches", async () => {
+    const { tx } = patchDb();
+    for (const [day, message] of [[{ ...newDay, slug: "upper-a" }, "already exists"], [{ ...newDay, rotationOrder: 1 }, "already used"], [{ ...newDay, exercises: [] }, "at least one exercise"]] as const) {
+      await expect(previewCoachImport(tx as never, "owner-1", dayPatch(day as typeof newDay))).rejects.toThrow(message);
+    }
+    await expect(previewCoachImport(tx as never, "owner-1", dayPatch(newDay, 2))).rejects.toThrow("current programme is version 1");
+  });
+  it("rejects unknown catalogue exercises and incompatible loads in new days", async () => {
+    const { tx } = patchDb();
+    tx.exercise.findMany.mockResolvedValueOnce([]);
+    await expect(previewCoachImport(tx as never, "owner-1", dayPatch())).rejects.toThrow("Unknown or unavailable");
+    const raw = JSON.parse(dayPatch());
+    raw.changes[0].day.exercises[0].load = { type: "kg", value: 5 };
+    await expect(previewCoachImport(tx as never, "owner-1", JSON.stringify(raw))).rejects.toThrow("requires no external load");
+  });
   it("accepts a versioned upsert with explicit changes", () => expect(parseCoachImport(valid).program).toBe("demo-four-day"));
   it("preserves a rest-only update exactly during parsing", () => {
     const parsed = parseCoachImport(JSON.stringify({ schemaVersion: 1, program: "small-gym", baseVersion: 1, changes: [{ action: "upsert", day: "upper-b", exercise: "biceps-curl", restSeconds: 60 }] }));
     expect(parsed.schemaVersion).toBe(1);
-    if (parsed.schemaVersion === 1) expect(parsed.changes[0].restSeconds).toBe(60);
+    if (parsed.schemaVersion === 1 && parsed.changes[0].action !== "add-day") expect(parsed.changes[0].restSeconds).toBe(60);
   });
   it("rejects invalid JSON", () => expect(() => parseCoachImport("{" )).toThrow("Invalid JSON"));
   it("rejects duplicate changes", () => expect(() => parseCoachImport(JSON.stringify({ schemaVersion: 1, program: "demo-four-day", baseVersion: 1, changes: [{ day: "demo-upper-a", exercise: "chest-press", sets: 3 }, { day: "demo-upper-a", exercise: "chest-press", restSeconds: 90 }] }))).toThrow("Duplicate"));
