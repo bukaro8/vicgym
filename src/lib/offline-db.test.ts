@@ -73,6 +73,14 @@ describe("offline database", () => {
     expect(await getOfflineOutbox()).toEqual([]);
   });
 
+  it.each([ ["incline-bench-pulls", 75], ["seated-incline-dumbbell-biceps-curl", 60], ["incline-bench-reverse-fly", 60] ] as const)("preserves %s defaults in local state and sync payload", async (slug, restSeconds) => {
+    await putOfflineWorkout(workout);
+    const created = await addExerciseLocally(workout.id, { exerciseId: slug, slug, name: slug, defaultTargetReps: 12, loadTrackingType: "KILOGRAM", loadEntryMode: "PER_DUMBBELL", equipmentName: "Dumbbells", imagePath: `/media/exercises/${slug}/${slug}-1280.webp` });
+    expect(created).toMatchObject({ plannedSets: 3, targetReps: 12, restSeconds, autoRest: true, loadTrackingType: "KILOGRAM", loadEntryMode: "PER_DUMBBELL" });
+    expect(created.sets).toHaveLength(3);
+    expect((await getOfflineOutbox())[0]).toMatchObject({ type: "ADD_EXERCISE", payload: { restSeconds, plannedSets: 3, autoRest: true } });
+  });
+
   it("clears the workout, timer, and outbox on explicit private-data reset", async () => {
     await putOfflineWorkout(workout); await putOfflineTimer({ id: "timer-1", setLogId: "set-1", status: "PAUSED", configuredSeconds: 120, startedAt: workout.startedAt, endsAt: null, pausedAt: workout.startedAt, pausedRemainingMs: 60_125, exerciseName: "Chest Press", completedSetNumber: 1, nextSetId: null, updatedAt: workout.updatedAt }); await queueOfflineMutation({ type: "UPSERT_SET", sessionId: workout.id, targetId: "set-1", payload: {} });
     await clearPrivateOfflineData();

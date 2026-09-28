@@ -326,7 +326,24 @@ Historical `weightKg` values are preserved unchanged. Old machine records are no
 
 ## Exercise catalogue
 
-The shared seed now contains **42 exercises**. The [dumbbell poster catalogue review](docs/dumbbell-poster-catalogue.md) lists the retained additions, exact slugs, load semantics, muscles, API or generated-media matches, existing-name aliases, and deferred movements. It also records the seven reviewed poster entries removed from the catalogue. The tables below describe the original catalogue; the review supplies the additions.
+The shared seed now contains **45 exercises**. The [dumbbell poster catalogue review](docs/dumbbell-poster-catalogue.md) lists the retained additions, exact slugs, load semantics, muscles, API or generated-media matches, existing-name aliases, and deferred movements. It also records the seven reviewed poster entries removed from the catalogue. The tables below describe the original catalogue; the review supplies the additions.
+
+Three incline-bench movements are included in the Dumbbells category:
+
+| Slug | Primary muscle | Secondary muscles | Default rest |
+| --- | --- | --- | --- |
+| `incline-bench-pulls` | Upper back | Lats, rear deltoids, biceps | 75 seconds |
+| `seated-incline-dumbbell-biceps-curl` | Biceps | Forearms | 60 seconds |
+| `incline-bench-reverse-fly` | Rear deltoids | Upper back | 60 seconds |
+
+All three require dumbbells and an incline bench, use kilograms per dumbbell,
+and default to 3 sets, 12 reps and auto-rest for extra exercises. Programme JSON
+still supplies explicit sets, targetReps, restSeconds and autoRest as usual;
+use these defaults when composing a new programme. Each has a local PRIMARY
+illustration at `gym-pictures/<slug>.png` and four bundled 640/1280 WebP/AVIF
+derivatives at `public/media/exercises/<slug>/`. Run the existing idempotent
+`npm run db:seed` after deployment to add these entries without deleting user
+data. No migration or database reset is required.
 
 The seed currently defines 25 active exercises. The exact slugs below are the identifiers accepted by programme imports.
 
@@ -584,7 +601,7 @@ The seed is idempotent. It creates or updates:
 
 - 14 verified equipment records and supplied-photo metadata;
 - 18 muscles;
-- 42 active exercises and muscle relationships;
+- 45 active exercises and muscle relationships;
 - approved exercise-specific image/video metadata.
 
 It does not create users, settings, programmes, workout history, or authentication sessions, and it does not call ExerciseDB at runtime. A user's settings row is created with their account after they consume their first magic link.

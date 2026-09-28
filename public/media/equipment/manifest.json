@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T22:50:47.978Z",
+  "generatedAt": "2026-09-28T21:30:11.205Z",
   "items": [
     {
       "equipmentSlug": "triceps-press",
@@ -287,6 +287,42 @@
         "/media/equipment/studio-accessories/20260830_142012-640.avif",
         "/media/equipment/studio-accessories/20260830_142012-1280.webp",
         "/media/equipment/studio-accessories/20260830_142012-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:incline-bench-pulls",
+      "role": "PRIMARY",
+      "originalFilename": "incline-bench-pulls.png",
+      "originalSha256": "a82efd72f38b234d14177bcfd12f2d7b0dd43e1bf43310e32b3aebd1d8e0c0c7",
+      "derivatives": [
+        "/media/exercises/incline-bench-pulls/incline-bench-pulls-640.webp",
+        "/media/exercises/incline-bench-pulls/incline-bench-pulls-640.avif",
+        "/media/exercises/incline-bench-pulls/incline-bench-pulls-1280.webp",
+        "/media/exercises/incline-bench-pulls/incline-bench-pulls-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:seated-incline-dumbbell-biceps-curl",
+      "role": "PRIMARY",
+      "originalFilename": "seated-incline-dumbbell-biceps-curl.png",
+      "originalSha256": "cb57fb5f4defe377b8ae9229a90c386e98f0579ff3e37c964d4985dd094cc4da",
+      "derivatives": [
+        "/media/exercises/seated-incline-dumbbell-biceps-curl/seated-incline-dumbbell-biceps-curl-640.webp",
+        "/media/exercises/seated-incline-dumbbell-biceps-curl/seated-incline-dumbbell-biceps-curl-640.avif",
+        "/media/exercises/seated-incline-dumbbell-biceps-curl/seated-incline-dumbbell-biceps-curl-1280.webp",
+        "/media/exercises/seated-incline-dumbbell-biceps-curl/seated-incline-dumbbell-biceps-curl-1280.avif"
+      ]
+    },
+    {
+      "equipmentSlug": "exercise:incline-bench-reverse-fly",
+      "role": "PRIMARY",
+      "originalFilename": "incline-bench-reverse-fly.png",
+      "originalSha256": "b406bad40113e8e0b6b2bb1c4459d3b7477c19f91e63cff2c6d9a0f782f01d1e",
+      "derivatives": [
+        "/media/exercises/incline-bench-reverse-fly/incline-bench-reverse-fly-640.webp",
+        "/media/exercises/incline-bench-reverse-fly/incline-bench-reverse-fly-640.avif",
+        "/media/exercises/incline-bench-reverse-fly/incline-bench-reverse-fly-1280.webp",
+        "/media/exercises/incline-bench-reverse-fly/incline-bench-reverse-fly-1280.avif"
       ]
     },
     {

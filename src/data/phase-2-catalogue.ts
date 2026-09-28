@@ -47,6 +47,9 @@ export type ExerciseDbMediaSeed = {
 };
 
 export const localExerciseMediaSeed: LocalExerciseMediaSeed[] = [
+  { exerciseSlug: "incline-bench-pulls", filename: "incline-bench-pulls.png", alt: "Chest-supported dumbbell pulls on an incline bench" },
+  { exerciseSlug: "seated-incline-dumbbell-biceps-curl", filename: "seated-incline-dumbbell-biceps-curl.png", alt: "Seated incline dumbbell biceps curl" },
+  { exerciseSlug: "incline-bench-reverse-fly", filename: "incline-bench-reverse-fly.png", alt: "Chest-supported dumbbell reverse fly on an incline bench" },
   { exerciseSlug: "dumbbell-chest-press", filename: "dumbbell-chest-press.png", alt: "Person performing a dumbbell chest press" },
   { exerciseSlug: "dumbbell-biceps-curl", filename: "Dumbbell Biceps Curl.png", alt: "Person performing a standing dumbbell biceps curl" },
   { exerciseSlug: "glute-bridge", filename: "Glute Bridge.png", alt: "Person performing a floor glute bridge" },
@@ -249,6 +252,7 @@ export const muscleSeed = [
 ] as const;
 
 export type ExerciseSeed = {
+  defaultRestSeconds?: number;
   slug: string;
   name: string;
   equipmentSlug: string | null;
@@ -265,6 +269,9 @@ const bodyweight = "BODYWEIGHT" as const;
 const repsOnly = "REPS_ONLY" as const;
 
 export const exerciseSeed: ExerciseSeed[] = [
+  { slug: "incline-bench-pulls", name: "Incline Bench Pulls", equipmentSlug: "dumbbells", primaryMuscle: "upper-back", secondaryMuscles: ["lats", "posterior-deltoids", "biceps"], repMode: "TOTAL", loadEntryMode: "PER_DUMBBELL", loadTrackingType: kilogram, defaultRestSeconds: 75 },
+  { slug: "seated-incline-dumbbell-biceps-curl", name: "Seated Incline Dumbbell Biceps Curl", equipmentSlug: "dumbbells", primaryMuscle: "biceps", secondaryMuscles: ["forearms"], repMode: "TOTAL", loadEntryMode: "PER_DUMBBELL", loadTrackingType: kilogram, defaultRestSeconds: 60 },
+  { slug: "incline-bench-reverse-fly", name: "Incline Bench Reverse Fly", equipmentSlug: "dumbbells", primaryMuscle: "posterior-deltoids", secondaryMuscles: ["upper-back"], repMode: "TOTAL", loadEntryMode: "PER_DUMBBELL", loadTrackingType: kilogram, defaultRestSeconds: 60 },
   ...posterExerciseSeed,
   { slug: "triceps-press", name: "Triceps Press", equipmentSlug: "triceps-press", primaryMuscle: "triceps", secondaryMuscles: [], repMode: "TOTAL", loadEntryMode: "STACK_TOTAL", loadTrackingType: machineLevel },
   { slug: "chest-press", name: "Chest Press", equipmentSlug: "chest-press", primaryMuscle: "chest", secondaryMuscles: ["triceps", "anterior-deltoids"], repMode: "TOTAL", loadEntryMode: "STACK_TOTAL", loadTrackingType: machineLevel },

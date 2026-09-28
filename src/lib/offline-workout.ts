@@ -1,4 +1,5 @@
 import { adjustedRemainingMilliseconds, remainingMilliseconds } from "@/lib/rest-timer";
+import { exerciseSeed } from "@/data/phase-2-catalogue";
 import { clearOfflineTimer, findOfflineWorkoutSessionForSet, getOfflineTimer, putOfflineTimer, queueOfflineMutation, updateOfflineWorkout } from "@/lib/offline-db";
 import { cardioDurationSeconds } from "@/lib/cardio";
 import type { OfflineCatalogueExercise, OfflineExercise, OfflineSet, OfflineTimer } from "@/lib/offline-types";
@@ -44,7 +45,7 @@ export async function addExerciseLocally(sessionId: string, catalogueExercise: O
   const created: OfflineExercise = {
     id, exerciseId: catalogueExercise.exerciseId, slug: catalogueExercise.slug, name: catalogueExercise.name,
     position, plannedSets: AD_HOC_DEFAULT_SETS, targetReps: catalogueExercise.defaultTargetReps,
-    restSeconds: AD_HOC_DEFAULT_REST_SECONDS, autoRest: true, isAdHoc: true,
+    restSeconds: exerciseSeed.find((item) => item.slug === catalogueExercise.slug)?.defaultRestSeconds ?? AD_HOC_DEFAULT_REST_SECONDS, autoRest: true, isAdHoc: true,
     loadTrackingType: catalogueExercise.loadTrackingType, loadEntryMode: catalogueExercise.loadEntryMode,
     equipmentName: catalogueExercise.equipmentName, imagePath: catalogueExercise.imagePath, sets,
   };
