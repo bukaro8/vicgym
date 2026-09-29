@@ -5,6 +5,48 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ReviewWorkflow } from "@/components/review-workflow";
 
 describe("ReviewWorkflow", () => {
+  it("revalidates selected operations and applies only the reviewed subset", async () => {
+    const user = userEvent.setup();
+    const changes = [{ action: "upsert", day: "upper-a", exercise: "chest-press", restSeconds: 60 }, { action: "remove", day: "upper-a", exercise: "biceps-curl" }];
+    const input = { schemaVersion: 1, program: "small-gym", baseVersion: 1, changes };
+    const preview = { kind: "patch", program: "small-gym", programName: "Small Gym", baseVersion: 1, nextVersion: 2, days: [], changes: [], changed: [], added: [], removed: [], reordered: [] };
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ preview, versionNumber: 2 }) });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<ReviewWorkflow initialReview={{ weekStart: "2026-08-24", weekEnd: "2026-08-31", report: "Report", isEmpty: false, completedSessions: 1, workingSets: 3, programSlug: "small-gym", versionNumber: 1 }} />);
+    fireEvent.change(screen.getByLabelText("Coach JSON changes"), { target: { value: JSON.stringify(input) } });
+    await user.click(screen.getByRole("button", { name: "Validate changes" }));
+    const remove = await screen.findByRole("checkbox", { name: /Remove: biceps-curl/ });
+    const confirm = screen.getByRole("checkbox", { name: /I have reviewed/ });
+    await user.click(confirm);
+    await user.click(remove);
+    expect(confirm).not.toBeChecked();
+    expect(screen.getByRole("button", { name: "Apply changes and activate" })).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Update preview" }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    const subset = JSON.parse(JSON.parse(fetchMock.mock.calls[1][1].body).json);
+    expect(subset).toEqual({ ...input, changes: [changes[0]] });
+    await user.click(await screen.findByRole("checkbox", { name: /I have reviewed/ }));
+    await user.click(screen.getByRole("button", { name: "Apply changes and activate" }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    expect(JSON.parse(fetchMock.mock.calls[2][1].body).json).toBe(JSON.parse(fetchMock.mock.calls[1][1].body).json);
+  });
+
+  it("keeps apply blocked when subset validation fails and when everything is deselected", async () => {
+    const user = userEvent.setup();
+    const input = { schemaVersion: 1, program: "small-gym", baseVersion: 1, changes: [{ action: "add-day", day: { slug: "extra", name: "Extra", rotationOrder: 2, exercises: [] } }, { day: "upper-a", exercise: "chest-press", position: 2 }] };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce({ ok: true, json: async () => ({ preview: { kind: "patch", baseVersion: 1, nextVersion: 2, days: [], changed: [], added: [], removed: [], reordered: [] } }) }).mockResolvedValue({ ok: false, json: async () => ({ error: "Duplicate final position" }) }));
+    render(<ReviewWorkflow initialReview={{ weekStart: "2026-08-24", weekEnd: "2026-08-31", report: "Report", isEmpty: true, completedSessions: 0, workingSets: 0, programSlug: "small-gym", versionNumber: 1 }} />);
+    fireEvent.change(screen.getByLabelText("Coach JSON changes"), { target: { value: JSON.stringify(input) } });
+    await user.click(screen.getByRole("button", { name: "Validate changes" }));
+    await user.click(await screen.findByRole("checkbox", { name: /Add day: Extra/ }));
+    await user.click(screen.getByRole("button", { name: "Update preview" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Duplicate final position");
+    expect(screen.queryByRole("button", { name: "Apply changes and activate" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("checkbox", { name: /Update: chest-press/ }));
+    expect(screen.getByRole("button", { name: "Update preview" })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Coach JSON changes"), { target: { value: "{}" } });
+    expect(screen.queryByText("Choose changes to include")).not.toBeInTheDocument();
+  });
   afterEach(() => vi.restoreAllMocks());
   it("copies exactly the report displayed in the preview", async () => {
     const user = userEvent.setup();
