@@ -80,6 +80,10 @@ export async function queueOfflineMutation(input: Omit<OfflineMutation, "id" | "
 }
 
 export async function getOfflineOutbox(): Promise<OfflineMutation[]> { return (await getAll<OfflineMutation>(OUTBOX)).sort((a, b) => a.sequence - b.sequence); }
+/** Failed validation mutations stay visible for recovery, but must not replay forever. */
+export async function getPendingOfflineOutbox(): Promise<OfflineMutation[]> {
+  return (await getOfflineOutbox()).filter((mutation) => !mutation.lastError);
+}
 export async function removeOfflineMutations(ids: string[]): Promise<void> { if (!ids.length) return; const db = await openOfflineDb(); const transaction = db.transaction(OUTBOX, "readwrite"); const store = transaction.objectStore(OUTBOX); ids.forEach((id) => store.delete(id)); await transactionDone(transaction); db.close(); window.dispatchEvent(new Event("vicgym:outbox-changed")); }
 export async function markOfflineMutationFailed(id: string, message: string): Promise<void> { const mutation = await getValue<OfflineMutation>(OUTBOX, id); if (!mutation) return; await putValue(OUTBOX, { ...mutation, attempts: mutation.attempts + 1, lastError: message }); window.dispatchEvent(new Event("vicgym:outbox-changed")); }
 

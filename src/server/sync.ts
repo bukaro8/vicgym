@@ -154,7 +154,9 @@ export async function replayOfflineMutations(prisma: PrismaClient, userId: strin
       const message = error instanceof Error ? error.message : "Mutation failed";
       console.error("Offline mutation replay failed", { mutationId: mutation.id, mutationType: mutation.type, sequence: mutation.sequence, sessionId: mutation.sessionId, targetId: mutation.targetId, errorName: error instanceof Error ? error.name : "UnknownError", error: message });
       results.push({ id: mutation.id, type: mutation.type, sequence: mutation.sequence, status: "failed", error: message });
-      break;
+      // Keep later independent changes moving; the client retains this failed
+      // mutation for attention instead of retrying it forever.
+      continue;
     }
   }
   return results;

@@ -50,6 +50,13 @@ describe("offline database", () => {
     ]);
   });
 
+  it("rejects a fractional machine selector level before it enters the sync queue", async () => {
+    const machineWorkout: OfflineWorkout = { ...workout, exercises: workout.exercises.map((exercise) => ({ ...exercise, loadTrackingType: "MACHINE_LEVEL", loadEntryMode: "STACK_TOTAL", sets: exercise.sets.map((set) => ({ ...set, loadTrackingType: "MACHINE_LEVEL", loadEntryMode: "STACK_TOTAL", loadValue: null, weightKg: null })) })) };
+    await putOfflineWorkout(machineWorkout);
+    await expect(saveSetLocally({ sessionId: workout.id, exerciseSessionId: "exercise-session-1", setId: "set-1", actualReps: 12, loadValue: 8.5, completed: true })).rejects.toThrow("Machine level must be a whole number");
+    expect(await getOfflineOutbox()).toEqual([]);
+  });
+
   it("stores cardio as a timestamp counter and queues start then stop in order", async () => {
     await putOfflineWorkout({ ...workout, cardioPlanned: true, cardioStartedAt: null, cardioStoppedAt: null, cardioDurationSeconds: 0 });
     await startCardioLocally(workout.id, new Date("2026-09-05T09:00:00.000Z"));
