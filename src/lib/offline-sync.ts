@@ -20,7 +20,7 @@ export function syncOfflineMutations(): Promise<SyncState> {
         }
         const response = await fetch("/api/sync", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ schemaVersion: 1, mutations }) });
         const body = await response.text();
-        let data: { error?: string; results?: Array<{ id: string; type?: string; sequence?: number; status: "applied" | "duplicate" | "failed"; error?: string }> };
+        let data: { error?: string; results?: Array<{ id: string; type?: string; sequence?: number; status: "applied" | "duplicate" | "acknowledged" | "failed"; error?: string }> };
         try { data = JSON.parse(body) as typeof data; } catch { data = {}; }
         if (!data.results?.length) throw new Error(`Sync request failed (${response.status}): ${data.error ?? "the server returned no mutation acknowledgements"}`);
         const sent = new Set(mutations.map((mutation) => mutation.id));

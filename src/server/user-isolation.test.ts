@@ -66,13 +66,17 @@ describe("personal data isolation", () => {
     const create = vi.fn();
     const transaction = {
       clientMutation: { findUnique: vi.fn().mockResolvedValue(null), create: vi.fn() },
+      workoutSession: { findFirst: vi.fn().mockResolvedValue({ status: "IN_PROGRESS" }) },
       exerciseSession: { findFirst: vi.fn().mockResolvedValue({ id: mutation.payload.exerciseSessionId, loadTrackingTypeSnapshot: "KILOGRAM" }) },
       setLog: { findUnique: vi.fn().mockResolvedValue({ exerciseSessionId: "another-users-exercise-session" }), create },
     };
     const prisma = { $transaction: (callback: (tx: typeof transaction) => unknown) => callback(transaction) };
     const result = await replayOfflineMutations(prisma as never, "user-a", [mutation]);
     expect(result[0]).toMatchObject({ status: "failed", error: "Set identifier belongs to another exercise session" });
-    expect(transaction.exerciseSession.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ workoutSession: { userId: "user-a", status: "IN_PROGRESS" } }) }));
+    expect(transaction.workoutSession.findFirst).toHaveBeenCalledWith({ where: { id: mutation.sessionId, userId: "user-a" }, select: { status: true } });
+    expect(transaction.exerciseSession.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ workoutSessionId: mutation.sessionId }),
+    }));
     expect(create).not.toHaveBeenCalled();
   });
 });

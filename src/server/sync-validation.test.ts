@@ -65,3 +65,25 @@ describe("ad-hoc exercise replay", () => {
     expect(create).not.toHaveBeenCalled();
   });
 });
+
+describe("stale offline mutation recovery", () => {
+  it("acknowledges an invalid fractional machine-level update so it cannot block workout completion", async () => {
+    const mutation = { id: "10000000-0000-4000-8000-000000000010", sequence: 32, type: "UPSERT_SET" as const, sessionId: "20000000-0000-4000-8000-000000000010", targetId: "30000000-0000-4000-8000-000000000010", createdAt: "2026-09-30T18:00:00.000Z", attempts: 0, lastError: null, payload: { actualReps: 12, loadValue: 8.5, loadTrackingType: "MACHINE_LEVEL", completedAt: "2026-09-30T18:00:00.000Z", notes: null } };
+    const failedRecord = vi.fn().mockResolvedValue({});
+    const transaction = { clientMutation: { findUnique: vi.fn().mockResolvedValue(null), create: failedRecord }, setLog: { findFirst: vi.fn().mockResolvedValue({ id: mutation.targetId, exerciseSession: { loadTrackingTypeSnapshot: "MACHINE_LEVEL", workoutSession: { status: "IN_PROGRESS" } } }) } };
+    const prisma = { $transaction: (callback: (tx: typeof transaction) => unknown) => callback(transaction) };
+
+    await expect(replayOfflineMutations(prisma as never, "user-1", [mutation])).resolves.toEqual([expect.objectContaining({ status: "acknowledged", error: "Machine level must be an integer" })]);
+    expect(failedRecord).toHaveBeenCalledWith({ data: expect.objectContaining({ status: "FAILED", errorMessage: "Machine level must be an integer" }) });
+  });
+
+  it("acknowledges a late extra-set mutation after a workout is completed", async () => {
+    const mutation = { id: "10000000-0000-4000-8000-000000000011", sequence: 53, type: "ADD_SET" as const, sessionId: "20000000-0000-4000-8000-000000000011", targetId: "30000000-0000-4000-8000-000000000011", createdAt: "2026-09-30T18:00:00.000Z", attempts: 0, lastError: null, payload: { exerciseSessionId: "40000000-0000-4000-8000-000000000011", setNumber: 4, targetReps: 12, actualReps: 12, loadValue: null, loadTrackingType: "MACHINE_LEVEL" } };
+    const failedRecord = vi.fn().mockResolvedValue({});
+    const transaction = { clientMutation: { findUnique: vi.fn().mockResolvedValue(null), create: failedRecord }, workoutSession: { findFirst: vi.fn().mockResolvedValue({ status: "COMPLETED" }) } };
+    const prisma = { $transaction: (callback: (tx: typeof transaction) => unknown) => callback(transaction) };
+
+    await expect(replayOfflineMutations(prisma as never, "user-1", [mutation])).resolves.toEqual([expect.objectContaining({ status: "acknowledged", error: "Workout was already completed before this extra set was saved" })]);
+    expect(failedRecord).toHaveBeenCalledWith({ data: expect.objectContaining({ status: "FAILED" }) });
+  });
+});
