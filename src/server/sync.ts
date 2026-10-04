@@ -3,8 +3,9 @@ import { createHash } from "node:crypto";
 import { Prisma, type PrismaClient } from "@/generated/prisma/client";
 import { cardioDurationSeconds } from "@/lib/cardio";
 import type { OfflineMutation } from "@/lib/offline-types";
+import { completeWorkoutSnapshot, CompletionValidationError } from "@/server/complete-workout";
 
-export type SyncResult = { id: string; type: OfflineMutation["type"]; sequence: number; status: "applied" | "duplicate" | "acknowledged" | "failed"; error?: string };
+export type SyncResult = { id: string; type: OfflineMutation["type"]; sequence: number; status: "applied" | "duplicate" | "acknowledged" | "failed"; error?: string; retryable?: boolean };
 
 /** A stale client mutation that must be recorded but must not block completion. */
 class AcknowledgedOfflineMutationError extends Error {}
@@ -52,6 +53,10 @@ export function validatedSyncLoad(payload: Record<string, unknown>, exercise: { 
 
 async function applyMutation(tx: Prisma.TransactionClient, userId: string, mutation: OfflineMutation) {
   const payload = mutation.payload;
+  if (mutation.type === "COMPLETE_WORKOUT") {
+    await completeWorkoutSnapshot(tx, userId, mutation.sessionId, payload.snapshot);
+    return;
+  }
   if (mutation.type === "ADD_EXERCISE") {
     const session = await tx.workoutSession.findFirst({ where: { id: mutation.sessionId, userId }, include: { exerciseSessions: { select: { exerciseId: true, position: true } } } });
     if (!session) throw new Error("Workout session was not found");
@@ -99,9 +104,13 @@ async function applyMutation(tx: Prisma.TransactionClient, userId: string, mutat
     return;
   }
   if (mutation.type === "UPSERT_SET") {
+    // Check the owning workout before resolving the set. A locally queued set
+    // may no longer exist after an already-completed workout was reconciled.
+    const session = await tx.workoutSession.findFirst({ where: { id: mutation.sessionId, userId }, select: { status: true } });
+    if (!session) throw new Error("Workout session was not found");
+    if (session.status === "COMPLETED") throw new AcknowledgedOfflineMutationError("Workout was already completed before this set update was saved");
     const set = await tx.setLog.findFirst({ where: { id: mutation.targetId, exerciseSession: { workoutSessionId: mutation.sessionId, workoutSession: { userId } } }, include: { exerciseSession: { include: { workoutSession: { select: { status: true } } } } } });
     if (!set) throw new Error("Set was not found");
-    if (set.exerciseSession.workoutSession.status === "COMPLETED") throw new AcknowledgedOfflineMutationError("Workout was already completed before this set update was saved");
     const { load, recoveredLegacyField } = validatedSyncLoad(payload, set.exerciseSession);
     if (recoveredLegacyField) console.warn("Recovered legacy offline load field", { mutationId: mutation.id, mutationType: mutation.type, sequence: mutation.sequence, sessionId: mutation.sessionId, expectedLoadType: set.exerciseSession.loadTrackingTypeSnapshot });
     await tx.setLog.update({ where: { id: set.id }, data: { actualReps: asNullableNumber(payload.actualReps, "actualReps"), ...load, completedAt: payload.completedAt === null ? null : asDate(payload.completedAt, "completedAt"), notes: typeof payload.notes === "string" ? payload.notes : null } });
@@ -156,12 +165,13 @@ export async function replayOfflineMutations(prisma: PrismaClient, userId: strin
     try {
       const status = await prisma.$transaction(async (tx) => {
         const hash = payloadHash(mutation); const existing = await tx.clientMutation.findUnique({ where: { userId_id: { userId, id: mutation.id } } });
-        if (existing) { if (existing.payloadHash !== hash) throw new Error("Idempotency key payload conflict"); return "duplicate" as const; }
+        if (existing) { if (existing.payloadHash !== hash) throw new Error("Idempotency key payload conflict"); if (existing.status === "FAILED") throw new AcknowledgedOfflineMutationError(existing.errorMessage ?? "Previously rejected mutation"); return "duplicate" as const; }
         await applyMutation(tx, userId, mutation);
         await tx.clientMutation.create({ data: { userId, id: mutation.id, status: "APPLIED", entityType: mutation.type, entityId: mutation.targetId, payloadHash: hash, appliedAt: new Date() } });
         return "applied" as const;
-      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable, timeout: 30000 });
       results.push({ id: mutation.id, type: mutation.type, sequence: mutation.sequence, status });
+      if (mutation.type === "COMPLETE_WORKOUT") console.info("Workout completion confirmed", { sessionId: mutation.sessionId, completionId: mutation.id, status });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Mutation failed";
       const acknowledged = error instanceof AcknowledgedOfflineMutationError || canAcknowledgeWithoutApplying(mutation, message);
@@ -175,7 +185,8 @@ export async function replayOfflineMutations(prisma: PrismaClient, userId: strin
         continue;
       }
       console.error("Offline mutation replay failed", { mutationId: mutation.id, mutationType: mutation.type, sequence: mutation.sequence, sessionId: mutation.sessionId, targetId: mutation.targetId, errorName: error instanceof Error ? error.name : "UnknownError", error: message });
-      results.push({ id: mutation.id, type: mutation.type, sequence: mutation.sequence, status: "failed", error: message });
+      const retryable = !(error instanceof CompletionValidationError) && typeof error === "object" && error !== null && "code" in error && ["P2034", "P2028", "P1001", "P1002", "P1017", "P2024"].includes(String(error.code));
+      results.push({ id: mutation.id, type: mutation.type, sequence: mutation.sequence, status: "failed", error: message, retryable });
       // Keep later independent changes moving; the client retains this failed
       // mutation for attention instead of retrying it forever.
       continue;

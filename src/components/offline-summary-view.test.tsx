@@ -5,6 +5,7 @@ import { OfflineSummaryView } from "@/components/offline-summary-view";
 import type { OfflineMutation, OfflineWorkout } from "@/lib/offline-types";
 
 const { getOfflineOutbox, getOfflineWorkout, replace, refresh } = vi.hoisted(() => ({ getOfflineOutbox: vi.fn(), getOfflineWorkout: vi.fn(), replace: vi.fn(), refresh: vi.fn() }));
+vi.mock("@/components/workout-sync-recovery", () => ({ WorkoutSyncRecovery: () => null }));
 vi.mock("@/lib/offline-db", () => ({ getOfflineOutbox, getOfflineWorkout }));
 vi.mock("next/navigation", () => ({ usePathname: () => "/offline/summary/session-1", useRouter: () => ({ push: vi.fn(), replace, refresh }) }));
 
@@ -19,6 +20,7 @@ describe("offline completed-workout summary", () => {
     expect(await screen.findByText("Synchronization pending")).toBeInTheDocument();
 
     getOfflineOutbox.mockResolvedValue([]);
+    getOfflineWorkout.mockResolvedValue({ ...workout, completionReceiptId: "receipt" });
     act(() => window.dispatchEvent(new Event("vicgym:outbox-changed")));
 
     await waitFor(() => expect(replace).toHaveBeenCalledWith(`/workouts/${workout.id}/summary`));

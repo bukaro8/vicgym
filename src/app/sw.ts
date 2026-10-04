@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import { CacheFirst, ExpirationPlugin, NetworkFirst, NetworkOnly, Serwist, StaleWhileRevalidate, type RuntimeCaching } from "serwist";
+import { ExpirationPlugin, NetworkFirst, NetworkOnly, Serwist, StaleWhileRevalidate, type RuntimeCaching } from "serwist";
 
 import { isAccountNeutralOfflinePath, isSafePreparedAsset } from "@/lib/offline-cache-policy";
 
@@ -20,7 +20,7 @@ const runtimeCaching: RuntimeCaching[] = [
   })),
   {
     matcher: ({ sameOrigin, url }) => sameOrigin && url.pathname.startsWith("/media/"),
-    handler: new CacheFirst({ cacheName: `${privateCachePrefix}workout-media-v1`, plugins: [expiration(80, 90 * 24 * 60 * 60)] }),
+    handler: new StaleWhileRevalidate({ cacheName: `${privateCachePrefix}workout-media-v1`, plugins: [expiration(80, 90 * 24 * 60 * 60)] }),
   },
   {
     matcher: ({ sameOrigin, url }) => sameOrigin && (url.pathname.startsWith("/_next/static/") || /\.(?:woff2?|ico|svg|png)$/.test(url.pathname)),

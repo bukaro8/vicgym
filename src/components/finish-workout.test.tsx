@@ -27,6 +27,12 @@ describe("FinishWorkout", () => {
     await user.click(screen.getByRole("button", { name: "Finish workout" }));
     expect(finishWorkoutLocally).toHaveBeenCalledWith("session");
     expect(syncOfflineMutations).toHaveBeenCalledOnce();
-    expect(push).toHaveBeenCalledWith("/workouts/session/summary");
+    expect(push).toHaveBeenCalledWith("/offline/summary/session");
+  });
+  it("opens the saved summary even if network synchronization never resolves", async () => {
+    syncOfflineMutations.mockReturnValue(new Promise(() => {}));
+    render(<FinishWorkout sessionId="session" incomplete={false} />);
+    await userEvent.setup().click(screen.getByRole("button", { name: "Finish workout" }));
+    expect(push).toHaveBeenCalledWith("/offline/summary/session");
   });
 });

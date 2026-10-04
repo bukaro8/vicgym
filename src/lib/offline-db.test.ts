@@ -2,9 +2,9 @@ import "fake-indexeddb/auto";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { clearPrivateOfflineData, configureOfflineOwner, getOfflineOutbox, getOfflineTimer, getOfflineWorkout, putOfflineTimer, putOfflineWorkout, queueOfflineMutation } from "@/lib/offline-db";
+import { clearPrivateOfflineData, configureOfflineOwner, getOfflineOutbox, getOfflineTimer, getOfflineWorkout, putOfflineTimer, putOfflineWorkout, queueOfflineMutation, recordCompletionReceipt } from "@/lib/offline-db";
 import type { OfflineTimer, OfflineWorkout } from "@/lib/offline-types";
-import { addExerciseLocally, saveSetLocally, startCardioLocally, stopCardioLocally, updateTimerLocally } from "@/lib/offline-workout";
+import { addExerciseLocally, finishWorkoutLocally, saveSetLocally, startCardioLocally, stopCardioLocally, updateTimerLocally } from "@/lib/offline-workout";
 
 const workout: OfflineWorkout = { schemaVersion: 1, id: "session-1", programId: "program-1", programSlug: "demo-upper-lower", programName: "Demo Upper/Lower", programVersionId: "version-1", programVersionNumber: 1, workoutDayId: "day-1", workoutDaySlug: "upper-a", status: "IN_PROGRESS", workoutDayName: "Demo Upper A", startedAt: "2026-08-31T09:00:00.000Z", completedAt: null, currentExerciseId: "exercise-session-1", updatedAt: "2026-08-31T09:00:00.000Z", exercises: [{ id: "exercise-session-1", exerciseId: "exercise-1", slug: "chest-press", name: "Chest Press", position: 1, plannedSets: 3, targetReps: 12, restSeconds: 120, autoRest: true, equipmentName: "Chest Press", imagePath: "/media/equipment/chest-press-1280.webp", sets: [{ id: "set-1", setNumber: 1, targetReps: 12, actualReps: 12, weightKg: 30, completedAt: null }] }] };
 
@@ -25,6 +25,24 @@ describe("offline database", () => {
     await queueOfflineMutation({ id: "mutation-a", type: "FINISH_WORKOUT", sessionId: workout.id, targetId: workout.id, payload: { completedAt: "2026-08-31T10:00:00.000Z" } });
     expect(await getOfflineWorkout(workout.id)).toEqual(workout);
     expect((await getOfflineOutbox()).map((item) => [item.id, item.sequence])).toEqual([["mutation-b", 1], ["mutation-a", 2]]);
+  });
+  it("freezes a durable completion snapshot once across concurrent finish clicks", async () => {
+    await putOfflineWorkout(workout);
+    const times = await Promise.all([finishWorkoutLocally(workout.id), finishWorkoutLocally(workout.id)]);
+    expect(times[0]).toBe(times[1]);
+    const outbox = await getOfflineOutbox();
+    expect(outbox.filter((item) => item.type === "COMPLETE_WORKOUT")).toHaveLength(1);
+    expect(outbox[0].payload.snapshot).toMatchObject({ id: workout.id, status: "COMPLETED", exercises: workout.exercises });
+    await expect(saveSetLocally({ sessionId: workout.id, exerciseSessionId: "exercise-session-1", setId: "set-1", actualReps: 12, loadValue: 30, completed: true })).rejects.toThrow("already finished");
+  });
+  it("records a session-specific completion receipt without removing another workout's pending data", async () => {
+    await putOfflineWorkout(workout);
+    await queueOfflineMutation({ type: "UPSERT_SET", sessionId: "other-session", targetId: "other-set", payload: { actualReps: 10 } });
+    await finishWorkoutLocally(workout.id);
+    const completion = (await getOfflineOutbox()).find((item) => item.type === "COMPLETE_WORKOUT")!;
+    await recordCompletionReceipt(completion);
+    expect(await getOfflineWorkout(workout.id)).toMatchObject({ completionReceiptId: completion.id });
+    expect((await getOfflineOutbox()).map((item) => item.sessionId)).toEqual(["other-session"]);
   });
 
   it("preserves exact paused milliseconds across reloads", async () => {

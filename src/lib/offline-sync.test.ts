@@ -2,7 +2,7 @@ import "fake-indexeddb/auto";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { clearPrivateOfflineData, getOfflineOutbox, queueOfflineMutation } from "@/lib/offline-db";
+import { clearPrivateOfflineData, configureOfflineOwner, getOfflineOutbox, queueOfflineMutation } from "@/lib/offline-db";
 import { syncOfflineMutations } from "@/lib/offline-sync";
 
 describe("offline synchronization", () => {
@@ -19,6 +19,32 @@ describe("offline synchronization", () => {
     await queueOfflineMutation({ id: "duplicate", type: "UPSERT_SET", sessionId: "session", targetId: "set-1", payload: {} });
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({ results: [{ id: "duplicate", status: "duplicate" }] }), { status: 200, headers: { "Content-Type": "application/json" } }));
     expect(await syncOfflineMutations()).toBe("synced"); expect(await getOfflineOutbox()).toEqual([]);
+  });
+  it("retains payloads acknowledged without being saved instead of reporting synchronization", async () => {
+    await queueOfflineMutation({ id: "rejected", type: "UPSERT_SET", sessionId: "session", targetId: "set-1", payload: { loadValue: 8.5 } });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({ results: [{ id: "rejected", status: "acknowledged", error: "Machine level must be an integer" }] })));
+    expect(await syncOfflineMutations()).toBe("needs-attention");
+    expect((await getOfflineOutbox())[0]).toMatchObject({ payload: { loadValue: 8.5 }, lastError: expect.any(String) });
+  });
+  it("keeps a temporary server failure retryable", async () => {
+    await queueOfflineMutation({ id: "retry", type: "UPSERT_SET", sessionId: "session", targetId: "set-1", payload: {} });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({ results: [{ id: "retry", status: "failed", retryable: true, error: "Database temporarily unavailable" }] }), { status: 409 }));
+    expect(await syncOfflineMutations()).toBe("saved-local");
+    expect((await getOfflineOutbox())[0].lastError).toBeNull();
+  });
+
+  it("preserves the original queue when the account changes during upload", async () => {
+    await queueOfflineMutation({ id: "original-owner", type: "UPSERT_SET", sessionId: "session", targetId: "set-1", payload: {} });
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () => {
+      configureOfflineOwner("another-user");
+      return new Response(JSON.stringify({ results: [{ id: "original-owner", status: "applied" }] }));
+    });
+    try {
+      expect(await syncOfflineMutations()).toBe("saved-local");
+    } finally {
+      configureOfflineOwner("test-user");
+    }
+    expect((await getOfflineOutbox()).map((mutation) => mutation.id)).toEqual(["original-owner"]);
   });
 
   it("keeps local work and reports the HTTP and server error when a request has no acknowledgements", async () => {

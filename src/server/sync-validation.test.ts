@@ -70,7 +70,7 @@ describe("stale offline mutation recovery", () => {
   it("acknowledges an invalid fractional machine-level update so it cannot block workout completion", async () => {
     const mutation = { id: "10000000-0000-4000-8000-000000000010", sequence: 32, type: "UPSERT_SET" as const, sessionId: "20000000-0000-4000-8000-000000000010", targetId: "30000000-0000-4000-8000-000000000010", createdAt: "2026-09-30T18:00:00.000Z", attempts: 0, lastError: null, payload: { actualReps: 12, loadValue: 8.5, loadTrackingType: "MACHINE_LEVEL", completedAt: "2026-09-30T18:00:00.000Z", notes: null } };
     const failedRecord = vi.fn().mockResolvedValue({});
-    const transaction = { clientMutation: { findUnique: vi.fn().mockResolvedValue(null), create: failedRecord }, setLog: { findFirst: vi.fn().mockResolvedValue({ id: mutation.targetId, exerciseSession: { loadTrackingTypeSnapshot: "MACHINE_LEVEL", workoutSession: { status: "IN_PROGRESS" } } }) } };
+    const transaction = { clientMutation: { findUnique: vi.fn().mockResolvedValue(null), create: failedRecord }, workoutSession: { findFirst: vi.fn().mockResolvedValue({ status: "IN_PROGRESS" }) }, setLog: { findFirst: vi.fn().mockResolvedValue({ id: mutation.targetId, exerciseSession: { loadTrackingTypeSnapshot: "MACHINE_LEVEL", workoutSession: { status: "IN_PROGRESS" } } }) } };
     const prisma = { $transaction: (callback: (tx: typeof transaction) => unknown) => callback(transaction) };
 
     await expect(replayOfflineMutations(prisma as never, "user-1", [mutation])).resolves.toEqual([expect.objectContaining({ status: "acknowledged", error: "Machine level must be an integer" })]);
@@ -85,5 +85,15 @@ describe("stale offline mutation recovery", () => {
 
     await expect(replayOfflineMutations(prisma as never, "user-1", [mutation])).resolves.toEqual([expect.objectContaining({ status: "acknowledged", error: "Workout was already completed before this extra set was saved" })]);
     expect(failedRecord).toHaveBeenCalledWith({ data: expect.objectContaining({ status: "FAILED" }) });
+  });
+
+  it("acknowledges an orphaned set update after a workout is completed", async () => {
+    const mutation = { id: "10000000-0000-4000-8000-000000000012", sequence: 39, type: "UPSERT_SET" as const, sessionId: "20000000-0000-4000-8000-000000000012", targetId: "30000000-0000-4000-8000-000000000012", createdAt: "2026-09-30T18:00:00.000Z", attempts: 0, lastError: null, payload: { actualReps: 12, loadValue: null, loadTrackingType: "MACHINE_LEVEL", completedAt: "2026-09-30T18:00:00.000Z", notes: null } };
+    const failedRecord = vi.fn().mockResolvedValue({});
+    const transaction = { clientMutation: { findUnique: vi.fn().mockResolvedValue(null), create: failedRecord }, workoutSession: { findFirst: vi.fn().mockResolvedValue({ status: "COMPLETED" }) }, setLog: { findFirst: vi.fn() } };
+    const prisma = { $transaction: (callback: (tx: typeof transaction) => unknown) => callback(transaction) };
+
+    await expect(replayOfflineMutations(prisma as never, "user-1", [mutation])).resolves.toEqual([expect.objectContaining({ status: "acknowledged", error: "Workout was already completed before this set update was saved" })]);
+    expect(transaction.setLog.findFirst).not.toHaveBeenCalled();
   });
 });

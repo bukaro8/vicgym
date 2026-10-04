@@ -90,14 +90,13 @@ export async function getWeeklyReview(prisma: PrismaClient, userId: string, requ
 
   const historyCache = new Map<string, ReportSet[]>();
   const exerciseIds = [...new Set(sessions.flatMap((session) => session.exerciseSessions.map((exercise) => exercise.exerciseId)))];
-  await Promise.all(exerciseIds.map(async (exerciseId) => {
-    const history = await prisma.exerciseSession.findMany({ where: { exerciseId, workoutSession: { userId, status: "COMPLETED" } }, orderBy: { workoutSession: { completedAt: "asc" } }, include: { workoutSession: { select: { completedAt: true } }, setLogs: { where: { completedAt: { not: null } }, orderBy: { setNumber: "asc" } } } });
-    for (let index = 0; index < history.length; index += 1) {
-      const item = history[index];
-      const prior = history.slice(0, index).reverse().find((candidate) => candidate.loadTrackingTypeSnapshot === item.loadTrackingTypeSnapshot && candidate.loadEntryModeSnapshot === item.loadEntryModeSnapshot);
-      historyCache.set(item.id, prior ? prior.setLogs.map((set) => ({ setNumber: set.setNumber, actualReps: set.actualReps, targetReps: set.targetReps, weightKg: set.weightKg === null ? null : Number(set.weightKg), loadValue: set.loadValue === null ? null : Number(set.loadValue), loadTrackingType: prior.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null, loadEntryMode: prior.loadEntryModeSnapshot as LoadEntryModeValue | null, notes: set.notes })) : []);
-    }
-  }));
+  const history = exerciseIds.length ? await prisma.exerciseSession.findMany({ where: { exerciseId: { in: exerciseIds }, workoutSession: { userId, status: "COMPLETED", completedAt: { lt: range.end } } }, orderBy: [{ workoutSession: { completedAt: "asc" } }, { id: "asc" }], include: { setLogs: { where: { completedAt: { not: null } }, orderBy: { setNumber: "asc" } } } }) : [];
+  const previous = new Map<string, ReportSet[]>();
+  for (const item of history) {
+    const key = `${item.exerciseId}:${item.loadTrackingTypeSnapshot}:${item.loadEntryModeSnapshot}`;
+    historyCache.set(item.id, previous.get(key) ?? []);
+    previous.set(key, item.setLogs.map((set) => ({ setNumber: set.setNumber, actualReps: set.actualReps, targetReps: set.targetReps, weightKg: set.weightKg === null ? null : Number(set.weightKg), loadValue: set.loadValue === null ? null : Number(set.loadValue), loadTrackingType: item.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null, loadEntryMode: item.loadEntryModeSnapshot as LoadEntryModeValue | null, notes: set.notes })));
+  }
 
   let completedSets = 0; let totalMinutes = 0; let cardioSeconds = 0; let volume = 0; let incomplete = 0; let skippedExercises = 0; let skippedRests = 0; let completedRests = 0; let completedRestSeconds = 0; let adjustedRestSeconds = 0;
   const primaryTotals = new Map<string, number>(); const secondaryTotals = new Map<string, number>();

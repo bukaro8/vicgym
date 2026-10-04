@@ -26,6 +26,7 @@
     "verify:phase3": "tsx scripts/verify-phase-3.ts",
     "verify:phase4": "tsx scripts/verify-phase-4.ts",
     "verify:phase6": "tsx scripts/verify-phase-6.ts",
+    "verify:completion": "tsx scripts/verify-workout-completion.ts",
     "verify:programme-lifecycle": "tsx scripts/verify-programme-lifecycle.ts"
   },
   "dependencies": {

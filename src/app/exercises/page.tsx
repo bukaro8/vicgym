@@ -12,7 +12,7 @@ export default async function ExercisesPage() {
   const prisma = getPrisma();
   const [exercises, equipmentCount] = await Promise.all([
     prisma.exercise.findMany({
-      where: { active: true },
+      where: { active: true, OR: [{ equipmentId: null }, { equipment: { available: true } }] },
       orderBy: { name: "asc" },
       include: {
         media: { orderBy: { sortOrder: "asc" } },

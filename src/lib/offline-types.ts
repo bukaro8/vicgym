@@ -62,6 +62,7 @@ export type OfflineWorkout = {
   exercises: OfflineExercise[];
   catalogue?: OfflineCatalogueExercise[];
   updatedAt: string;
+  completionReceiptId?: string;
 };
 
 export type OfflineTimer = {
@@ -81,7 +82,7 @@ export type OfflineTimer = {
   updatedAt: string;
 };
 
-export type OfflineMutationType = "ADD_EXERCISE" | "ADD_SET" | "UPSERT_SET" | "UPSERT_TIMER" | "UPDATE_CARDIO" | "FINISH_WORKOUT";
+export type OfflineMutationType = "ADD_EXERCISE" | "ADD_SET" | "UPSERT_SET" | "UPSERT_TIMER" | "UPDATE_CARDIO" | "FINISH_WORKOUT" | "COMPLETE_WORKOUT";
 export type OfflineMutation = {
   id: string;
   sequence: number;

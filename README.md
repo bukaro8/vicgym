@@ -1,5 +1,9 @@
 # VicGym
 
+Workout completion now uses an atomic local snapshot and a transactional server
+completion receipt. For deployment, recovery, and integration verification, see
+[Workout completion and recovery](docs/workout-reliability.md).
+
 VicGym is a mobile-first progressive web application for a small group of users to run private workout programmes, record raw training data, review completed history, and exchange controlled programme updates with a dedicated ChatGPT coaching conversation.
 
 The application does not generate training advice and does not call the OpenAI API. ChatGPT interaction is deliberately manual and reviewable:
