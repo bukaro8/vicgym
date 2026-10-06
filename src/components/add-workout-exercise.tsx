@@ -10,7 +10,7 @@ import type { OfflineCatalogueExercise, OfflineExercise, OfflineWorkout } from "
 import { addExerciseLocally, AD_HOC_DEFAULT_REST_SECONDS, AD_HOC_DEFAULT_SETS } from "@/lib/offline-workout";
 import { loadInputLabel } from "@/lib/load-tracking";
 
-export function AddWorkoutExercise({ snapshot }: Readonly<{ snapshot: OfflineWorkout }>) {
+export function AddWorkoutExercise({ snapshot, stayOnWorkout = false }: Readonly<{ snapshot: OfflineWorkout; stayOnWorkout?: boolean }>) {
   const router = useRouter();
   const [open, setOpen] = useState(false); const [query, setQuery] = useState(""); const [busyId, setBusyId] = useState<string | null>(null); const [error, setError] = useState("");
   const [includedIds, setIncludedIds] = useState(() => new Set(snapshot.exercises.map((exercise) => exercise.exerciseId)));
@@ -31,6 +31,7 @@ export function AddWorkoutExercise({ snapshot }: Readonly<{ snapshot: OfflineWor
       setIncludedIds((current) => new Set([...current, exercise.exerciseId]));
       window.dispatchEvent(new CustomEvent<OfflineExercise>("vicgym:exercise-added", { detail: created }));
       setOpen(false);
+      if (stayOnWorkout) { void syncOfflineMutations(); return; }
       const status = await syncOfflineMutations();
       router.push(status === "synced" ? `/workouts/${snapshot.id}/exercises/${created.id}` : `/offline/workout/${snapshot.id}/${created.id}`);
       if (status === "synced") router.refresh();

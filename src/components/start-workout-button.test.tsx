@@ -16,7 +16,7 @@ describe("StartWorkoutButton", () => {
     expect(screen.getByRole("heading", { name: "Are you doing cardio?" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Yes, add cardio" }));
     expect(fetch).toHaveBeenCalledWith("/api/workouts/start", expect.objectContaining({ body: JSON.stringify({ workoutDayId: "day-1", cardioPlanned: true }) }));
-    expect(push).toHaveBeenCalledWith("/workouts/session-1/exercises/exercise-1");
+    expect(push).toHaveBeenCalledWith("/workouts/session-1");
   });
 
   it("supports starting without cardio", async () => {

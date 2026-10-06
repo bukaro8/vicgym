@@ -27,6 +27,7 @@ export type OfflineExercise = {
   equipmentName: string | null;
   imagePath: string | null;
   sets: OfflineSet[];
+  previousPerformance?: string[];
 };
 
 export type OfflineCatalogueExercise = {

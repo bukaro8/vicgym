@@ -165,12 +165,16 @@ The home screen shows the active programme, current version, workout rotation, c
 
 Open **Workouts**, choose a day from the active rotation, and select **Start workout**. VicGym creates a session pinned to the current immutable programme version. If a session is already active, the screen offers **Resume workout** instead of creating another.
 
+The active session is a single list of compact exercise cards in programme order. Train in any order: use **Log sets** / **Hide sets** independently on each card. Collapsing keeps unfinished inputs mounted; saved sets survive refresh and returning from exercise details. Cards start collapsed on a fresh page load. Completed exercises remain visible, and **Add exercise** appends a session-only extra without leaving the list.
+
+Tap an exercise name or image to open its catalogue details, then use **Back to workout** to return. Detail pages require a connection; prepared active workouts still work offline. No form instructions or video URLs are invented when the catalogue has none.
+
 During an exercise:
 
 - enter actual reps;
 - enter the load only when the exercise supports an external load;
 - complete or reopen individual sets;
-- navigate between exercises;
+- open any exercise card without advancing to another screen;
 - use compatible previous-performance values as context;
 - allow `autoRest` to open the rest timer after a newly completed set.
 

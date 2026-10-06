@@ -2,6 +2,7 @@ import { ArrowLeft, BarChart3, Dumbbell, ExternalLink, Repeat2 } from "lucide-re
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { OfflineAwareLink } from "@/components/offline-aware-link";
 import { AppShell } from "@/components/app-shell";
 import { ResponsiveEquipmentImage } from "@/components/responsive-equipment-image";
 import { equipmentTypeLabel } from "@/lib/display";
@@ -12,8 +13,11 @@ import { requireCurrentUser } from "@/server/auth";
 
 export const dynamic = "force-dynamic";
 
-export default async function ExerciseDetailPage({ params }: PageProps<"/exercises/[slug]">) {
-  await requireCurrentUser();
+export default async function ExerciseDetailPage({ params, searchParams }: PageProps<"/exercises/[slug]">) {
+  const user = await requireCurrentUser();
+  const { workout } = await searchParams;
+  const returnSession = typeof workout === "string" && /^[0-9a-f-]{36}$/i.test(workout)
+    ? await getPrisma().workoutSession.findFirst({ where: { id: workout, userId: user.id }, select: { id: true, exerciseSessions: { take: 1, select: { id: true } } } }) : null;
   const { slug } = await params;
   const exercise = await getPrisma().exercise.findUnique({
     where: { slug, active: true },
@@ -34,6 +38,7 @@ export default async function ExerciseDetailPage({ params }: PageProps<"/exercis
   return (
     <AppShell>
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-8 sm:py-10">
+        {returnSession && <OfflineAwareLink href={`/workouts/${returnSession.id}`} offlineHref={`/offline/workout/${returnSession.id}/${returnSession.exerciseSessions[0]?.id ?? "all"}`} className="mb-2 flex min-h-11 items-center gap-2 text-sm font-semibold text-primary"><ArrowLeft className="size-4"/>Back to workout</OfflineAwareLink>}
         <Link href="/exercises" className="inline-flex items-center gap-2 rounded-xl py-2 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" aria-hidden="true" />All exercises</Link>
         <article className="mt-3 overflow-hidden rounded-3xl border bg-card shadow-sm">
           <div className="overflow-hidden border-b bg-muted">
