@@ -1,3 +1,4 @@
+import type { RoutePageProps } from "@/lib/page-props";
 import { ArrowLeft, CheckCircle2, Clock3, ListChecks } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -11,7 +12,7 @@ import { requireCurrentUser } from "@/server/auth";
 
 export const dynamic = "force-dynamic";
 
-export default async function FinishPage({ params }: PageProps<"/workouts/[sessionId]/finish">) {
+export default async function FinishPage({ params }: RoutePageProps<{ sessionId: string }>) {
   const { sessionId } = await params;
   const user = await requireCurrentUser();
   const session = await getPrisma().workoutSession.findFirst({ where: { id: sessionId, userId: user.id }, include: { exerciseSessions: { orderBy: { position: "asc" }, include: { setLogs: true } } } });

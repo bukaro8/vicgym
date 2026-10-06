@@ -1,3 +1,4 @@
+import type { RoutePageProps } from "@/lib/page-props";
 import { ArrowLeft, BarChart3, Dumbbell, ExternalLink, Repeat2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,7 +14,7 @@ import { requireCurrentUser } from "@/server/auth";
 
 export const dynamic = "force-dynamic";
 
-export default async function ExerciseDetailPage({ params, searchParams }: PageProps<"/exercises/[slug]">) {
+export default async function ExerciseDetailPage({ params, searchParams }: RoutePageProps<{ slug: string }>) {
   const user = await requireCurrentUser();
   const { workout } = await searchParams;
   const returnSession = typeof workout === "string" && /^[0-9a-f-]{36}$/i.test(workout)

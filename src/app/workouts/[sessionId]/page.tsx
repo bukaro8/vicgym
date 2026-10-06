@@ -1,3 +1,4 @@
+import type { RoutePageProps } from "@/lib/page-props";
 import { notFound, redirect } from "next/navigation";
 import { WorkoutList } from "@/components/workout-list";
 import { getExercisePrimaryMedia } from "@/lib/exercise-media";
@@ -7,7 +8,7 @@ import { getPrisma } from "@/lib/prisma";
 import { requireCurrentUser } from "@/server/auth";
 
 export const dynamic = "force-dynamic";
-export default async function WorkoutSessionPage({ params }: PageProps<"/workouts/[sessionId]">) {
+export default async function WorkoutSessionPage({ params }: RoutePageProps<{ sessionId: string }>) {
   const { sessionId } = await params;
   const user = await requireCurrentUser();
   const prisma = getPrisma();
