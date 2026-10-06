@@ -216,6 +216,8 @@ The report is a compact weekly data handoff, not a full AI system prompt. It exp
 
 Open **More → Rest-timer alerts** to enable sound and, where supported, vibration. Enabling sound from the toggle gives the browser the user gesture normally required to initialize audio. Use **Test alert** before a workout.
 
+At zero, the alert plays six short beeps in two groups of three, with matching vibration pulses when supported. Each group uses 120 ms pulses separated by 100 ms; the groups have a 500 ms pause. A new timer cancels any still-running alert.
+
 Web alerts remain best-effort. iPhone and iPad browsers do not expose web vibration, device silent/restricted modes may suppress effects, and a fully suspended PWA cannot be relied upon to alert.
 
 ## Programme creation and Coach Changes
