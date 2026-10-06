@@ -27,7 +27,8 @@ describe("single-page workout", () => {
     const second = within(await screen.findByRole("article", { name: "Second exercise" }));
     await user.click(second.getByRole("button", { name: "Log sets" }));
     await user.type(second.getByLabelText("Set 1 weight per dumbbell (kg)"), "10");
-    await user.click(second.getByRole("button", { name: "Complete set 1 without effort" }));
+    await user.click(second.getByRole("button", { name: "Complete set 1" }));
+    await user.click(screen.getByRole("button", { name: "Skip — no rating" }));
     await waitFor(() => expect(screen.getByText("1/2 sets complete")).toBeInTheDocument());
     const local = await getOfflineWorkout("workout");
     expect(local?.exercises[0].sets[0].completedAt).toBeNull();
@@ -48,7 +49,8 @@ describe("single-page workout", () => {
     await user.click(first.getByRole("button", { name: "Hide sets" }));
     await user.click(first.getByRole("button", { name: "Log sets" }));
     expect(first.getByLabelText("Set 1 notes input")).toHaveValue("Good form");
-    await user.click(first.getByRole("button", { name: "Complete set 1 without effort" }));
+    await user.click(first.getByRole("button", { name: "Complete set 1" }));
+    await user.click(screen.getByRole("button", { name: "Skip — no rating" }));
     await waitFor(() => expect(screen.getByText("1/2 sets complete")).toBeInTheDocument());
     view.unmount(); render(<WorkoutList sessionId="workout"/>);
     const restored = within(await screen.findByRole("article", { name: "First exercise" }));
@@ -72,17 +74,21 @@ describe("single-page workout", () => {
     const user = userEvent.setup(); const view = render(<WorkoutList sessionId="workout"/>);
     let first = within(await screen.findByRole("article", { name: "First exercise" }));
     await user.click(first.getByRole("button", { name: "Log sets" }));
-    await user.click(first.getByRole("button", { name: "Set 1 effort Easy" }));
+    await user.click(first.getByRole("button", { name: "Complete set 1" }));
+    await user.click(screen.getByRole("button", { name: "Easy" }));
     await waitFor(async () => expect((await getOfflineWorkout("workout"))?.exercises[0].sets[0].effort).toBe("EASY"));
     expect((await getOfflineWorkout("workout"))?.exercises[1].sets[0].effort).toBeUndefined();
     await user.click(first.getByRole("button", { name: "Log sets" }));
-    await user.click(first.getByRole("button", { name: "Set 1 effort Hard" }));
+    await user.click(first.getByRole("button", { name: "Edit set 1 effort" }));
+    expect(screen.getByRole("button", { name: "Easy" })).toHaveAttribute("aria-pressed", "true");
+    await user.click(screen.getByRole("button", { name: "Hard" }));
     await waitFor(async () => expect((await getOfflineWorkout("workout"))?.exercises[0].sets[0].effort).toBe("HARD"));
     view.unmount(); render(<WorkoutList sessionId="workout"/>);
     first = within(await screen.findByRole("article", { name: "First exercise" }));
     await user.click(first.getByRole("button", { name: "Log sets" }));
-    expect(first.getByRole("button", { name: "Set 1 effort Hard" })).toHaveAttribute("aria-pressed", "true");
-    await user.click(first.getByRole("button", { name: "Set 1 effort Hard" }));
+    await user.click(first.getByRole("button", { name: "Edit set 1 effort" }));
+    expect(screen.getByRole("button", { name: "Hard" })).toHaveAttribute("aria-pressed", "true");
+    await user.click(screen.getByRole("button", { name: "Clear rating" }));
     await waitFor(async () => expect((await getOfflineWorkout("workout"))?.exercises[0].sets[0].effort).toBeNull());
   });
 
@@ -97,12 +103,39 @@ describe("single-page workout", () => {
     await user.click(first.getByRole("button", { name: "Log sets" }));
     expect(first.getByText("8 kg/DB × 12")).toBeInTheDocument();
     expect(first.getByText("8 kg/DB × 10")).toBeInTheDocument();
-    await user.click(first.getByRole("button", { name: "Set 1 effort Easy" }));
-    await waitFor(() => expect(first.getByRole("button", { name: "Hide sets" })).toBeInTheDocument());
-    await user.click(first.getByRole("button", { name: "Set 2 effort Moderate" }));
-    await waitFor(() => expect(first.getByRole("button", { name: "Hide sets" })).toBeInTheDocument());
-    await user.click(first.getByRole("button", { name: "Set 3 effort Hard" }));
+    await user.click(first.getByRole("button", { name: "Complete set 1" }));
+    await user.click(screen.getByRole("button", { name: "Easy" }));
+    await waitFor(async () => expect((await getOfflineWorkout("workout"))?.exercises[0].sets[0].effort).toBe("EASY"));
+    await user.click(first.getByRole("button", { name: "Complete set 2" }));
+    await user.click(screen.getByRole("button", { name: "Moderate" }));
+    await waitFor(async () => expect((await getOfflineWorkout("workout"))?.exercises[0].sets[1].effort).toBe("MODERATE"));
+    await user.click(first.getByRole("button", { name: "Complete set 3" }));
+    await user.click(screen.getByRole("button", { name: "Hard" }));
     await waitFor(() => expect(first.getByRole("button", { name: "Log sets" })).toBeInTheDocument());
     expect((await getOfflineWorkout("workout"))?.exercises[0].sets.map((set) => set.effort)).toEqual(["EASY", "MODERATE", "HARD"]);
+  });
+
+  it("starts auto-rest after rated completion and does not restart it when effort is edited", async () => {
+    const withRest = structuredClone(snapshot);
+    withRest.exercises[0].autoRest = true;
+    await putOfflineWorkout(withRest);
+    const timerStarted = vi.fn();
+    window.addEventListener("vicgym:timer-started", timerStarted);
+    try {
+      const user = userEvent.setup(); render(<WorkoutList sessionId="workout"/>);
+      const first = within(await screen.findByRole("article", { name: "First exercise" }));
+      await user.click(first.getByRole("button", { name: "Log sets" }));
+      expect(first.queryByRole("button", { name: "Easy" })).not.toBeInTheDocument();
+      await user.click(first.getByRole("button", { name: "Complete set 1" }));
+      await user.click(screen.getByRole("button", { name: "Moderate" }));
+      await waitFor(() => expect(timerStarted).toHaveBeenCalledTimes(1));
+      await user.click(first.getByRole("button", { name: "Log sets" }));
+      await user.click(first.getByRole("button", { name: "Edit set 1 effort" }));
+      await user.click(screen.getByRole("button", { name: "Hard" }));
+      await waitFor(async () => expect((await getOfflineWorkout("workout"))?.exercises[0].sets[0].effort).toBe("HARD"));
+      expect(timerStarted).toHaveBeenCalledTimes(1);
+    } finally {
+      window.removeEventListener("vicgym:timer-started", timerStarted);
+    }
   });
 });
