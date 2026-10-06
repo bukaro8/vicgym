@@ -1,3 +1,4 @@
+import { setEffortSchema } from "@/lib/set-effort";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -8,7 +9,7 @@ import { authenticationErrorResponse } from "@/lib/http/auth-response";
 import { requireApiUser } from "@/server/auth";
 
 export const runtime = "nodejs";
-const schema = z.object({ actualReps: z.number().int().min(0).max(999), loadValue: z.number().min(0).max(9999).nullable().optional(), weightKg: z.number().min(0).max(9999).nullable().optional(), completed: z.boolean() }).strict().superRefine((value, context) => {
+const schema = z.object({ effort: setEffortSchema, actualReps: z.number().int().min(0).max(999), loadValue: z.number().min(0).max(9999).nullable().optional(), weightKg: z.number().min(0).max(9999).nullable().optional(), completed: z.boolean() }).strict().superRefine((value, context) => {
   if (value.loadValue !== undefined && value.weightKg !== undefined) context.addIssue({ code: "custom", message: "Use loadValue or legacy weightKg, never both" });
 });
 
@@ -30,7 +31,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ se
         if (trackingType === "MACHINE_LEVEL" && input.loadValue != null && !Number.isInteger(input.loadValue)) throw new Error("INCOMPATIBLE_LOAD");
       }
       const newlyCompleted = input.completed && !existing.completedAt;
-      const set = await tx.setLog.update({ where: { id: setLogId }, data: { actualReps: input.actualReps, weightKg: trackingType === null ? (input.weightKg ?? null) : null, loadValue: trackingType === null ? null : (input.loadValue ?? null), loadTrackingType: trackingType, completedAt: input.completed ? (existing.completedAt ?? new Date()) : null } });
+      const set = await tx.setLog.update({ where: { id: setLogId }, data: { effort: input.effort, actualReps: input.actualReps, weightKg: trackingType === null ? (input.weightKg ?? null) : null, loadValue: trackingType === null ? null : (input.loadValue ?? null), loadTrackingType: trackingType, completedAt: input.completed ? (existing.completedAt ?? new Date()) : null } });
       const timer = newlyCompleted ? await startRestForSet(tx, user.id, setLogId) : null;
       return { set, timer };
     });

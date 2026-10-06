@@ -1,10 +1,11 @@
+import { setEffortSchema } from "@/lib/set-effort";
 import { z } from "zod";
 import type { Prisma } from "@/generated/prisma/client";
 import { cardioDurationSeconds } from "@/lib/cardio";
 
 const tracking = z.enum(["KILOGRAM", "MACHINE_LEVEL", "BODYWEIGHT", "REPS_ONLY"]).nullable();
 const number = z.number().finite().min(0).max(9999).nullable();
-const setSchema = z.object({ id: z.string().uuid(), setNumber: z.number().int().min(1).max(100), targetReps: z.number().int().min(1).max(1000), actualReps: z.number().int().min(0).max(999).nullable(), weightKg: number, loadValue: number.optional(), loadTrackingType: tracking.optional(), completedAt: z.string().datetime().nullable(), notes: z.string().max(500).nullable().optional() });
+const setSchema = z.object({ effort: setEffortSchema, id: z.string().uuid(), setNumber: z.number().int().min(1).max(100), targetReps: z.number().int().min(1).max(1000), actualReps: z.number().int().min(0).max(999).nullable(), weightKg: number, loadValue: number.optional(), loadTrackingType: tracking.optional(), completedAt: z.string().datetime().nullable(), notes: z.string().max(500).nullable().optional() });
 const exerciseSchema = z.object({ id: z.string().uuid(), exerciseId: z.string().uuid(), position: z.number().int().min(1).max(100), plannedSets: z.number().int().min(1).max(20), targetReps: z.number().int().min(1).max(1000), restSeconds: z.number().int().min(0).max(3600), autoRest: z.boolean(), isAdHoc: z.boolean().optional(), loadTrackingType: tracking.optional(), sets: z.array(setSchema).min(1).max(100) });
 export const completionSnapshotSchema = z.object({ id: z.string().uuid(), programVersionId: z.string().uuid(), status: z.literal("COMPLETED"), completedAt: z.string().datetime(), cardioStartedAt: z.string().datetime().nullable().optional(), cardioStoppedAt: z.string().datetime().nullable().optional(), exercises: z.array(exerciseSchema).min(1).max(100) });
 
@@ -52,7 +53,7 @@ export async function completeWorkoutSnapshot(tx: Prisma.TransactionClient, user
       check(!completedAt || (completedAt >= session.startedAt && completedAt <= end), `${label}: invalid completion time`);
       const existing = await tx.setLog.findUnique({ where: { id: set.id } });
       check(!existing || (existing.exerciseSessionId === exercise.id && existing.setNumber === set.setNumber), `${label}: set belongs to a different exercise`);
-      const data = { actualReps: set.actualReps, weightKg: set.weightKg, loadValue: load, loadTrackingType: type, completedAt, notes: set.notes ?? null };
+      const data = { effort: set.effort, actualReps: set.actualReps, weightKg: set.weightKg, loadValue: load, loadTrackingType: type, completedAt, notes: set.notes ?? null };
       if (existing) await tx.setLog.update({ where: { id: set.id }, data });
       else await tx.setLog.create({ data: { id: set.id, exerciseSessionId: exercise.id, setNumber: set.setNumber, targetReps: set.targetReps, ...data } });
     }

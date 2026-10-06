@@ -1,3 +1,4 @@
+import { setEffortSchema } from "@/lib/set-effort";
 import { createHash } from "node:crypto";
 
 import { Prisma, type PrismaClient } from "@/generated/prisma/client";
@@ -113,7 +114,7 @@ async function applyMutation(tx: Prisma.TransactionClient, userId: string, mutat
     if (!set) throw new Error("Set was not found");
     const { load, recoveredLegacyField } = validatedSyncLoad(payload, set.exerciseSession);
     if (recoveredLegacyField) console.warn("Recovered legacy offline load field", { mutationId: mutation.id, mutationType: mutation.type, sequence: mutation.sequence, sessionId: mutation.sessionId, expectedLoadType: set.exerciseSession.loadTrackingTypeSnapshot });
-    await tx.setLog.update({ where: { id: set.id }, data: { actualReps: asNullableNumber(payload.actualReps, "actualReps"), ...load, completedAt: payload.completedAt === null ? null : asDate(payload.completedAt, "completedAt"), notes: typeof payload.notes === "string" ? payload.notes : null } });
+    await tx.setLog.update({ where: { id: set.id }, data: { effort: setEffortSchema.parse(payload.effort), actualReps: asNullableNumber(payload.actualReps, "actualReps"), ...load, completedAt: payload.completedAt === null ? null : asDate(payload.completedAt, "completedAt"), notes: typeof payload.notes === "string" ? payload.notes : null } });
     return;
   }
   if (mutation.type === "UPSERT_TIMER") {

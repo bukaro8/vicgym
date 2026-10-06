@@ -367,6 +367,7 @@ export type ExerciseSessionScalarFieldEnum = (typeof ExerciseSessionScalarFieldE
 
 
 export const SetLogScalarFieldEnum = {
+  effort: 'effort',
   id: 'id',
   exerciseSessionId: 'exerciseSessionId',
   setNumber: 'setNumber',

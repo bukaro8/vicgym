@@ -451,7 +451,14 @@ model ExerciseSession {
   @@index([exerciseId, createdAt])
 }
 
+enum SetEffort {
+  EASY
+  MODERATE
+  HARD
+}
+
 model SetLog {
+  effort            SetEffort?
   id                String            @id @default(uuid()) @db.Uuid
   exerciseSessionId String            @db.Uuid
   setNumber         Int

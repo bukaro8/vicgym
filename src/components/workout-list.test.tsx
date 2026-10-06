@@ -57,10 +57,30 @@ describe("single-page workout", () => {
   it("adds an extra exercise without leaving the list and keeps finish available", async () => {
     const user = userEvent.setup(); render(<WorkoutList sessionId="workout"/>);
     await user.click(await screen.findByRole("button", { name: "Add exercise" }));
-    await user.click(screen.getByRole("button", { name: /Extra exercise.*Weight per dumbbell/ }));
+    await user.click(await screen.findByRole("button", { name: /Extra exercise.*Weight per dumbbell/ }));
     expect(await screen.findByRole("article", { name: "Extra exercise" })).toBeInTheDocument();
     expect((await getOfflineWorkout("workout"))?.exercises[2].isAdHoc).toBe(true);
     expect(push).not.toHaveBeenCalled();
     expect(screen.getByRole("link", { name: "Finish workout" })).toHaveAttribute("href", "/workouts/workout/finish");
+  });
+
+  it("saves, edits, restores and clears optional effort on the exact set", async () => {
+    const user = userEvent.setup(); const view = render(<WorkoutList sessionId="workout"/>);
+    let first = within(await screen.findByRole("article", { name: "First exercise" }));
+    await user.click(first.getByRole("button", { name: "Log sets" }));
+    await user.click(first.getByRole("button", { name: "Set 1 effort Easy" }));
+    await user.click(first.getByRole("button", { name: "Complete set" }));
+    await waitFor(async () => expect((await getOfflineWorkout("workout"))?.exercises[0].sets[0].effort).toBe("EASY"));
+    expect((await getOfflineWorkout("workout"))?.exercises[1].sets[0].effort).toBeUndefined();
+    await user.click(first.getByRole("button", { name: "Set 1 effort Hard" }));
+    await user.click(first.getByRole("button", { name: "Save changes" }));
+    await waitFor(async () => expect((await getOfflineWorkout("workout"))?.exercises[0].sets[0].effort).toBe("HARD"));
+    view.unmount(); render(<WorkoutList sessionId="workout"/>);
+    first = within(await screen.findByRole("article", { name: "First exercise" }));
+    await user.click(first.getByRole("button", { name: "Log sets" }));
+    expect(first.getByRole("button", { name: "Set 1 effort Hard" })).toHaveAttribute("aria-pressed", "true");
+    await user.click(first.getByRole("button", { name: "Set 1 effort Hard" }));
+    await user.click(first.getByRole("button", { name: "Save changes" }));
+    await waitFor(async () => expect((await getOfflineWorkout("workout"))?.exercises[0].sets[0].effort).toBeNull());
   });
 });

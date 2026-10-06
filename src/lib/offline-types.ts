@@ -1,4 +1,5 @@
 export type OfflineSet = {
+  effort?: import("@/lib/set-effort").SetEffortValue | null;
   id: string;
   setNumber: number;
   targetReps: number;

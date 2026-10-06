@@ -1,3 +1,4 @@
+import { setEffortSchema, type SetEffortValue } from "@/lib/set-effort";
 import { adjustedRemainingMilliseconds, remainingMilliseconds } from "@/lib/rest-timer";
 import { exerciseSeed } from "@/data/phase-2-catalogue";
 import { clearOfflineTimer, commitWorkoutChange, findOfflineWorkoutSessionForSet, getOfflineTimer, putOfflineTimer, queueOfflineMutation, queueWorkoutCompletion, updateOfflineWorkout } from "@/lib/offline-db";
@@ -7,17 +8,18 @@ import type { RestTimerDto, TimerAction } from "@/server/rest-timers";
 
 export function offlineTimerDto(timer: OfflineTimer): RestTimerDto { return { id: timer.id, sessionId: timer.sessionId ?? null, setLogId: timer.setLogId, status: timer.status, configuredSeconds: timer.configuredSeconds, startedAt: timer.startedAt, endsAt: timer.endsAt, pausedAt: timer.pausedAt, pausedRemainingMs: timer.pausedRemainingMs, updatedAt: timer.updatedAt, exerciseName: timer.exerciseName, completedSetNumber: timer.completedSetNumber, nextSetId: timer.nextSetId }; }
 
-export async function saveSetLocally(input: { sessionId: string; exerciseSessionId: string; setId: string; actualReps: number; loadValue: number | null; completed: boolean; notes?: string | null }): Promise<{ set: OfflineSet; timer: RestTimerDto | null }> {
+export async function saveSetLocally(input: { sessionId: string; exerciseSessionId: string; setId: string; actualReps: number; loadValue: number | null; completed: boolean; effort?: SetEffortValue | null; notes?: string | null }): Promise<{ set: OfflineSet; timer: RestTimerDto | null }> {
   const now = new Date().toISOString(); const workout = await updateOfflineWorkout(input.sessionId, (current) => current); const exercise = workout?.exercises.find((item) => item.id === input.exerciseSessionId); const old = exercise?.sets.find((set) => set.id === input.setId);
   if (!exercise || !old) throw new Error("LOCAL_SET_NOT_FOUND");
   if (workout?.status !== "IN_PROGRESS") throw new Error("This workout has already finished.");
   if (!Number.isInteger(input.actualReps) || input.actualReps < 0 || input.actualReps > 999) throw new Error("Reps must be a whole number from 0 to 999");
   if (input.loadValue !== null && (!Number.isFinite(input.loadValue) || input.loadValue < 0 || input.loadValue > 9999)) throw new Error("Load must be a number from 0 to 9999");
   if (exercise.loadTrackingType === "MACHINE_LEVEL" && input.loadValue !== null && !Number.isInteger(input.loadValue)) throw new Error("Machine level must be a whole number");
-  const newlyCompleted = input.completed && !old.completedAt; const saved: OfflineSet = { ...old, actualReps: input.actualReps, loadValue: exercise.loadTrackingType == null ? null : input.loadValue, weightKg: exercise.loadTrackingType == null ? input.loadValue : null, loadTrackingType: exercise.loadTrackingType ?? null, completedAt: input.completed ? (old.completedAt ?? now) : null, notes: input.notes?.trim() || null };
+  const effort = setEffortSchema.parse(input.effort);
+  const newlyCompleted = input.completed && !old.completedAt; const saved: OfflineSet = { ...old, effort: effort === undefined ? old.effort ?? null : effort, actualReps: input.actualReps, loadValue: exercise.loadTrackingType == null ? null : input.loadValue, weightKg: exercise.loadTrackingType == null ? input.loadValue : null, loadTrackingType: exercise.loadTrackingType ?? null, completedAt: input.completed ? (old.completedAt ?? now) : null, notes: input.notes?.trim() || null };
   const timer: OfflineTimer | null = newlyCompleted && exercise.autoRest && exercise.restSeconds > 0 ? { id: crypto.randomUUID(), sessionId: input.sessionId, setLogId: input.setId, status: "RUNNING", configuredSeconds: exercise.restSeconds, startedAt: now, endsAt: new Date(Date.now() + exercise.restSeconds * 1000).toISOString(), pausedAt: null, pausedRemainingMs: null, exerciseName: exercise.name, completedSetNumber: saved.setNumber, nextSetId: exercise.sets.find((set) => set.setNumber > saved.setNumber && !set.completedAt)?.id ?? null, updatedAt: now } : null;
   await commitWorkoutChange(input.sessionId, (current) => ({ ...current, updatedAt: now, exercises: current.exercises.map((item) => item.id === input.exerciseSessionId ? { ...item, sets: item.sets.map((set) => set.id === input.setId ? saved : set) } : item) }), [
-    { type: "UPSERT_SET", sessionId: input.sessionId, targetId: input.setId, payload: { actualReps: saved.actualReps, loadValue: saved.loadValue, weightKg: saved.weightKg, loadTrackingType: saved.loadTrackingType, completedAt: saved.completedAt, notes: saved.notes ?? null } },
+    { type: "UPSERT_SET", sessionId: input.sessionId, targetId: input.setId, payload: { actualReps: saved.actualReps, loadValue: saved.loadValue, weightKg: saved.weightKg, loadTrackingType: saved.loadTrackingType, completedAt: saved.completedAt, notes: saved.notes ?? null, effort: saved.effort ?? null } },
     ...(timer ? [{ type: "UPSERT_TIMER" as const, sessionId: input.sessionId, targetId: timer.id, payload: { ...timer } }] : []),
   ], timer);
   return { set: saved, timer: timer ? offlineTimerDto(timer) : null };

@@ -172,6 +172,7 @@ Tap an exercise name or image to open its catalogue details, then use **Back to 
 During an exercise:
 
 - enter actual reps;
+- optionally select **Easy**, **Moderate**, or **Hard** for each set; tap the selected rating again to clear it, then use **Complete set** or **Save changes**;
 - enter the load only when the exercise supports an external load;
 - complete or reopen individual sets;
 - open any exercise card without advancing to another screen;
@@ -179,6 +180,8 @@ During an exercise:
 - allow `autoRest` to open the rest timer after a newly completed set.
 
 On the finish screen, VicGym reports incomplete planned sets and requires confirmation. The summary and history use only data actually saved for that session.
+
+Effort is stored on the individual historical set, including offline saves, and appears beside each completed set in Coach Review. It does not trigger automatic progression. Existing sets remain unrated. Deploy migration `20261006130000_add_set_effort` before running the updated app (`npm run db:migrate:deploy`); no reset or reseed is required.
 
 When cardio was selected at workout start, a separate **Start cardio** control appears throughout the active workout. The counter does not begin until pressed. **Stop** records its duration; finishing the workout also stops a running cardio counter. Cardio is displayed separately while remaining part of the whole session elapsed time.
 

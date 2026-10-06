@@ -667,6 +667,23 @@ export type EnumWorkoutSessionStatusWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumWorkoutSessionStatusFilter<$PrismaModel>
 }
 
+export type EnumSetEffortNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.SetEffort | Prisma.EnumSetEffortFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SetEffort[] | Prisma.ListEnumSetEffortFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SetEffort[] | Prisma.ListEnumSetEffortFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSetEffortNullableFilter<$PrismaModel> | $Enums.SetEffort | null
+}
+
+export type EnumSetEffortNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SetEffort | Prisma.EnumSetEffortFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SetEffort[] | Prisma.ListEnumSetEffortFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SetEffort[] | Prisma.ListEnumSetEffortFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSetEffortNullableWithAggregatesFilter<$PrismaModel> | $Enums.SetEffort | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSetEffortNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSetEffortNullableFilter<$PrismaModel>
+}
+
 export type EnumRestPeriodStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.RestPeriodStatus | Prisma.EnumRestPeriodStatusFieldRefInput<$PrismaModel>
   in?: $Enums.RestPeriodStatus[] | Prisma.ListEnumRestPeriodStatusFieldRefInput<$PrismaModel>
@@ -1412,6 +1429,23 @@ export type NestedEnumWorkoutSessionStatusWithAggregatesFilter<$PrismaModel = ne
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumWorkoutSessionStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumWorkoutSessionStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumSetEffortNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.SetEffort | Prisma.EnumSetEffortFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SetEffort[] | Prisma.ListEnumSetEffortFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SetEffort[] | Prisma.ListEnumSetEffortFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSetEffortNullableFilter<$PrismaModel> | $Enums.SetEffort | null
+}
+
+export type NestedEnumSetEffortNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SetEffort | Prisma.EnumSetEffortFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SetEffort[] | Prisma.ListEnumSetEffortFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SetEffort[] | Prisma.ListEnumSetEffortFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSetEffortNullableWithAggregatesFilter<$PrismaModel> | $Enums.SetEffort | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSetEffortNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSetEffortNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumRestPeriodStatusFilter<$PrismaModel = never> = {

@@ -13,6 +13,17 @@ function prismaFor(activeProgram: unknown, exercises: unknown[] = []) {
 }
 
 describe("weekly review coaching identifiers", () => {
+  it("exports effort for individual completed sets in sequence, without guessing missing ratings", async () => {
+    const prisma = prismaFor(null);
+    vi.mocked(prisma.exerciseSession.findMany).mockResolvedValue([]);
+    const sets = ["EASY", "MODERATE", "HARD", null].map((effort, index) => ({ setNumber: index + 1, targetReps: 12, actualReps: 12, weightKg: null, loadValue: 12, effort, notes: null, completedAt: new Date("2026-08-25T10:10:00Z"), restPeriod: null }));
+    vi.mocked(prisma.workoutSession.findMany).mockResolvedValue([{
+      id: "session", status: "COMPLETED", startedAt: new Date("2026-08-25T10:00:00Z"), completedAt: new Date("2026-08-25T10:20:00Z"), workoutDayNameSnapshot: "Upper A", workoutDay: { slug: "upper-a" }, programVersion: { versionNumber: 3 }, cardioPlanned: false,
+      exerciseSessions: [{ id: "exercise-session", exerciseId: "chest", exerciseNameSnapshot: "Chest Press", targetReps: 12, plannedSets: 4, restSeconds: 60, notes: null, loadTrackingTypeSnapshot: "MACHINE_LEVEL", loadEntryModeSnapshot: "STACK_TOTAL", loadMultiplierSnapshot: 1, exercise: { slug: "chest-press", muscles: [] }, setLogs: sets }],
+    }] as never);
+    const { report } = await getWeeklyReview(prisma, "user-1", "2026-08-24");
+    expect(report).toContain("- Set 1: L12 × 12 · Effort: Easy\n- Set 2: L12 × 12 · Effort: Moderate\n- Set 3: L12 × 12 · Effort: Hard\n- Set 4: L12 × 12\n");
+  });
   it("uses the exact active programme, version, workout days, and available exercise slugs", async () => {
     const review = await getWeeklyReview(prismaFor({
       id: "programme-id",

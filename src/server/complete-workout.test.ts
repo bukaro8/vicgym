@@ -10,6 +10,19 @@ function fixture() {
   return { tx, session };
 }
 describe("complete workout snapshot", () => {
+  it.each(["EASY", "MODERATE", "HARD", null, undefined])("preserves optional effort %s in completion", async (effort) => {
+    const { tx } = fixture();
+    const input = structuredClone(snapshot);
+    Object.assign(input.exercises[0].sets[0], { effort });
+    await completeWorkoutSnapshot(tx as never, "owner", id(1), input);
+    expect(tx.setLog.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ effort }) }));
+  });
+  it("rejects unknown effort before writing any completion data", async () => {
+    const { tx } = fixture(); const input = structuredClone(snapshot);
+    Object.assign(input.exercises[0].sets[0], { effort: "IMPOSSIBLE" });
+    await expect(completeWorkoutSnapshot(tx as never, "owner", id(1), input)).rejects.toThrow("effort");
+    expect(tx.setLog.update).not.toHaveBeenCalled();
+  });
   it("saves typed sets and cardio before completing the owned session", async () => {
     const { tx } = fixture();
     await completeWorkoutSnapshot(tx as never, "owner", id(1), snapshot);

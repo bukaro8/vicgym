@@ -3,6 +3,15 @@ import { describe, expect, it, vi } from "vitest";
 import { replayOfflineMutations, resolveTimerReplay, validatedSyncLoad } from "@/server/sync";
 
 describe("offline sync load compatibility", () => {
+  it.each(["EASY", "MODERATE", "HARD", null, undefined, "INVALID"])("validates per-set effort %s during replay", async (effort) => {
+    const mutation = { id: "10000000-0000-4000-8000-000000000020", sequence: 1, type: "UPSERT_SET" as const, sessionId: "session", targetId: "set", createdAt: "2026-10-06T10:00:00Z", attempts: 0, lastError: null, payload: { actualReps: 12, loadValue: null, loadTrackingType: "BODYWEIGHT", completedAt: "2026-10-06T10:00:00Z", effort } };
+    const tx = { clientMutation: { findUnique: vi.fn().mockResolvedValue(null), create: vi.fn() }, workoutSession: { findFirst: vi.fn().mockResolvedValue({ status: "IN_PROGRESS" }) }, setLog: { findFirst: vi.fn().mockResolvedValue({ id: "set", exerciseSession: { loadTrackingTypeSnapshot: "BODYWEIGHT" } }), update: vi.fn() } };
+    const prisma = { $transaction: (fn: (value: typeof tx) => unknown) => fn(tx) };
+    const result = await replayOfflineMutations(prisma as never, "owner", [mutation]);
+    expect(result[0].status).toBe(effort === "INVALID" ? "failed" : "applied");
+    if (effort === "INVALID") expect(tx.setLog.update).not.toHaveBeenCalled();
+    else expect(tx.setLog.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ effort }) }));
+  });
   it("recovers a pending legacy field using a typed machine session snapshot", () => {
     expect(validatedSyncLoad({ weightKg: 8 }, { loadTrackingTypeSnapshot: "MACHINE_LEVEL" })).toEqual({
       load: { weightKg: null, loadValue: 8, loadTrackingType: "MACHINE_LEVEL" },

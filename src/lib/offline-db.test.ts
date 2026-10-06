@@ -1,4 +1,5 @@
 import "fake-indexeddb/auto";
+import { queueWorkoutCompletion } from "@/lib/offline-db";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -10,6 +11,16 @@ const workout: OfflineWorkout = { schemaVersion: 1, id: "session-1", programId: 
 
 describe("offline database", () => {
   beforeEach(async () => { vi.restoreAllMocks(); configureOfflineOwner("test-user"); await clearPrivateOfflineData(); });
+
+  it.each(["MACHINE_LEVEL", "KILOGRAM", "BODYWEIGHT", "REPS_ONLY"] as const)("queues effort and includes it in completion for %s", async (type) => {
+    const local = structuredClone(workout); local.exercises[0].loadTrackingType = type;
+    await putOfflineWorkout(local);
+    await saveSetLocally({ sessionId: workout.id, exerciseSessionId: "exercise-session-1", setId: "set-1", actualReps: 12, loadValue: null, completed: true, effort: "MODERATE" });
+    expect((await getOfflineOutbox()).find((item) => item.type === "UPSERT_SET")?.payload.effort).toBe("MODERATE");
+    await queueWorkoutCompletion(workout.id);
+    const completion = (await getOfflineOutbox()).find((item) => item.type === "COMPLETE_WORKOUT");
+    expect(completion?.payload.snapshot).toMatchObject({ exercises: [{ sets: [{ effort: "MODERATE" }] }] });
+  });
 
   it("keeps offline workouts and mutation queues isolated by authenticated user", async () => {
     configureOfflineOwner("user-a"); await putOfflineWorkout(workout); await queueOfflineMutation({ type: "UPSERT_SET", sessionId: workout.id, targetId: "set-1", payload: { actualReps: 12 } });

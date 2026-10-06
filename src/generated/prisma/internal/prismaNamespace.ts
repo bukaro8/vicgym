@@ -2233,6 +2233,7 @@ export type ExerciseSessionScalarFieldEnum = (typeof ExerciseSessionScalarFieldE
 
 
 export const SetLogScalarFieldEnum = {
+  effort: 'effort',
   id: 'id',
   exerciseSessionId: 'exerciseSessionId',
   setNumber: 'setNumber',
@@ -2678,6 +2679,20 @@ export type ListEnumWorkoutSessionStatusFieldRefInput<$PrismaModel> = FieldRefIn
 
 
 /**
+ * Reference to a field of type 'SetEffort'
+ */
+export type EnumSetEffortFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SetEffort'>
+
+
+
+/**
+ * Reference to a field of type 'SetEffort[]'
+ */
+export type ListEnumSetEffortFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SetEffort[]'>
+
+
+
+/**
  * Reference to a field of type 'RestPeriodStatus'
  */
 export type EnumRestPeriodStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RestPeriodStatus'>
@@ -2965,4 +2980,3 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
-

@@ -43,6 +43,7 @@ export type SetLogSumAggregateOutputType = {
 }
 
 export type SetLogMinAggregateOutputType = {
+  effort: $Enums.SetEffort | null
   id: string | null
   exerciseSessionId: string | null
   setNumber: number | null
@@ -58,6 +59,7 @@ export type SetLogMinAggregateOutputType = {
 }
 
 export type SetLogMaxAggregateOutputType = {
+  effort: $Enums.SetEffort | null
   id: string | null
   exerciseSessionId: string | null
   setNumber: number | null
@@ -73,6 +75,7 @@ export type SetLogMaxAggregateOutputType = {
 }
 
 export type SetLogCountAggregateOutputType = {
+  effort: number
   id: number
   exerciseSessionId: number
   setNumber: number
@@ -106,6 +109,7 @@ export type SetLogSumAggregateInputType = {
 }
 
 export type SetLogMinAggregateInputType = {
+  effort?: true
   id?: true
   exerciseSessionId?: true
   setNumber?: true
@@ -121,6 +125,7 @@ export type SetLogMinAggregateInputType = {
 }
 
 export type SetLogMaxAggregateInputType = {
+  effort?: true
   id?: true
   exerciseSessionId?: true
   setNumber?: true
@@ -136,6 +141,7 @@ export type SetLogMaxAggregateInputType = {
 }
 
 export type SetLogCountAggregateInputType = {
+  effort?: true
   id?: true
   exerciseSessionId?: true
   setNumber?: true
@@ -238,6 +244,7 @@ export type SetLogGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 export type SetLogGroupByOutputType = {
+  effort: $Enums.SetEffort | null
   id: string
   exerciseSessionId: string
   setNumber: number
@@ -276,6 +283,7 @@ export type SetLogWhereInput = {
   AND?: Prisma.SetLogWhereInput | Prisma.SetLogWhereInput[]
   OR?: Prisma.SetLogWhereInput[]
   NOT?: Prisma.SetLogWhereInput | Prisma.SetLogWhereInput[]
+  effort?: Prisma.EnumSetEffortNullableFilter<"SetLog"> | $Enums.SetEffort | null
   id?: Prisma.UuidFilter<"SetLog"> | string
   exerciseSessionId?: Prisma.UuidFilter<"SetLog"> | string
   setNumber?: Prisma.IntFilter<"SetLog"> | number
@@ -293,6 +301,7 @@ export type SetLogWhereInput = {
 }
 
 export type SetLogOrderByWithRelationInput = {
+  effort?: Prisma.SortOrderInput | Prisma.SortOrder
   id?: Prisma.SortOrder
   exerciseSessionId?: Prisma.SortOrder
   setNumber?: Prisma.SortOrder
@@ -315,6 +324,7 @@ export type SetLogWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.SetLogWhereInput | Prisma.SetLogWhereInput[]
   OR?: Prisma.SetLogWhereInput[]
   NOT?: Prisma.SetLogWhereInput | Prisma.SetLogWhereInput[]
+  effort?: Prisma.EnumSetEffortNullableFilter<"SetLog"> | $Enums.SetEffort | null
   exerciseSessionId?: Prisma.UuidFilter<"SetLog"> | string
   setNumber?: Prisma.IntFilter<"SetLog"> | number
   targetReps?: Prisma.IntFilter<"SetLog"> | number
@@ -331,6 +341,7 @@ export type SetLogWhereUniqueInput = Prisma.AtLeast<{
 }, "id" | "exerciseSessionId_setNumber">
 
 export type SetLogOrderByWithAggregationInput = {
+  effort?: Prisma.SortOrderInput | Prisma.SortOrder
   id?: Prisma.SortOrder
   exerciseSessionId?: Prisma.SortOrder
   setNumber?: Prisma.SortOrder
@@ -354,6 +365,7 @@ export type SetLogScalarWhereWithAggregatesInput = {
   AND?: Prisma.SetLogScalarWhereWithAggregatesInput | Prisma.SetLogScalarWhereWithAggregatesInput[]
   OR?: Prisma.SetLogScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SetLogScalarWhereWithAggregatesInput | Prisma.SetLogScalarWhereWithAggregatesInput[]
+  effort?: Prisma.EnumSetEffortNullableWithAggregatesFilter<"SetLog"> | $Enums.SetEffort | null
   id?: Prisma.UuidWithAggregatesFilter<"SetLog"> | string
   exerciseSessionId?: Prisma.UuidWithAggregatesFilter<"SetLog"> | string
   setNumber?: Prisma.IntWithAggregatesFilter<"SetLog"> | number
@@ -369,6 +381,7 @@ export type SetLogScalarWhereWithAggregatesInput = {
 }
 
 export type SetLogCreateInput = {
+  effort?: $Enums.SetEffort | null
   id?: string
   setNumber: number
   targetReps?: number
@@ -385,6 +398,7 @@ export type SetLogCreateInput = {
 }
 
 export type SetLogUncheckedCreateInput = {
+  effort?: $Enums.SetEffort | null
   id?: string
   exerciseSessionId: string
   setNumber: number
@@ -401,6 +415,7 @@ export type SetLogUncheckedCreateInput = {
 }
 
 export type SetLogUpdateInput = {
+  effort?: Prisma.NullableEnumSetEffortFieldUpdateOperationsInput | $Enums.SetEffort | null
   id?: Prisma.StringFieldUpdateOperationsInput | string
   setNumber?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
@@ -417,6 +432,7 @@ export type SetLogUpdateInput = {
 }
 
 export type SetLogUncheckedUpdateInput = {
+  effort?: Prisma.NullableEnumSetEffortFieldUpdateOperationsInput | $Enums.SetEffort | null
   id?: Prisma.StringFieldUpdateOperationsInput | string
   exerciseSessionId?: Prisma.StringFieldUpdateOperationsInput | string
   setNumber?: Prisma.IntFieldUpdateOperationsInput | number
@@ -433,6 +449,7 @@ export type SetLogUncheckedUpdateInput = {
 }
 
 export type SetLogCreateManyInput = {
+  effort?: $Enums.SetEffort | null
   id?: string
   exerciseSessionId: string
   setNumber: number
@@ -448,6 +465,7 @@ export type SetLogCreateManyInput = {
 }
 
 export type SetLogUpdateManyMutationInput = {
+  effort?: Prisma.NullableEnumSetEffortFieldUpdateOperationsInput | $Enums.SetEffort | null
   id?: Prisma.StringFieldUpdateOperationsInput | string
   setNumber?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
@@ -462,6 +480,7 @@ export type SetLogUpdateManyMutationInput = {
 }
 
 export type SetLogUncheckedUpdateManyInput = {
+  effort?: Prisma.NullableEnumSetEffortFieldUpdateOperationsInput | $Enums.SetEffort | null
   id?: Prisma.StringFieldUpdateOperationsInput | string
   exerciseSessionId?: Prisma.StringFieldUpdateOperationsInput | string
   setNumber?: Prisma.IntFieldUpdateOperationsInput | number
@@ -492,6 +511,7 @@ export type SetLogExerciseSessionIdSetNumberCompoundUniqueInput = {
 }
 
 export type SetLogCountOrderByAggregateInput = {
+  effort?: Prisma.SortOrder
   id?: Prisma.SortOrder
   exerciseSessionId?: Prisma.SortOrder
   setNumber?: Prisma.SortOrder
@@ -515,6 +535,7 @@ export type SetLogAvgOrderByAggregateInput = {
 }
 
 export type SetLogMaxOrderByAggregateInput = {
+  effort?: Prisma.SortOrder
   id?: Prisma.SortOrder
   exerciseSessionId?: Prisma.SortOrder
   setNumber?: Prisma.SortOrder
@@ -530,6 +551,7 @@ export type SetLogMaxOrderByAggregateInput = {
 }
 
 export type SetLogMinOrderByAggregateInput = {
+  effort?: Prisma.SortOrder
   id?: Prisma.SortOrder
   exerciseSessionId?: Prisma.SortOrder
   setNumber?: Prisma.SortOrder
@@ -599,6 +621,10 @@ export type SetLogUncheckedUpdateManyWithoutExerciseSessionNestedInput = {
   deleteMany?: Prisma.SetLogScalarWhereInput | Prisma.SetLogScalarWhereInput[]
 }
 
+export type NullableEnumSetEffortFieldUpdateOperationsInput = {
+  set?: $Enums.SetEffort | null
+}
+
 export type SetLogCreateNestedOneWithoutRestPeriodInput = {
   create?: Prisma.XOR<Prisma.SetLogCreateWithoutRestPeriodInput, Prisma.SetLogUncheckedCreateWithoutRestPeriodInput>
   connectOrCreate?: Prisma.SetLogCreateOrConnectWithoutRestPeriodInput
@@ -614,6 +640,7 @@ export type SetLogUpdateOneRequiredWithoutRestPeriodNestedInput = {
 }
 
 export type SetLogCreateWithoutExerciseSessionInput = {
+  effort?: $Enums.SetEffort | null
   id?: string
   setNumber: number
   targetReps?: number
@@ -629,6 +656,7 @@ export type SetLogCreateWithoutExerciseSessionInput = {
 }
 
 export type SetLogUncheckedCreateWithoutExerciseSessionInput = {
+  effort?: $Enums.SetEffort | null
   id?: string
   setNumber: number
   targetReps?: number
@@ -673,6 +701,7 @@ export type SetLogScalarWhereInput = {
   AND?: Prisma.SetLogScalarWhereInput | Prisma.SetLogScalarWhereInput[]
   OR?: Prisma.SetLogScalarWhereInput[]
   NOT?: Prisma.SetLogScalarWhereInput | Prisma.SetLogScalarWhereInput[]
+  effort?: Prisma.EnumSetEffortNullableFilter<"SetLog"> | $Enums.SetEffort | null
   id?: Prisma.UuidFilter<"SetLog"> | string
   exerciseSessionId?: Prisma.UuidFilter<"SetLog"> | string
   setNumber?: Prisma.IntFilter<"SetLog"> | number
@@ -688,6 +717,7 @@ export type SetLogScalarWhereInput = {
 }
 
 export type SetLogCreateWithoutRestPeriodInput = {
+  effort?: $Enums.SetEffort | null
   id?: string
   setNumber: number
   targetReps?: number
@@ -703,6 +733,7 @@ export type SetLogCreateWithoutRestPeriodInput = {
 }
 
 export type SetLogUncheckedCreateWithoutRestPeriodInput = {
+  effort?: $Enums.SetEffort | null
   id?: string
   exerciseSessionId: string
   setNumber: number
@@ -734,6 +765,7 @@ export type SetLogUpdateToOneWithWhereWithoutRestPeriodInput = {
 }
 
 export type SetLogUpdateWithoutRestPeriodInput = {
+  effort?: Prisma.NullableEnumSetEffortFieldUpdateOperationsInput | $Enums.SetEffort | null
   id?: Prisma.StringFieldUpdateOperationsInput | string
   setNumber?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
@@ -749,6 +781,7 @@ export type SetLogUpdateWithoutRestPeriodInput = {
 }
 
 export type SetLogUncheckedUpdateWithoutRestPeriodInput = {
+  effort?: Prisma.NullableEnumSetEffortFieldUpdateOperationsInput | $Enums.SetEffort | null
   id?: Prisma.StringFieldUpdateOperationsInput | string
   exerciseSessionId?: Prisma.StringFieldUpdateOperationsInput | string
   setNumber?: Prisma.IntFieldUpdateOperationsInput | number
@@ -764,6 +797,7 @@ export type SetLogUncheckedUpdateWithoutRestPeriodInput = {
 }
 
 export type SetLogCreateManyExerciseSessionInput = {
+  effort?: $Enums.SetEffort | null
   id?: string
   setNumber: number
   targetReps?: number
@@ -778,6 +812,7 @@ export type SetLogCreateManyExerciseSessionInput = {
 }
 
 export type SetLogUpdateWithoutExerciseSessionInput = {
+  effort?: Prisma.NullableEnumSetEffortFieldUpdateOperationsInput | $Enums.SetEffort | null
   id?: Prisma.StringFieldUpdateOperationsInput | string
   setNumber?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
@@ -793,6 +828,7 @@ export type SetLogUpdateWithoutExerciseSessionInput = {
 }
 
 export type SetLogUncheckedUpdateWithoutExerciseSessionInput = {
+  effort?: Prisma.NullableEnumSetEffortFieldUpdateOperationsInput | $Enums.SetEffort | null
   id?: Prisma.StringFieldUpdateOperationsInput | string
   setNumber?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
@@ -808,6 +844,7 @@ export type SetLogUncheckedUpdateWithoutExerciseSessionInput = {
 }
 
 export type SetLogUncheckedUpdateManyWithoutExerciseSessionInput = {
+  effort?: Prisma.NullableEnumSetEffortFieldUpdateOperationsInput | $Enums.SetEffort | null
   id?: Prisma.StringFieldUpdateOperationsInput | string
   setNumber?: Prisma.IntFieldUpdateOperationsInput | number
   targetReps?: Prisma.IntFieldUpdateOperationsInput | number
@@ -824,6 +861,7 @@ export type SetLogUncheckedUpdateManyWithoutExerciseSessionInput = {
 
 
 export type SetLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  effort?: boolean
   id?: boolean
   exerciseSessionId?: boolean
   setNumber?: boolean
@@ -841,6 +879,7 @@ export type SetLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 }, ExtArgs["result"]["setLog"]>
 
 export type SetLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  effort?: boolean
   id?: boolean
   exerciseSessionId?: boolean
   setNumber?: boolean
@@ -857,6 +896,7 @@ export type SetLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
 }, ExtArgs["result"]["setLog"]>
 
 export type SetLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  effort?: boolean
   id?: boolean
   exerciseSessionId?: boolean
   setNumber?: boolean
@@ -873,6 +913,7 @@ export type SetLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
 }, ExtArgs["result"]["setLog"]>
 
 export type SetLogSelectScalar = {
+  effort?: boolean
   id?: boolean
   exerciseSessionId?: boolean
   setNumber?: boolean
@@ -887,7 +928,7 @@ export type SetLogSelectScalar = {
   updatedAt?: boolean
 }
 
-export type SetLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "exerciseSessionId" | "setNumber" | "targetReps" | "actualReps" | "weightKg" | "loadValue" | "loadTrackingType" | "completedAt" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["setLog"]>
+export type SetLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"effort" | "id" | "exerciseSessionId" | "setNumber" | "targetReps" | "actualReps" | "weightKg" | "loadValue" | "loadTrackingType" | "completedAt" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["setLog"]>
 export type SetLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   exerciseSession?: boolean | Prisma.ExerciseSessionDefaultArgs<ExtArgs>
   restPeriod?: boolean | Prisma.SetLog$restPeriodArgs<ExtArgs>
@@ -906,6 +947,7 @@ export type $SetLogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     restPeriod: Prisma.$RestPeriodPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    effort: $Enums.SetEffort | null
     id: string
     exerciseSessionId: string
     setNumber: number
@@ -1343,6 +1385,7 @@ export interface Prisma__SetLogClient<T, Null = never, ExtArgs extends runtime.T
  * Fields of the SetLog model
  */
 export interface SetLogFieldRefs {
+  readonly effort: Prisma.FieldRef<"SetLog", 'SetEffort'>
   readonly id: Prisma.FieldRef<"SetLog", 'String'>
   readonly exerciseSessionId: Prisma.FieldRef<"SetLog", 'String'>
   readonly setNumber: Prisma.FieldRef<"SetLog", 'Int'>

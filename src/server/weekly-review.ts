@@ -1,3 +1,4 @@
+import { effortLabel, type SetEffortValue } from "@/lib/set-effort";
 import type { PrismaClient } from "@/generated/prisma/client";
 import { formatLoad, jsonLoadType, type LoadEntryModeValue, type LoadTrackingTypeValue } from "@/lib/load-tracking";
 import { completedWorkoutDurationMinutes } from "@/lib/workout-duration";
@@ -7,7 +8,7 @@ const LONDON = "Europe/London";
 
 export type WeekRange = { start: Date; end: Date; startDate: string; endDate: string };
 
-type ReportSet = { setNumber: number; actualReps: number | null; targetReps: number; weightKg: number | null; loadValue: number | null; loadTrackingType: LoadTrackingTypeValue | null; loadEntryMode: LoadEntryModeValue | null; notes: string | null };
+type ReportSet = { effort?: SetEffortValue | null; setNumber: number; actualReps: number | null; targetReps: number; weightKg: number | null; loadValue: number | null; loadTrackingType: LoadTrackingTypeValue | null; loadEntryMode: LoadEntryModeValue | null; notes: string | null };
 type ReportExercise = { slug: string; name: string; targetReps: number; restSeconds: number; notes: string | null; sets: ReportSet[]; primary: string[]; secondary: string[]; progression: string };
 export type WeeklyReview = { weekStart: string; weekEnd: string; report: string; isEmpty: boolean; completedSessions: number; workingSets: number; programSlug: string | null; versionNumber: number | null };
 
@@ -95,7 +96,7 @@ export async function getWeeklyReview(prisma: PrismaClient, userId: string, requ
   for (const item of history) {
     const key = `${item.exerciseId}:${item.loadTrackingTypeSnapshot}:${item.loadEntryModeSnapshot}`;
     historyCache.set(item.id, previous.get(key) ?? []);
-    previous.set(key, item.setLogs.map((set) => ({ setNumber: set.setNumber, actualReps: set.actualReps, targetReps: set.targetReps, weightKg: set.weightKg === null ? null : Number(set.weightKg), loadValue: set.loadValue === null ? null : Number(set.loadValue), loadTrackingType: item.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null, loadEntryMode: item.loadEntryModeSnapshot as LoadEntryModeValue | null, notes: set.notes })));
+    previous.set(key, item.setLogs.map((set) => ({ setNumber: set.setNumber, actualReps: set.actualReps, targetReps: set.targetReps, weightKg: set.weightKg === null ? null : Number(set.weightKg), loadValue: set.loadValue === null ? null : Number(set.loadValue), loadTrackingType: item.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null, loadEntryMode: item.loadEntryModeSnapshot as LoadEntryModeValue | null, notes: set.notes, effort: set.effort })));
   }
 
   let completedSets = 0; let totalMinutes = 0; let cardioSeconds = 0; let volume = 0; let incomplete = 0; let skippedExercises = 0; let skippedRests = 0; let completedRests = 0; let completedRestSeconds = 0; let adjustedRestSeconds = 0;
@@ -107,14 +108,14 @@ export async function getWeeklyReview(prisma: PrismaClient, userId: string, requ
     const minutes = completedWorkoutDurationMinutes(session); if (minutes) totalMinutes += minutes;
     if (session.cardioPlanned) { cardioSeconds += session.cardioDurationSeconds; lines.push(`Cardio: ${session.cardioDurationSeconds ? `${Math.floor(session.cardioDurationSeconds / 60)} min ${session.cardioDurationSeconds % 60} sec` : "planned but not recorded"}`); }
     for (const item of session.exerciseSessions) {
-      const sets: ReportSet[] = item.setLogs.filter((set) => set.completedAt).map((set) => ({ setNumber: set.setNumber, actualReps: set.actualReps, targetReps: set.targetReps, weightKg: set.weightKg === null ? null : Number(set.weightKg), loadValue: set.loadValue === null ? null : Number(set.loadValue), loadTrackingType: item.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null, loadEntryMode: item.loadEntryModeSnapshot as LoadEntryModeValue | null, notes: set.notes }));
+      const sets: ReportSet[] = item.setLogs.filter((set) => set.completedAt).map((set) => ({ setNumber: set.setNumber, actualReps: set.actualReps, targetReps: set.targetReps, weightKg: set.weightKg === null ? null : Number(set.weightKg), loadValue: set.loadValue === null ? null : Number(set.loadValue), loadTrackingType: item.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null, loadEntryMode: item.loadEntryModeSnapshot as LoadEntryModeValue | null, notes: set.notes, effort: set.effort }));
       const primary = item.exercise.muscles.filter((muscle) => muscle.role === "PRIMARY").map((muscle) => muscle.muscle.name);
       const secondary = item.exercise.muscles.filter((muscle) => muscle.role === "SECONDARY").map((muscle) => muscle.muscle.name);
       const exercise: ReportExercise = { slug: item.exercise.slug, name: item.exerciseNameSnapshot, targetReps: item.targetReps, restSeconds: item.restSeconds, notes: item.notes, sets, primary, secondary, progression: comparePerformance(sets, historyCache.get(item.id)) };
       lines.push("", `${exercise.name} [${exercise.slug}]${item.isAdHoc ? " · Extra/ad-hoc exercise" : ""}`, `Target reps: ${exercise.targetReps}`, `Configured rest: ${exercise.restSeconds} sec`, `Primary muscle: ${primary.join(", ") || "—"}`, `Secondary muscles: ${secondary.join(", ") || "—"}`);
       if (sets.length) {
         for (const set of sets) {
-          lines.push(`- Set ${set.setNumber}: ${reportLoad(set)} × ${set.actualReps ?? set.targetReps}${set.notes ? ` · Note: ${set.notes}` : ""}`);
+          lines.push(`- Set ${set.setNumber}: ${reportLoad(set)} × ${set.actualReps ?? set.targetReps}${set.effort ? ` · Effort: ${effortLabel[set.effort]}` : ""}${set.notes ? ` · Note: ${set.notes}` : ""}`);
           completedSets += 1; const kilograms = set.loadTrackingType === "KILOGRAM" ? set.loadValue : set.loadTrackingType === null ? set.weightKg : null; if (kilograms !== null && set.actualReps !== null) volume += kilograms * set.actualReps * Number(item.loadMultiplierSnapshot ?? 1);
           primary.forEach((muscle) => primaryTotals.set(muscle, (primaryTotals.get(muscle) ?? 0) + 1)); secondary.forEach((muscle) => secondaryTotals.set(muscle, (secondaryTotals.get(muscle) ?? 0) + 1));
         }

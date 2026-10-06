@@ -207,3 +207,12 @@ export const ClientMutationStatus = {
 } as const
 
 export type ClientMutationStatus = (typeof ClientMutationStatus)[keyof typeof ClientMutationStatus]
+
+
+export const SetEffort = {
+  EASY: 'EASY',
+  MODERATE: 'MODERATE',
+  HARD: 'HARD'
+} as const
+
+export type SetEffort = (typeof SetEffort)[keyof typeof SetEffort]
