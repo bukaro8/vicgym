@@ -92,10 +92,9 @@ The shared seed creates only the verified exercise/equipment catalogue. Each new
 
 ### Progress and review
 
-- Completed-workout totals over 4, 8, 12 weeks or all time.
-- Working sets, training minutes, and compatible kilogram-volume totals.
-- Weekly activity charts.
-- Direct primary-muscle sets separated from secondary-muscle involvement.
+- Visual dashboard for Week, Month (last 30 days), 6 months (last 26 weeks), or All.
+- Compact weekly-goal, completed-workout and training-time summaries.
+- Interactive completed-set activity bars and a weighted muscle-group radar.
 - Exercise history and recent compatible-session comparisons.
 - Machine-level and kilogram series kept separate.
 - Europe/London Monday-to-Sunday coaching report.
@@ -197,7 +196,13 @@ The Programme screen is read-only. It displays the currently active programme ve
 
 ### Progress
 
-Progress is computed from completed sessions, including sessions performed under older programme versions. Period filters cover 4, 8, 12 weeks and all time. Machine levels and kilograms are never placed into the same comparison series, and legacy records with incompatible semantics are preserved but excluded from direct comparisons.
+Progress is derived from completed sessions and completed sets, including older programme versions. Month is the default. Week uses the current London Monday–Sunday week through today; Month shows the last 30 days. Both use daily bars. Six months uses 26 weekly buckets. All uses monthly buckets, switching to years for history spanning at least 36 months. Empty buckets remain visible. Tap a bar or use its date selector for sets, workouts, minutes and recorded reps.
+
+The weekly consistency card always shows the current week against the user's onboarding training-days-per-week goal, when available. Without that goal it shows a count only; programme rotation days are not assumed to be a weekly target. Other totals follow the selected range. Training time reuses the existing duration calculation: workout start to the last completed set or stopped cardio at or before completion, excluding a delayed finish/sync timestamp.
+
+The muscle radar maps catalogue muscle slugs into Chest, Back, Shoulders, Arms, Core, Quads, Hamstrings, Glutes, Calves and Hips (hip flexors/adductors). Each completed set contributes 1 to a primary group or 0.5 to a secondary group. Multiple muscles within one group use the strongest contribution once per set. Unmapped future muscles appear under Other. The scale follows the highest contribution in the selected range; it is not a prescribed balance or an effort score. Detailed values are available in the collapsed breakdown.
+
+Individual exercise history remains accessible through the exercise catalogue. Machine levels and kilograms are never placed into the same comparison series, and legacy records with incompatible semantics are preserved but excluded from direct comparisons. Dashboard charts use CSS and SVG without a new chart dependency. All queries remain scoped to the authenticated user; no summary tables or migration are needed.
 
 ### Coach review
 
