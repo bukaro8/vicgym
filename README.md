@@ -146,11 +146,11 @@ Raw `SetLog` and `RestPeriod` records are the source of truth. Progress, previou
 2. Sign in and choose **Create my programme now** or **Build a fully personalised programme**.
 3. The instant path answers a short questionnaire and atomically creates and activates immutable programme version 1. The fully personalised path creates a pending coach-review request and no generic programme.
 4. For a fully personalised request, an administrator can create the programme, copy a self-contained welcome-email prompt, paste the externally drafted body, preview the exact message, and explicitly send it through Resend.
-5. Alternatively, a validated `schemaVersion: 2` import can create an initial programme through **More → Coach review**.
+5. A trainer can manage validated programme JSON through **Admin → Users → coaching profile → Coach Review**. Personalised initial requests retain their existing request approval workflow.
 6. Start a workout from **Home** or **Workouts**.
 7. Log sets, use the rest timer, and explicitly finish the workout.
 8. Review factual history under **Progress**.
-9. Copy a weekly report from **Coach review** into the existing coaching conversation.
+9. Your trainer reviews completed history and copies your Coach Review into the coaching conversation when an update is needed.
 10. If ChatGPT recommends changes, paste its `schemaVersion: 1` patch back into VicGym.
 11. Validate, preview, and explicitly apply it. VicGym creates version 2, 3, and so on without altering completed sessions.
 
@@ -206,7 +206,13 @@ Individual exercise history remains accessible through the exercise catalogue. M
 
 ### Coach review
 
-**More → Coach review** provides:
+The weekly export includes ordered per-set effort and up to three recent comparable exposures per exercise/load type/entry mode, looking back 12 weeks before the selected week. It also includes current planned slots, the three most recent programme compositions, stored coaching constraints, and available catalogue primary-muscle/equipment/load metadata. Older or unavailable evidence is not inferred.
+
+External trainer guidance combines effort with completed targets, loads, rest and repeated performance. Repeated all-Easy sets meeting targets can support a small confirmed increment; rising effort with later-set deterioration supports considering rest before load; consistently Hard sets or repeated misses block a suggested increase. Missing effort is unknown. Variation should preserve at least roughly 80–90% of slots, normally change at most one exercise per day, match the primary muscle and a suitable movement pattern, and have a useful reason. Frequent version creation is not a reason to rotate exercises.
+
+These are instructions for the external coaching conversation, not an automatic coaching engine or a new import validation contract. VicGym cannot guarantee an external AI follows them. All patches still require validation, preview and explicit approval; the catalogue and immutable history rules remain enforced by the existing importer. Numeric equipment increments, limits and movement equivalence must be confirmed when they are not recorded.
+
+**Admin → Users → Open coaching profile → Coach Review** provides:
 
 - a week selector;
 - an exact Markdown report preview;
@@ -227,7 +233,11 @@ Web alerts remain best-effort. iPhone and iPad browsers do not expose web vibrat
 
 ## Programme creation and Coach Changes
 
-VicGym has no programme-creation form. Initial creation and later changes both use the Coach Review safety flow.
+VicGym has no programme-creation form. Trainers use the existing JSON validation, preview and explicit apply flow. Normal users train and view programmes, progress and history; they cannot export reports or apply programme versions.
+
+The trainer profile at `/admin/users/[userId]` has Profile, Coach Review, Programme and History tabs. It displays stored onboarding context, monthly progress, up to eight recent immutable versions and ten completed workouts with per-set effort. There is no impersonation or new editable notes field. Existing notes/answers are read-only. Requests, Users and Logout remain in the shared admin navigation.
+
+All coaching endpoints under `/api/admin/users/[userId]/review/{report,preview,apply}` authenticate ADMIN and resolve a non-admin target server-side. Report and programme engines are shared with the established workflow. Apply rechecks the account inside a serializable transaction and still validates programme ownership, catalogue identifiers, typed loads and base version. Explicit confirmation is required. Disabled accounts can be inspected/reported on but must be reactivated before programme changes. Legacy `/api/review/*` endpoints return 403 and `/more/review` redirects to programme status for users or the user directory for administrators. No schema migration or database reset is needed.
 
 ### Initial creation: schema version 2
 
@@ -545,7 +555,8 @@ Personalised-request admin notification happens only after the request transacti
 | `/progress` | Completed-history overview |
 | `/progress/exercises/[slug]` | Compatible exercise progression/history |
 | `/more` | Coach, offline, and timer-alert controls |
-| `/more/review` | Weekly report and Coach Changes workflow |
+| `/admin/users/[userId]` | Admin coaching profile, report, programme versions and recent history |
+| `/more/review` | Retired user report page; redirects to programme status |
 | `/more/offline` | Sync status, retry, and private local reset |
 | `/offline` | Offline workout recovery |
 | `/api/health` | Application/database readiness |

@@ -9,10 +9,30 @@ function prismaFor(activeProgram: unknown, exercises: unknown[] = []) {
     appSettings: { findUnique: vi.fn().mockResolvedValue({ activeProgram }) },
     exercise: { findMany: vi.fn().mockResolvedValue(exercises) },
     exerciseSession: { findMany: vi.fn() },
+    programVersion: { findMany: vi.fn().mockResolvedValue([]) },
+    onboardingProfile: { findUnique: vi.fn().mockResolvedValue(null) },
   } as unknown as PrismaClient;
 }
 
 describe("weekly review coaching identifiers", () => {
+  it("exports bounded comparable exposures, programme stability and only available substitution metadata", async () => {
+    const program = { id: "p", name: "Small Gym", slug: "small-gym", status: "ACTIVE", activeVersion: { versionNumber: 4, days: [{ slug: "upper-a", name: "Upper A", workoutExercises: [{ exerciseId: "curl", position: 1, sets: 3, targetReps: 12, restSeconds: 60, autoRest: true, plannedLoadValue: 8, plannedWeightKg: null, loadTrackingTypeSnapshot: "MACHINE_LEVEL", loadEntryModeSnapshot: "STACK_TOTAL", exercise: { slug: "biceps-curl", loadTrackingType: "MACHINE_LEVEL" } }] }] } };
+    const db = prismaFor(program, [{ slug: "hammer-curl", name: "Hammer Curl", loadTrackingType: "KILOGRAM", loadEntryMode: "PER_DUMBBELL", muscles: [{ role: "PRIMARY", muscle: { name: "Biceps" } }], equipment: { available: true, type: "DUMBBELL", name: "Dumbbells" } }, { slug: "unavailable", equipment: { available: false, type: "MACHINE" } }]);
+    vi.mocked(db.programVersion.findMany).mockResolvedValue([{ versionNumber: 3, createdAt: new Date("2026-08-10T12:00:00Z"), notes: null, days: [{ slug: "upper-a", workoutExercises: [{ exercise: { slug: "biceps-curl" } }] }] }] as never);
+    vi.mocked(db.onboardingProfile.findUnique).mockResolvedValue({ limitationsText: "Avoid painful shoulder movements", trainingPreferences: "nope" } as never);
+    vi.mocked(db.exerciseSession.findMany).mockResolvedValue([1, 2, 3, 4].map((index) => ({ id: `exposure-${index}`, exerciseId: "curl", exercise: { slug: "biceps-curl" }, plannedSets: 3, restSeconds: 60, loadTrackingTypeSnapshot: "MACHINE_LEVEL", loadEntryModeSnapshot: "STACK_TOTAL", workoutSession: { completedAt: new Date(`2026-08-${10 + index}T12:00:00Z`), programVersion: { versionNumber: 3, program: { slug: "small-gym" } } }, setLogs: [1, 2, 3].map((setNumber) => ({ setNumber, actualReps: 12, targetReps: 12, weightKg: null, loadValue: 8, effort: "EASY", notes: null })) })) as never);
+    const { report } = await getWeeklyReview(db, "user-1", "2026-08-24");
+    expect(report).not.toContain("biceps-curl · 2026-08-11");
+    expect(report).toContain("biceps-curl · 2026-08-12");
+    expect(report).toContain("S1 L8 × 12/12 target · Easy; S2 L8 × 12/12 target · Easy; S3 L8 × 12/12 target · Easy");
+    expect(report).toContain("Version 3 · 2026-08-10: upper-a [biceps-curl]");
+    expect(report).toContain("hammer-curl: Hammer Curl · primary Biceps · Dumbbells · KILOGRAM/PER_DUMBBELL");
+    expect(report).not.toContain("unavailable:");
+    expect(report).toContain("Avoid painful shoulder movements");
+    expect(report).toContain("Preferences: nope");
+    expect(db.programVersion.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ program: { userId: "user-1" } }), take: 3 }));
+    expect(db.exerciseSession.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ workoutSession: expect.objectContaining({ userId: "user-1", status: "COMPLETED" }) }) }));
+  });
   it("exports effort for individual completed sets in sequence, without guessing missing ratings", async () => {
     const prisma = prismaFor(null);
     vi.mocked(prisma.exerciseSession.findMany).mockResolvedValue([]);

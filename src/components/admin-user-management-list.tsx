@@ -1,6 +1,7 @@
 "use client";
 
 import { Trash2, UserCheck, UserX } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -39,7 +40,7 @@ export function AdminUserManagementList({ initialUsers, currentAdminId }: { init
       <ul className="divide-y">{users.map((user) => {
         const manageable = user.role !== "ADMIN" && user.id !== currentAdminId;
         return <li key={user.id} className="grid gap-4 p-5 lg:grid-cols-[minmax(0,1.4fr)_0.5fr_0.65fr_1fr_1fr_1.25fr] lg:items-center lg:gap-4">
-          <div className="min-w-0"><span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground lg:hidden">Email</span><p className="truncate font-medium">{user.email}</p></div>
+          <div className="min-w-0"><span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground lg:hidden">Email</span><p className="break-words font-medium">{user.email}</p>{manageable && <Link href={`/admin/users/${user.id}`} className="mt-1 inline-flex min-h-9 items-center text-sm font-semibold text-primary">Open coaching profile →</Link>}</div>
           <UserValue label="Role" value={user.role === "ADMIN" ? "Admin" : "User"}/>
           <div><span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground lg:hidden">Status</span><p><span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${user.status === "ACTIVE" ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-700"}`}>{user.status === "ACTIVE" ? "Active" : "Disabled"}</span></p></div>
           <UserValue label="Onboarding" value={user.onboardingState}/>

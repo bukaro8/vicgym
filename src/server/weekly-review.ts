@@ -3,6 +3,7 @@ import type { PrismaClient } from "@/generated/prisma/client";
 import { formatLoad, jsonLoadType, type LoadEntryModeValue, type LoadTrackingTypeValue } from "@/lib/load-tracking";
 import { completedWorkoutDurationMinutes } from "@/lib/workout-duration";
 import { getActiveProgramme } from "@/server/active-programme";
+import { coachReviewGuidance } from "@/server/coach-review-guidance";
 
 const LONDON = "Europe/London";
 
@@ -74,12 +75,14 @@ export async function getWeeklyReview(prisma: PrismaClient, userId: string, requ
     },
   });
   const activeProgram = await getActiveProgramme(prisma, userId);
+  const profile = await prisma.onboardingProfile.findUnique({ where: { userId }, select: { goal: true, sessionLengthMinutes: true, trainingPreferences: true, hasLimitations: true, limitationsText: true, personalPriorities: true, additionalNotes: true } });
   const availableExercises = await prisma.exercise.findMany({
     where: { active: true },
     orderBy: [{ equipment: { type: "asc" } }, { name: "asc" }],
-    include: { equipment: { select: { available: true, type: true } } },
+    include: { equipment: { select: { available: true, type: true, name: true } }, muscles: { include: { muscle: true } } },
   });
   const currentVersion = activeProgram?.activeVersion ?? null;
+  const versions = activeProgram && currentVersion ? await prisma.programVersion.findMany({ where: { programId: activeProgram.id, program: { userId }, versionNumber: { lte: currentVersion.versionNumber } }, orderBy: { versionNumber: "desc" }, take: 3, include: { days: { orderBy: { rotationOrder: "asc" }, include: { workoutExercises: { orderBy: { position: "asc" }, include: { exercise: true } } } } } }) : [];
   const lines = ["# VicGym weekly review", "", "## CURRENT PROGRAMME"];
 
   if (activeProgram && currentVersion) {
@@ -87,11 +90,18 @@ export async function getWeeklyReview(prisma: PrismaClient, userId: string, requ
   } else {
     lines.push("No active programme is currently confirmed.", "Weekly schemaVersion 1 changes cannot be imported until a programme is active.", "An initial programme may be created with validated schemaVersion 2 JSON.");
   }
+  if (currentVersion) {
+    lines.push("", "Current planned exercise slots (not completed training):");
+    for (const day of currentVersion.days) for (const item of day.workoutExercises) lines.push(`- ${day.slug}: ${item.exercise.slug} · position ${item.position} · ${item.sets} × ${item.targetReps} · rest ${item.restSeconds}s · autoRest ${item.autoRest} · ${formatLoad(item.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null, item.loadEntryModeSnapshot as LoadEntryModeValue | null, item.plannedLoadValue == null ? null : Number(item.plannedLoadValue), { legacyWeightKg: item.plannedWeightKg == null ? null : Number(item.plannedWeightKg), blank: "not entered" })}`);
+    lines.push("", "Recent programme composition (up to 3 versions; creation is not training exposure):");
+    for (const version of versions) lines.push(`- Version ${version.versionNumber} · ${localDate(version.createdAt)}: ${version.days.map((day) => `${day.slug} [${day.workoutExercises.map((item) => item.exercise.slug).join(", ")}]`).join("; ")}${version.notes ? ` · Notes: ${version.notes}` : ""}`);
+  }
+  if (profile) lines.push("", "Stored coaching context (user answers; preserve existing coaching constraints):", `Goal: ${profile.goal ?? "not recorded"} · Session length: ${profile.sessionLengthMinutes ?? "not recorded"} minutes`, `Preferences: ${profile.trainingPreferences ?? "not recorded"}`, `Limitations: ${profile.limitationsText ?? (profile.hasLimitations ? "Reported; details not recorded" : "None reported")}`, `Priorities: ${profile.personalPriorities ?? "not recorded"}`, `Notes: ${profile.additionalNotes ?? "not recorded"}`);
   lines.push("", "## WEEK", `${range.startDate} to ${addDays(range.endDate, -1)}`, `Timezone: ${LONDON}`, "", "## TRAINING");
 
   const historyCache = new Map<string, ReportSet[]>();
-  const exerciseIds = [...new Set(sessions.flatMap((session) => session.exerciseSessions.map((exercise) => exercise.exerciseId)))];
-  const history = exerciseIds.length ? await prisma.exerciseSession.findMany({ where: { exerciseId: { in: exerciseIds }, workoutSession: { userId, status: "COMPLETED", completedAt: { lt: range.end } } }, orderBy: [{ workoutSession: { completedAt: "asc" } }, { id: "asc" }], include: { setLogs: { where: { completedAt: { not: null } }, orderBy: { setNumber: "asc" } } } }) : [];
+  const exerciseIds = [...new Set([...sessions.flatMap((session) => session.exerciseSessions.map((exercise) => exercise.exerciseId)), ...(currentVersion?.days.flatMap((day) => day.workoutExercises.map((item) => item.exerciseId)) ?? [])].filter(Boolean))];
+  const history = exerciseIds.length ? await prisma.exerciseSession.findMany({ where: { exerciseId: { in: exerciseIds }, workoutSession: { userId, status: "COMPLETED", completedAt: { gte: new Date(range.start.getTime() - 84 * 86400000), lt: range.end } } }, orderBy: [{ workoutSession: { completedAt: "asc" } }, { id: "asc" }], include: { workoutSession: { select: { completedAt: true, programVersion: { select: { versionNumber: true, program: { select: { slug: true } } } } } }, exercise: { select: { slug: true } }, setLogs: { where: { completedAt: { not: null } }, orderBy: { setNumber: "asc" } } } }) : [];
   const previous = new Map<string, ReportSet[]>();
   for (const item of history) {
     const key = `${item.exerciseId}:${item.loadTrackingTypeSnapshot}:${item.loadEntryModeSnapshot}`;
@@ -135,13 +145,18 @@ export async function getWeeklyReview(prisma: PrismaClient, userId: string, requ
   }
   lines.push("", "## SUMMARY", `Workouts completed: ${sessions.length}`, `Completed working sets: ${completedSets}`, `Recorded training time: ${totalMinutes} min`, `Cardio time: ${Math.floor(cardioSeconds / 60)} min ${cardioSeconds % 60} sec`, `Logged external-load volume: ${volume ? `${volume.toFixed(1)} kg-reps` : "not available"}`, `Incomplete / missed planned sets: ${incomplete}`, `Skipped exercises: ${skippedExercises}`, `Direct working sets by primary muscle: ${[...primaryTotals.entries()].map(([name, count]) => `${name} ${count}`).join(", ") || "none"}`, `Secondary-muscle involvement sets: ${[...secondaryTotals.entries()].map(([name, count]) => `${name} ${count}`).join(", ") || "none"}`);
   if (skippedRests || completedRests || adjustedRestSeconds) lines.push("", "## REST INFORMATION", `Completed rest periods: ${completedRests}${completedRests ? ` · average elapsed ${Math.round(completedRestSeconds / completedRests)} sec` : ""}`, `Skipped rest periods: ${skippedRests}`, `Net manual rest adjustment: ${adjustedRestSeconds >= 0 ? "+" : ""}${adjustedRestSeconds} sec`);
+  lines.push("", "## RECENT COMPARABLE HISTORY", "Up to 3 completed exposures per exercise/load type/entry mode from this week and the preceding 12 weeks. Missing ratings/loads/reps remain unknown; current-week exposures may also appear above.");
+  const recent = new Map<string, typeof history>();
+  for (const item of history) { const key = `${item.exerciseId}:${item.loadTrackingTypeSnapshot}:${item.loadEntryModeSnapshot}`; recent.set(key, [...(recent.get(key) ?? []), item].slice(-3)); }
+  for (const entries of recent.values()) for (const item of entries) lines.push(`- ${item.exercise.slug} · ${localDate(item.workoutSession.completedAt!)} · ${item.workoutSession.programVersion.program.slug} v${item.workoutSession.programVersion.versionNumber} · ${item.loadTrackingTypeSnapshot ?? "LEGACY"}/${item.loadEntryModeSnapshot ?? "LEGACY"} · ${item.setLogs.length}/${item.plannedSets} sets · rest ${item.restSeconds}s: ${item.setLogs.map((set) => `S${set.setNumber} ${formatLoad(item.loadTrackingTypeSnapshot as LoadTrackingTypeValue | null, item.loadEntryModeSnapshot as LoadEntryModeValue | null, set.loadValue === null ? null : Number(set.loadValue), { legacyWeightKg: set.weightKg === null ? null : Number(set.weightKg), blank: "unknown load" })} × ${set.actualReps ?? "unknown"}/${set.targetReps} target · ${set.effort ? effortLabel[set.effort] : "unrated"}`).join("; ")}${item.notes ? ` · Notes: ${item.notes}` : ""}`);
+  if (!recent.size) lines.push("No recent comparable exposures available. Do not infer a trend.");
   const categories = new Map<string, string[]>();
   for (const exercise of availableExercises) {
     if (exercise.equipment && !exercise.equipment.available) continue;
     const category = exercise.equipment?.type === "DUMBBELL" ? "Dumbbells" : exercise.equipment?.type === "BODYWEIGHT" || !exercise.equipment ? "Bodyweight / no equipment" : exercise.equipment?.type === "STEP" ? "Studio accessories" : "Machines";
     categories.set(category, [...(categories.get(category) ?? []), exercise.slug]);
   }
-  lines.push("", "## VALID VICGYM EXERCISES", "Use only these currently available exercise slugs:", ...[...categories.entries()].map(([category, slugs]) => `- ${category}: ${slugs.join(", ")}`), "", "## VICGYM COACH RESPONSE");
+  lines.push("", "## VALID VICGYM EXERCISES", "Use only these currently available exercise slugs:", ...[...categories.entries()].map(([category, slugs]) => `- ${category}: ${slugs.join(", ")}`), "", ...availableExercises.filter((exercise) => !exercise.equipment || exercise.equipment.available).map((exercise) => `- ${exercise.slug}: ${exercise.name} · primary ${(exercise.muscles ?? []).filter((relation) => relation.role === "PRIMARY").map((relation) => relation.muscle.name).join(", ") || "not recorded"} · ${exercise.equipment?.name ?? "no equipment"} · ${exercise.loadTrackingType}/${exercise.loadEntryMode}`), "", coachReviewGuidance, "", "## VICGYM COACH RESPONSE");
   if (activeProgram && currentVersion) {
     const exampleDay = currentVersion.days[0];
     const exampleItem = exampleDay?.workoutExercises[0];
